@@ -1,0 +1,16 @@
+package org.d3javu.bd.repositories;
+
+import org.d3javu.bd.models.post.IPost;
+import org.d3javu.bd.models.post.Post;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
+
+public interface PostRepository extends JpaRepository<Post, Long> {
+
+    @Query(value = "select * from posts where id in (select post_id from posts_tags where tag_id = :id)",
+            nativeQuery = true)
+    List<IPost> findAllByTagId(Long id);
+
+}

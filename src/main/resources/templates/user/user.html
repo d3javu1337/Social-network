@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User</title>
+</head>
+<body>
+    <div th:insert="~{fragments/logoutFragment :: header}"></div>
+    <form th:action="@{/users/{userId}/update(userId=${user.id})}" method="post" th:object="${user}">
+        <label for="firstName">Firstname:
+            <input id="firstName" type="text" name="firstName" th:value="*{firstName}">
+        </label><br>
+        <label for="lastName">Lastname:
+            <input id="lastName" type="text" name="lastName" th:value="*{lastName}">
+        </label><br>
+        <label for="email">Email:
+            <input id="email" type="text" name="email" th:value="*{email}">
+        </label><br>
+        <label for="customLink">Custom Link:
+            <input id="customLink" type="text" name="customLink" th:value="*{customLink}">
+        </label><br>
+        <label for="createdAt">Created at:
+            <input id="createdAt" type="datetime-local" name="createdAt" th:value="*{createdAt}">
+        </label><br>
+        <button type="submit">Update</button>
+    </form>
+</body>
+</html>

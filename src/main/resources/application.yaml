@@ -1,0 +1,22 @@
+spring:application:name: bd
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bd
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties.hibernate:
+      show_sql: true
+      format_sql: true
+    hibernate:
+      ddl-auto: create-drop
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui/index.html
+#  mvc:
+#    view:
+#      prefix: /WEB-INF/jsp/
+#      suffix: .jsp
