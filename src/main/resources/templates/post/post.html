@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Post</title>
+</head>
+<body>
+<div th:insert="~{fragments/logoutFragment :: header}"></div>
+<div>
+  <h3 th:text="${post.title}"></h3>
+  <p th:text="${post.body}"></p>
+  <button th:href="" th:if="pos.id==user.id">update</button>
+</div>
+</body>
+</html>

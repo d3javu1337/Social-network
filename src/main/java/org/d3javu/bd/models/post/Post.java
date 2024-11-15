@@ -10,15 +10,12 @@ import org.d3javu.bd.models.tag.Tag;
 import org.d3javu.bd.models.user.User;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @NoArgsConstructor
 @Data
-@EqualsAndHashCode
+//@EqualsAndHashCode
 @ToString
 @Entity
 @Table(name = "posts")
@@ -54,7 +51,7 @@ public class Post {
     private Long likesCount = 0L;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "post")
-    private List<Comment> comments;
+    private Set<Comment> comments;
 
     private LocalDateTime createdAt;
 
@@ -78,7 +75,7 @@ public class Post {
     }
 
     public void addComment(Comment comment){
-        if(this.comments == null) this.comments = new ArrayList<>();
+        if(this.comments == null) this.comments = new HashSet<>();
         this.comments.add(comment);
     }
 
@@ -102,4 +99,16 @@ public class Post {
         this.viewsCount = (long) this.views.size();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Post post = (Post) o;
+        return Objects.equals(id, post.id) && Objects.equals(title, post.title) && Objects.equals(body, post.body) && Objects.equals(author, post.author) && Objects.equals(createdAt, post.createdAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, body, author, createdAt);
+    }
 }

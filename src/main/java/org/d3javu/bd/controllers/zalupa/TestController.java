@@ -96,7 +96,7 @@ public class TestController implements CommandLineRunner {
 
         System.out.println(post1.getViews());
 
-        post1.getComments().get(0).like(user3);
+//        post1.getComments().get(0).like(user3);
 
         postRepository.findAllByTagId(1L).forEach(e -> System.out.println(e.getBody()));
 

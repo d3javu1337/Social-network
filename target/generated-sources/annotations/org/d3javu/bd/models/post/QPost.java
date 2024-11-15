@@ -26,7 +26,7 @@ public class QPost extends EntityPathBase<Post> {
 
     public final StringPath body = createString("body");
 
-    public final ListPath<org.d3javu.bd.models.comment.Comment, org.d3javu.bd.models.comment.QComment> comments = this.<org.d3javu.bd.models.comment.Comment, org.d3javu.bd.models.comment.QComment>createList("comments", org.d3javu.bd.models.comment.Comment.class, org.d3javu.bd.models.comment.QComment.class, PathInits.DIRECT2);
+    public final SetPath<org.d3javu.bd.models.comment.Comment, org.d3javu.bd.models.comment.QComment> comments = this.<org.d3javu.bd.models.comment.Comment, org.d3javu.bd.models.comment.QComment>createSet("comments", org.d3javu.bd.models.comment.Comment.class, org.d3javu.bd.models.comment.QComment.class, PathInits.DIRECT2);
 
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 

@@ -10,7 +10,7 @@ import java.util.Set;
 public class PostEditDto {
 
     public String title;
-    public String content;
+    public String body;
     public Set<Tag> tags = new HashSet<>();
 
 }

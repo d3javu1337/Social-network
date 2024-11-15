@@ -12,7 +12,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import static org.d3javu.bd.models.user.Roles.admin;
 
-@EnableMethodSecurity
+//@EnableMethodSecurity
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {

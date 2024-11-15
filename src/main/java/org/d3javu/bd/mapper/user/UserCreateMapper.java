@@ -18,15 +18,15 @@ public class UserCreateMapper implements Mapper<UserCreateDto, User> {
         return user;
     }
 
-    @Override
-    public User map(UserCreateDto from, User to) {
-        to.setFirstName(from.firstName);
-        to.setLastName(from.lastName);
-        to.setEmail(from.login);
-        to.setPassword(from.password);
-        to.setPreferredTags(from.preferredTags);
-        return to;
-    }
+//    @Override
+//    public User map(UserCreateDto from, User to) {
+//        to.setFirstName(from.firstName);
+//        to.setLastName(from.lastName);
+//        to.setEmail(from.login);
+//        to.setPassword(from.password);
+//        to.setPreferredTags(from.preferredTags);
+//        return to;
+//    }
 }
 
 /*
