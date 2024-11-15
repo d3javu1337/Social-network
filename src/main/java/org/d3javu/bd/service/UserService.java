@@ -123,4 +123,8 @@ public class UserService implements UserDetailsService {
                 ))
                 .orElseThrow(() -> new UsernameNotFoundException(username));
     }
+
+    public User findByEmail(String user){
+        return this.userRepository.findByEmail(user).orElseThrow(() -> new UsernameNotFoundException(user));
+    }
 }

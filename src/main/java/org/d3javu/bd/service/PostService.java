@@ -8,10 +8,12 @@ import org.d3javu.bd.mapper.post.PostCreateMapper;
 import org.d3javu.bd.mapper.post.PostEditMapper;
 import org.d3javu.bd.mapper.post.PostReadMapper;
 import org.d3javu.bd.mapper.post.StaticPostCreateMapper;
+import org.d3javu.bd.models.post.Post;
 import org.d3javu.bd.models.tag.Tag;
 import org.d3javu.bd.repositories.PostRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.webjars.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +38,9 @@ public class PostService {
 
     public Optional<PostReadDto> findById(Long id) {
         return this.postRepository.findById(id).map(this.postReadMapper::map);
+    }
+    public Optional<Post> findPostById(Long id) {
+        return this.postRepository.findById(id);
     }
 
     public List<PostReadDto> findAll() {

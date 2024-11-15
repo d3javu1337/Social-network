@@ -13,12 +13,14 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
 public class PostReadMapper implements Mapper<Post, PostReadDto> {
 
     private final UserReadMapper userReadMapper;
+//    private final CommentMapper commentMapper;
 
     @Override
     public PostReadDto map(Post object) {
@@ -28,9 +30,10 @@ public class PostReadMapper implements Mapper<Post, PostReadDto> {
                 object.getBody(),
                 object.getTags(),
                 StaticUserReadMapper.map(object.getAuthor()),
-                object.getViews(),
-                object.getLikes(),
-                object.getComments(),
+                object.getViews().stream().map(userReadMapper::map).collect(Collectors.toSet()),
+                object.getLikes().stream().map(userReadMapper::map).collect(Collectors.toSet()),
+//                object.getComments().stream().map(commentM).collect(Collectors.toSet()),
+                new HashSet<>(),
                 object.getCreatedAt()
         );
     }

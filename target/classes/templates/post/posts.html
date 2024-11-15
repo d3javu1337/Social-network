@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Post</title>
+</head>
+<body>
+<div th:insert="~{fragments/logoutFragment :: header}"></div>
+<div th:each="post : ${posts}">
+<!--  add author with ref-->
+<!--  <div th:href="@{'/posts/'+${post.id}}" th:text="|${post.id}. ${post.title}'\n'${post.body}'\n'|"th:href="@{'/users/'+${post.author.id}}">Post</div>-->
+  <div>
+    <a th:href="@{'/users/'+${post.author.id}}" th:text="${post.author.firstName}">Author</a>
+<!--    <a th:href="@{'/users/'+${user.id}}" th:text="|${user.id}. ${user.email}. ${user.firstName}|">User</a>-->
+    <h3 th:text="${post.title}"></h3>
+    <p th:text="${post.body}"></p>
+    <a th:href="@{'/posts/'+${post.id}}">полный пост</a>
+  </div>
+</div>
+</body>
+</html>
+
+<!--<div th:each="user : ${users}">-->
+<!--  <a th:href="@{'/users/' + ${user.id}}" th:text="|${user.id}. ${user.email}. ${user.firstName}|">User</a>-->
+<!--</div>-->
