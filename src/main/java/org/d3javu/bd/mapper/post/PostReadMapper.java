@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,8 +31,8 @@ public class PostReadMapper implements Mapper<Post, PostReadDto> {
                 object.getBody(),
                 object.getTags(),
                 StaticUserReadMapper.map(object.getAuthor()),
-                object.getViews().stream().map(userReadMapper::map).collect(Collectors.toSet()),
-                object.getLikes().stream().map(userReadMapper::map).collect(Collectors.toSet()),
+                Optional.of(object.getViews().stream().map(userReadMapper::map).collect(Collectors.toSet())).orElse(new HashSet<>()),
+                Optional.of(object.getLikes().stream().map(userReadMapper::map).collect(Collectors.toSet())).orElse(new HashSet<>()),
 //                object.getComments().stream().map(commentM).collect(Collectors.toSet()),
                 new HashSet<>(),
                 object.getCreatedAt()

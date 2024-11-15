@@ -8,6 +8,7 @@ import org.d3javu.bd.repositories.UserRepository;
 import org.d3javu.bd.service.UserService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -36,7 +37,10 @@ public class UserController {
         return userService.findById(id)
                 .map(user -> {
                     model.addAttribute("user", user);
-                    return "user/user";
+                    var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+                    var currentUser = this.userService.findByEmail(userEmail);
+                    if(currentUser.getId() == id) return "user/user";
+                    else return "user/userProfile";
                 })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }

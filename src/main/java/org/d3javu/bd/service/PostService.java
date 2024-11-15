@@ -10,6 +10,7 @@ import org.d3javu.bd.mapper.post.PostReadMapper;
 import org.d3javu.bd.mapper.post.StaticPostCreateMapper;
 import org.d3javu.bd.models.post.Post;
 import org.d3javu.bd.models.tag.Tag;
+import org.d3javu.bd.models.user.User;
 import org.d3javu.bd.repositories.PostRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,10 +30,12 @@ public class PostService {
     private final PostEditMapper postEditMapper;
     private final PostReadMapper postReadMapper;
 
+
+//crud
     @Transactional
     public PostReadDto create(PostCreateDto postCreateDto) {
         var post = Optional.of(postCreateDto).map(this.postCreateMapper::map).get();
-        post = this.postRepository.save(post);
+        post = this.postRepository.saveAndFlush(post);
         return this.postReadMapper.map(post);
     }
 
@@ -69,6 +72,18 @@ public class PostService {
                     return true;
                 })
                 .orElse(false);
+    }
+//crud end
+
+    @Transactional
+    public void view(Long id, User user) {
+        var post = postRepository.findById(id).orElse(null);
+        if(post != null) {
+            post.view(user);
+            postRepository.saveAndFlush(post);
+        }else{
+            throw new NotFoundException("Post not found");
+        }
     }
 
 }

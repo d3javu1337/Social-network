@@ -5,6 +5,7 @@ import org.d3javu.bd.dto.user.UserEditDto;
 import org.d3javu.bd.dto.user.UserReadDto;
 import org.d3javu.bd.models.post.Post;
 import org.d3javu.bd.models.tag.Tag;
+import org.d3javu.bd.models.user.Roles;
 import org.d3javu.bd.models.user.User;
 import org.d3javu.bd.repositories.CommentRepository;
 import org.d3javu.bd.repositories.PostRepository;
@@ -49,8 +50,11 @@ public class TestController implements CommandLineRunner {
 
         var user1 = new User("Ivan", "Ivanov", "vanya@jmail.org", "124");
         var user2 = new User("Petr", "Petrov", "petya@jmail.org", "petya228");
+        var user4 = new User("Egor", "Trunov", "admin", "admin");
+        user4.setRole(Roles.admin);
         userRepository.save(user1);
         userRepository.save(user2);
+        userRepository.save(user4);
 
         user1 = userRepository.findAll().get(0);
         user2 = userRepository.findAll().get(1);

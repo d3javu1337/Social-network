@@ -15,5 +15,9 @@
     </label><br>
     <button type="submit">Update</button>
 </form>
+<form th:action="@{/posts/{postId}/update/delete(postId=${post.id})}" method="post">
+    <button type="submit">Delete</BUTTON>
+</form>
+
 </body>
 </html>

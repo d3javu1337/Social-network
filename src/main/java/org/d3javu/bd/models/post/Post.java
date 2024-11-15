@@ -37,7 +37,7 @@ public class Post {
             joinColumns=@JoinColumn(name="post_id"),
             inverseJoinColumns=@JoinColumn(name="user_id")
     )
-    private Set<User> views;
+    private Set<User> views = new HashSet<>();
 
     private Long viewsCount = 0L;
 
@@ -46,12 +46,12 @@ public class Post {
             joinColumns=@JoinColumn(name="post_id"),
             inverseJoinColumns=@JoinColumn(name="user_id")
     )
-    private Set<User> likes;
+    private Set<User> likes = new HashSet<>();
 
     private Long likesCount = 0L;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "post")
-    private Set<Comment> comments;
+    private Set<Comment> comments = new HashSet<>();
 
     private LocalDateTime createdAt;
 
@@ -69,6 +69,12 @@ public class Post {
 //        tags.forEach(e -> e.linkPost(this));
         this.createdAt = LocalDateTime.now();
     }
+
+//    public Post() {
+//        this.views = new HashSet<>();
+//        this.likes = new HashSet<>();
+//        this.comments = new HashSet<>();
+//    }
 
     public void linkUser(User author){
         this.author = author;

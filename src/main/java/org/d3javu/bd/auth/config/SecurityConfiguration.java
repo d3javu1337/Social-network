@@ -23,7 +23,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(
                         auth -> auth
                                 .requestMatchers("/login", "/registration").permitAll()
-                                .requestMatchers("/admin/**").hasRole(admin.getAuthority())
+                                .requestMatchers("/admin/**").hasAuthority(admin.getAuthority())
                                 .requestMatchers(AntPathRequestMatcher.antMatcher("/users/{\\d}/delete")).hasRole(admin.getAuthority())
                                 .anyRequest().authenticated()
                 )

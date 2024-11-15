@@ -15,6 +15,7 @@ public class PostCreateMapper implements Mapper<PostCreateDto, Post> {
         Post post = new Post();
         post.setTitle(object.getTitle());
         post.setBody(object.getBody());
+        post.setAuthor(object.getAuthor());
         post.setTags(object.getTags());
         post.setCreatedAt(LocalDateTime.now());
         return post;

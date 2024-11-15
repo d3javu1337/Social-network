@@ -9,6 +9,7 @@
 <div>
   <h3 th:text="${post.title}"></h3>
   <p th:text="${post.body}"></p>
+  <p th:each="tag : ${tags}" th:text="${tag.body}"></p>
   <a th:href="@{'/posts/'+${post.id}+'/update'}" th:if="${authorId==userId}">update</a>
 <!--  <a th:href="@{'/users/' + ${user.id}}" th:text="|${user.id}. ${user.email}. ${user.firstName}|">User</a>-->
 
