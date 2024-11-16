@@ -17,5 +17,14 @@
 <!--        <a th:href="@{'/posts/'+${post.id}}">полный пост</a>-->
     </div>
 </div>
+<form th:action="@{'/admin/tags/new'}" method="post">
+    <label for="body">Body<br>
+        <input id="body" type="text" name="body">
+    </label><br>
+    <label for="description">Description<br>
+        <input id="description" type="text" name="description">
+    </label><br>
+    <button type="submit">Add tag</button>
+</form>
 </body>
 </html>

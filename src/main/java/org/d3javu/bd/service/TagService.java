@@ -9,6 +9,7 @@ import org.d3javu.bd.models.tag.Tag;
 import org.d3javu.bd.repositories.TagRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.webjars.NotFoundException;
 
 import java.util.HashSet;
 import java.util.List;
@@ -73,5 +74,16 @@ public class TagService {
     public Set<TagDto> findByPost(Post post) {
         return this.tagRepository.findTagsIdByPostId(post.getId()).stream().map(tagToDtoMapper::map).collect(Collectors.toSet());
     }
+
+    public Optional<TagDto> findByBody(String body) {
+        return this.tagRepository.findByBody(body).map(this.tagToDtoMapper::map);
+    }
+
+//    public boolean existsByBody(String body) {
+//        return this.tagRepository.findByBody(body)
+//                .map(tag -> {
+//                    if (tag == null) {}
+//                })
+//    }
 
 }

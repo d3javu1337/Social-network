@@ -44,6 +44,15 @@ public class AdminController {
 
     }
 
+    @PostMapping("/tags/new")
+    public String add(@ModelAttribute TagDto dto) {
+        if(this.tagService.findByBody(dto.getBody()).isPresent()) throw new ResponseStatusException(HttpStatus.CONFLICT, "Duplicate tag");
+        else{
+            this.tagService.create(dto);
+            return "redirect:/admin/tags";
+        }
+    }
+
 //        return userService.update(id, user)
 //            .map(it -> "redirect:/users/{id}")
 //            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
