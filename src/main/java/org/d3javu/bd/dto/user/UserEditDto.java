@@ -15,6 +15,6 @@ public class UserEditDto {
     public String customLink;
     //
     public String password;
-    public Set<Tag> tags = new HashSet<>();
+    public Set<Tag> tags;
 
 }

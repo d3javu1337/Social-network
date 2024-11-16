@@ -2,7 +2,7 @@ package org.d3javu.bd.controllers.userController;
 
 import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.user.UserEditDto;
-import org.d3javu.bd.dto.user.UserFilter;
+import org.d3javu.bd.filter.user.UserFilter;
 import org.d3javu.bd.dto.user.UserReadDto;
 import org.d3javu.bd.repositories.UserRepository;
 import org.d3javu.bd.service.UserService;
@@ -39,7 +39,7 @@ public class UserController {
                     model.addAttribute("user", user);
                     var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
                     var currentUser = this.userService.findByEmail(userEmail);
-                    if(currentUser.getId() == id) return "user/user";
+                    if(currentUser.getId().equals(id)) return "user/user";
                     else return "user/userProfile";
                 })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));

@@ -6,10 +6,11 @@ import java.time.LocalDateTime;
 
 @Value
 public class UserReadDto {
+
     Long id;
     String firstName;
     String lastName;
-    String email;
+    String username;
     String customLink;
     LocalDateTime createdAt;
 

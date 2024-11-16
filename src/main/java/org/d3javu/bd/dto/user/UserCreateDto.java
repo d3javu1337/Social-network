@@ -13,7 +13,7 @@ public class UserCreateDto {
     public String lastName;
     public String login;
     public String password;
-    public Set<Tag> preferredTags = new HashSet<>();
+    public Set<Tag> preferredTags;
 
     @Override
     public String toString() {

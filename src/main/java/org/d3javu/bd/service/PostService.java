@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.post.PostCreateDto;
 import org.d3javu.bd.dto.post.PostEditDto;
 import org.d3javu.bd.dto.post.PostReadDto;
+import org.d3javu.bd.filter.post.PostFilter;
 import org.d3javu.bd.mapper.post.PostCreateMapper;
 import org.d3javu.bd.mapper.post.PostEditMapper;
 import org.d3javu.bd.mapper.post.PostReadMapper;
@@ -51,8 +52,15 @@ public class PostService {
     }
 
     public List<PostReadDto> findByPreferred(Set<Tag> preferredTags) {
-        return this.postRepository.findAllByTags(preferredTags)
+        var postFilter = new PostFilter(preferredTags);
+        return this.postRepository.findAllByTagsFilter(postFilter)
                 .stream().map(this.postReadMapper::map).toList();
+    }
+
+    public List<PostReadDto> findAllByTagId(Long tagId) {
+        return this.postRepository.findAllByTagId(tagId)
+                .stream().map(postReadMapper::map)
+                .toList();
     }
 
     @Transactional

@@ -11,7 +11,7 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
 
     Optional<Tag> findByBody(String name);
 
-    @Query(value = "select * from tags where id in (select tag_id from posts_tags where post_id= :postId)",
+    @Query(value = "select * from tags where id in (select tag_id from posts_tags where post_id = :postId)",
             nativeQuery = true)
     Set<Tag> findTagsIdByPostId(Long postId);
 

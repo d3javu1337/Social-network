@@ -50,6 +50,10 @@ public class Comment {
         this.createdAt = LocalDateTime.now();
     }
 
+//    public Comment(){
+//        this.createdAt = LocalDateTime.now();
+//    }
+
     public void like(User user) {
         if (this.likes == null) this.likes = new HashSet<>();
         this.likes.add(user);

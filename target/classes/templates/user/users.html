@@ -19,7 +19,7 @@
     <button type="submit">Filter</button>
 </form>
   <div th:each="user : ${users}">
-    <a th:href="@{'/users/' + ${user.id}}" th:text="|${user.id}. ${user.email}. ${user.firstName}|">User</a>
+    <a th:href="@{'/users/' + ${user.id}}" th:text="|${user.id}. ${user.username}. ${user.firstName}|">User</a>
   </div>
 </body>
 </html>

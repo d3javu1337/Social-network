@@ -14,8 +14,7 @@ public class CommentReadDto {
     public String body;
     public Post post;
     public User author;
-//    public Set<User> likes = new HashSet<>(); add it into CommentDetailsReadDto
-
+    public Set<User> likes;
     public LocalDateTime createdAt;
 
 }

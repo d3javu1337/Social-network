@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.user.UserCreateDto;
 import org.d3javu.bd.dto.user.UserEditDto;
 import org.d3javu.bd.dto.user.UserReadDto;
+import org.d3javu.bd.service.TagService;
 import org.d3javu.bd.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,12 +14,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashSet;
+
 @RequestMapping
 @RequiredArgsConstructor
 @Controller
 public class AuthController {
 
     private final UserService userService;
+    private final TagService tagService;
 
     @GetMapping("/login")
     public String loginPage(){
@@ -28,8 +32,11 @@ public class AuthController {
 
 
     @GetMapping("/registration")
-    public String registration(Model model, @ModelAttribute("user") UserCreateDto user){
-        model.addAttribute("user", user);
+    public String registration(Model model){
+        model.addAttribute("user", new UserCreateDto(
+                "", "", "", "", new HashSet<>()
+        ));
+        model.addAttribute("tags", tagService.findAll());
         return "user/registration";
     }
 

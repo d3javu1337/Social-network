@@ -110,7 +110,8 @@ public class TestController implements CommandLineRunner {
                 "Aleksandrovich",
                 "sanya@jmail.org",
                 null,
-                "{noop}123"
+                "{noop}123",
+                new HashSet<>()
         ));
         System.out.println(actual);
 //        System.out.println(userRepository.findAll());

@@ -5,10 +5,15 @@
     <title>logout</title>
 </head>
 <body>
-    <div th:fragment="header">
-        <form action="/logout" method="post">
-            <button type="submit">logout</button>
-        </form>
-    </div>
+    <header th:fragment="header" style="display: flex; align-items: center; justify-content: space-evenly; border: solid black; border-radius: 5px; padding-bottom: 5px">
+<!--        <form action="/logout" method="post">-->
+<!--            <button type="submit" >logout</button>-->
+<!--        </form>-->
+<!--        <form action="/posts" method="get">-->
+<!--            <button type="submit">posts</button>-->
+<!--        </form>-->
+        <a th:href="@{/logout}" class="btn btn-success btn-block">logout</a>
+        <a th:href="@{/posts}" class="btn btn-success btn-block">posts</a>
+    </header>
 </body>
 </html>

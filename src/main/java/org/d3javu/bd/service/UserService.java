@@ -1,13 +1,11 @@
 package org.d3javu.bd.service;
 
 import lombok.RequiredArgsConstructor;
-import org.checkerframework.checker.units.qual.A;
-import org.d3javu.bd.auth.GetPasswordHash;
 //import org.d3javu.bd.auth.authData.AuthData;
 //import org.d3javu.bd.auth.userDetails.UserDetailsImpl;
 import org.d3javu.bd.dto.user.UserCreateDto;
 import org.d3javu.bd.dto.user.UserEditDto;
-import org.d3javu.bd.dto.user.UserFilter;
+import org.d3javu.bd.filter.user.UserFilter;
 import org.d3javu.bd.dto.user.UserReadDto;
 import org.d3javu.bd.mapper.user.UserCreateMapper;
 import org.d3javu.bd.mapper.user.UserEditMapper;

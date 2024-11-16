@@ -3,7 +3,7 @@ package org.d3javu.bd.repositories;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
-import org.d3javu.bd.dto.user.UserFilter;
+import org.d3javu.bd.filter.user.UserFilter;
 import org.d3javu.bd.models.user.User;
 
 import java.util.ArrayList;

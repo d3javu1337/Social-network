@@ -2,8 +2,13 @@ package org.d3javu.bd.mapper.user;
 
 import org.d3javu.bd.dto.user.UserCreateDto;
 import org.d3javu.bd.mapper.Mapper;
+import org.d3javu.bd.models.user.Roles;
 import org.d3javu.bd.models.user.User;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Optional;
 
 @Component
 public class UserCreateMapper implements Mapper<UserCreateDto, User> {
@@ -13,8 +18,10 @@ public class UserCreateMapper implements Mapper<UserCreateDto, User> {
         user.setFirstName(object.firstName);
         user.setLastName(object.lastName);
         user.setEmail(object.login);
-        user.setPassword(object.password);
+        user.setPassword("{noop}"+object.password);
+        user.setRole(Roles.user);
         user.setPreferredTags(object.preferredTags);
+        user.setPreferredTags(Optional.ofNullable(object.preferredTags).orElse(new HashSet<>()));
         return user;
     }
 

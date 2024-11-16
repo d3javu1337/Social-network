@@ -2,7 +2,7 @@
 //
 //import lombok.RequiredArgsConstructor;
 //import org.d3javu.bd.dto.user.UserEditDto;
-//import org.d3javu.bd.dto.user.UserFilter;
+//import org.d3javu.bd.filter.user.UserFilter;
 //import org.d3javu.bd.dto.user.UserReadDto;
 //import org.d3javu.bd.repositories.UserRepository;
 //import org.d3javu.bd.service.UserService;
