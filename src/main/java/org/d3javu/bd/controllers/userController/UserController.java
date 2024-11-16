@@ -1,5 +1,7 @@
 package org.d3javu.bd.controllers.userController;
 
+import io.swagger.v3.oas.annotations.servers.ServerVariable;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.user.UserEditDto;
 import org.d3javu.bd.filter.user.UserFilter;
@@ -31,19 +33,54 @@ public class UserController {
 
     //    @PreAuthorize("hasAnyAuthority('admin')")
     @GetMapping("/{id}")
-    public String findById(@PathVariable("id") Long id, Model model){
-//        model.addAttribute("user", userRepository.findById(id));
-//        return "users";
-        return userService.findById(id)
-                .map(user -> {
-                    model.addAttribute("user", user);
-                    var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-                    var currentUser = this.userService.findByEmail(userEmail);
-                    if(currentUser.getId().equals(id)) return "user/user";
-                    else return "user/userProfile";
-                })
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    public String findById(@PathVariable("id") String id, Model model){
+        try{
+            var val = Long.parseLong(id);
+            return userService.findById(val)
+                    .map(user -> {
+                        model.addAttribute("user", user);
+                        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+                        var currentUser = this.userService.findByEmail(userEmail);
+                        if(currentUser.getId() == val) return "user/user";
+                        else return "user/userProfile";
+                    })
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        }catch (Exception e){
+            return userService.findByCustomLink(id)
+                    .map(user -> {
+                        model.addAttribute("user", user);
+                        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+                        var currentUser = this.userService.findByEmail(userEmail);
+                        if(currentUser.getCustomLink().equals(id)) return "user/user";
+                        else return "user/userProfile";
+                    })
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        }
+//        return userService.findById(id)
+//                .map(user -> {
+//                    model.addAttribute("user", user);
+//                    var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+//                    var currentUser = this.userService.findByEmail(userEmail);
+//                    if(currentUser.getId().equals(id)) return "user/user";
+//                    else return "user/userProfile";
+//                })
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
+
+
+
+//    @GetMapping("/customlink")
+//    public String findByCustomLink(@PathVariable("customlink") String customLink, Model model){
+//        return userService.findByCustomLink(customLink)
+//                .map(user -> {
+//                    model.addAttribute("user", user);
+//                    var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+//                    var currentUser = this.userService.findByEmail(userEmail);
+//                    if(currentUser.getCustomLink().equals(customLink)) return "user/user";
+//                    else return "user/userProfile";
+//                })
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+//    }
 
     @PostMapping("/registration")
     public String create(@ModelAttribute UserEditDto user, RedirectAttributes redirectAttributes){

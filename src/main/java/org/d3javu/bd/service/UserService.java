@@ -58,6 +58,10 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(id).map(userReadMapper::map);
     }
 
+    public Optional<UserReadDto> findByCustomLink(String customLink){
+        return userRepository.findByCustomLink(customLink).map(userReadMapper::map);
+    }
+
     @Transactional
     public UserReadDto create(UserEditDto userEditDto){
         return Optional.of(userEditDto)
