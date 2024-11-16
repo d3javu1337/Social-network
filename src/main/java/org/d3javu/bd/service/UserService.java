@@ -13,11 +13,14 @@ import org.d3javu.bd.mapper.user.UserReadMapper;
 import org.d3javu.bd.models.user.User;
 //import org.d3javu.bd.repositories.AuthDataRepository;
 import org.d3javu.bd.repositories.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.MethodNotAllowedException;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
@@ -96,6 +99,10 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public Optional<UserReadDto> update(Long id, UserEditDto userEditDto){
+        if(userRepository.findByCustomLink(userEditDto.getCustomLink()).isPresent()){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+             //need to do another but now ok
+        }
         return this.userRepository.findById(id)
                 .map(en -> this.userEditMapper.map(userEditDto, en))
                 .map(this.userRepository::saveAndFlush)
@@ -128,5 +135,53 @@ public class UserService implements UserDetailsService {
 
     public User findByEmail(String user){
         return this.userRepository.findByEmail(user).orElseThrow(() -> new UsernameNotFoundException(user));
+    }
+
+    @Transactional
+    public void follow(Long id, User user){
+        this.userRepository.findById(id)
+                .map(en -> {
+                    user.follow(en);
+                    this.userRepository.save(en);
+                    this.userRepository.flush();
+                    return true;
+                })
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @Transactional
+    public void follow(String customLink, User user){
+        this.userRepository.findByCustomLink(customLink)
+                .map(en -> {
+                    user.follow(en);
+                    this.userRepository.save(en);
+                    this.userRepository.flush();
+                    return true;
+                })
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @Transactional
+    public void unfollow(Long id, User user){
+        this.userRepository.findById(id)
+                .map(en -> {
+                    user.unfollow(en);
+                    this.userRepository.save(en);
+                    this.userRepository.flush();
+                    return true;
+                })
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @Transactional
+    public void unfollow(String customLink, User user){
+        this.userRepository.findByCustomLink(customLink)
+                .map(en -> {
+                    user.unfollow(en);
+                    this.userRepository.save(en);
+                    this.userRepository.flush();
+                    return true;
+                })
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 }

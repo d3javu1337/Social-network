@@ -3,7 +3,7 @@ package org.d3javu.bd.mapper.post;
 import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.post.PostReadDto;
 import org.d3javu.bd.mapper.Mapper;
-import org.d3javu.bd.mapper.user.StaticUserReadMapper;
+//import org.d3javu.bd.mapper.user.StaticUserReadMapper;
 import org.d3javu.bd.mapper.user.UserReadMapper;
 import org.d3javu.bd.models.post.Post;
 import org.d3javu.bd.models.tag.Tag;
@@ -30,7 +30,7 @@ public class PostReadMapper implements Mapper<Post, PostReadDto> {
                 object.getTitle(),
                 object.getBody(),
                 object.getTags(),
-                StaticUserReadMapper.map(object.getAuthor()),
+                userReadMapper.map(object.getAuthor()),
                 Optional.of(object.getViews().stream().map(userReadMapper::map).collect(Collectors.toSet())).orElse(new HashSet<>()),
                 Optional.of(object.getLikes().stream().map(userReadMapper::map).collect(Collectors.toSet())).orElse(new HashSet<>()),
 //                object.getComments().stream().map(commentM).collect(Collectors.toSet()),

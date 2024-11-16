@@ -50,7 +50,7 @@ public class User implements Serializable {
             joinColumns=@JoinColumn(name="followed_id"),
             inverseJoinColumns=@JoinColumn(name="follower_id")
     )
-    private Set<User> followers;
+    private Set<User> followers = new HashSet<>();
 
 //    @OneToMany(cascade = CascadeType.ALL)
 //    private List<Tag> preferredTags;
@@ -100,6 +100,10 @@ public class User implements Serializable {
         // не нужна тебе такая машина, вовка
         // нужна мне такая машина, только как сделать хуй его знает
         // eom
+    }
+
+    public void unfollow(User user) {
+        if (follows != null) follows.remove(user);
     }
 
 

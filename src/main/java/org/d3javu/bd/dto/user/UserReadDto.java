@@ -3,6 +3,7 @@ package org.d3javu.bd.dto.user;
 import lombok.Value;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Value
 public class UserReadDto {
@@ -13,6 +14,7 @@ public class UserReadDto {
     String username;
     String customLink;
     LocalDateTime createdAt;
+    Set<UserReadDto> followers;
 
 
 }
