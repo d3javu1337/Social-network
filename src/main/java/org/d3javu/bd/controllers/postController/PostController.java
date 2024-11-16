@@ -118,15 +118,24 @@ public class PostController {
     @GetMapping("/{id}/update")
     public String update(Model model, @PathVariable Long id){
         var post = this.postService.findById(id).get();
-        System.out.println(post+"-----------------------------------------");
+//        System.out.println(post+"-----------------------------------------");
         model.addAttribute("post", post);
+        model.addAttribute("tags", this.tagService.findAll());
         return "/post/postUpdate";
     }
 
+//    @PostMapping("/{id}/update")
+//    public String update(@PathVariable("id") Long id, PostEditDto post){
+////        return postService.update(id, post).map()
+//        return postService.update(id, post)
+//                .map(it -> "redirect:/posts/{id}")
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+//    }
+
     @PostMapping("/{id}/update")
-    public String update(@PathVariable("id") Long id, PostEditDto post){
+    public String update(@PathVariable("id") Long id, @ModelAttribute PostEditDto postEditDto){
 //        return postService.update(id, post).map()
-        return postService.update(id, post)
+        return postService.update(id, postEditDto)
                 .map(it -> "redirect:/posts/{id}")
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }

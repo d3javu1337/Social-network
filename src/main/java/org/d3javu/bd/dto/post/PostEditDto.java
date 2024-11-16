@@ -11,6 +11,6 @@ public class PostEditDto {
 
     public String title;
     public String body;
-    public Set<Tag> tags = new HashSet<>();
+    public Set<Tag> tags;
 
 }

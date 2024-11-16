@@ -13,6 +13,14 @@
     <label for="body">Body<br>
         <input id="body" type="text" name="body" th:value="*{post.body}">
     </label><br>
+    <ul>
+        <li th:each="tag : ${tags}">
+            <div class="ui checkbox">
+                <input type="checkbox" th:field="${post.tags}" th:value="${tag.id}" th:checked="${post.tags.contains(tag)}">
+                <label th:text="${tag.body}"></label>
+            </div>
+        </li>
+    </ul>
     <button type="submit">Update</button>
 </form>
 <form th:action="@{/posts/{postId}/update/delete(postId=${post.id})}" method="post">
