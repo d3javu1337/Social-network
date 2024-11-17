@@ -43,7 +43,9 @@ public class UserController {
                         model.addAttribute("user", user);
                         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
                         var currentUser = this.userService.findByEmail(userEmail);
-                        model.addAttribute("currentUser", this.userReadMapper.map(currentUser));
+//                        model.addAttribute("currentUser", this.userReadMapper.map(currentUser));
+                        var bool = this.userService.findByEmail(user.getUsername()).getFollowers().contains(currentUser);
+                        model.addAttribute("isFollowed", bool);
                         if(currentUser.getId() == val) return "user/user";
                         else return "user/userProfile";
                     })
@@ -54,7 +56,9 @@ public class UserController {
                         model.addAttribute("user", user);
                         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
                         var currentUser = this.userService.findByEmail(userEmail);
-                        model.addAttribute("currentUser", this.userReadMapper.map(currentUser));
+                        var bool = this.userService.findByEmail(user.getUsername()).getFollowers().contains(currentUser);
+//                        model.addAttribute("currentUser", this.userReadMapper.map(currentUser));
+                        model.addAttribute("isFollowed", bool);
                         if(currentUser.getCustomLink().equals(id)) return "user/user";
                         else return "user/userProfile";
                     })

@@ -11,10 +11,10 @@
   <p th:text="${user.lastName}">lastname</p>
 <!--  <p th:text="${}">lastname</p>-->
 </div>
-<form th:action="@{'/users/'+${user.id}+'/follow'}" method="post">
+<form th:action="@{'/users/'+${user.id}+'/follow'}" method="post" th:if="${!isFollowed}">
   <button type="submit">follow</button>
 </form>
-<form th:action="@{'/users/'+${user.id}+'/unfollow'}" method="post">
+<form th:action="@{'/users/'+${user.id}+'/unfollow'}" method="post" th:if="${isFollowed}">
   <button type="submit">unfollow</button>
 </form>
 <!--<a th:href="@{'/users/'+${user.id}+'/follow'}" th:method="post">Follow</a>-->
