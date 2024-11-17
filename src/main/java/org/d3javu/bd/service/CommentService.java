@@ -12,6 +12,7 @@ import org.d3javu.bd.models.user.User;
 import org.d3javu.bd.repositories.CommentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.webjars.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -75,6 +76,23 @@ public class CommentService {
 //crud
 
     @Transactional
-    public void like(Long id, User user) {}
+    public void like(Long id, User user) {
+        this.commentRepository.findById(id).map(comment -> {
+            comment.like(user);
+            this.commentRepository.save(comment);
+            this.commentRepository.flush();
+            return true;
+        }).orElseThrow(() -> new NotFoundException("Comment not found"));
+    }
+
+    @Transactional
+    public void unlike(Long id, User user) {
+        this.commentRepository.findById(id).map(comment -> {
+            comment.unlike(user);
+            this.commentRepository.save(comment);
+            this.commentRepository.flush();
+            return true;
+        }).orElseThrow(() -> new NotFoundException("Comment not found"));
+    }
 
 }

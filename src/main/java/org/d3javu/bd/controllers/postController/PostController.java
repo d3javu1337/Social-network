@@ -84,6 +84,7 @@ public class PostController {
                     model.addAttribute("authorId", p.getAuthor().getId());
                     model.addAttribute("comments", commentService.findAllByPostId(id));
                     model.addAttribute("isLiked", p.getLikes().contains(user));
+                    model.addAttribute("currentUser", user);
                     return "/post/post";
                 })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));

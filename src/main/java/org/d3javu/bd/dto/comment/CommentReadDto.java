@@ -11,6 +11,7 @@ import java.util.Set;
 @Value
 public class CommentReadDto {
 
+    public Long id;
     public String body;
     public Post post;
     public User author;

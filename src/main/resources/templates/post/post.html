@@ -9,6 +9,7 @@
 <div>
   <h3 th:text="${post.title}"></h3>
   <p th:text="${post.body}"></p>
+  <p th:text="'liked by '+${post.likesCount}"></p>
   <div th:each="tag : ${tags}">
     <a th:href="@{'/posts/tag/'+${tag.id}}" th:text="${tag.body}" th:value="${tag.id}"></a>
   </div>
@@ -25,6 +26,13 @@
   <div style="border: black solid">
     <a th:href="@{'/users/'+${comment.author.id}}" th:text="|${comment.author.firstName} ${comment.author.lastName}|"></a>
     <p th:text="${comment.body}"></p>
+    <p th:text="|liked by : ${comment.likes.size()}|"></p>
+    <form th:action="@{'/posts/'+${post.id}+'/comment/'+${comment.id}+'/like'}" th:if="${!comment.likes.contains(currentUser)}" method="post">
+      <button type="submit">like</button>
+    </form>
+    <form th:action="@{'/posts/'+${post.id}+'/comment/'+${comment.id}+'/unlike'}" th:if="${comment.likes.contains(currentUser)}" method="post">
+      <button type="submit">unlike</button>
+    </form>
   </div>
 </div>
 </body>

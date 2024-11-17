@@ -18,6 +18,7 @@ public class CommentReadMapper implements Mapper<Comment, CommentReadDto> {
     @Override
     public CommentReadDto map(Comment object) {
         return new CommentReadDto(
+                object.getId(),
                 object.getBody(),
                 object.getPost(),
                 object.getUser(),
