@@ -83,6 +83,7 @@ public class PostController {
                     model.addAttribute("tags", this.tagService.findByPost(p));
                     model.addAttribute("authorId", p.getAuthor().getId());
                     model.addAttribute("comments", commentService.findAllByPostId(id));
+                    model.addAttribute("isLiked", p.getLikes().contains(user));
                     return "/post/post";
                 })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -118,6 +119,22 @@ public class PostController {
         }else{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @PostMapping("/{id}/like")
+    public String like(@PathVariable("id") Long id){
+        var user = this.userService.findByEmail(SecurityContextHolder.getContext()
+                .getAuthentication().getName());
+        this.postService.like(id, user);
+        return "redirect:/posts/" + id;
+    }
+
+    @PostMapping("/{id}/unlike")
+    public String unlike(@PathVariable("id") Long id){
+        var user = this.userService.findByEmail(SecurityContextHolder.getContext()
+                .getAuthentication().getName());
+        this.postService.unlike(id, user);
+        return "redirect:/posts/" + id;
     }
 
 }

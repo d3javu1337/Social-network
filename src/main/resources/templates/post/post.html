@@ -11,22 +11,21 @@
   <p th:text="${post.body}"></p>
   <div th:each="tag : ${tags}">
     <a th:href="@{'/posts/tag/'+${tag.id}}" th:text="${tag.body}" th:value="${tag.id}"></a>
-<!--    <p th:text="${tag.body}"></p>-->
   </div>
-<!--  <p th:text="${tag.body}"></p>-->
-
-<!--    <p th:href="@{'/users/comment.userId'}" th:text="${comment.author}"></p>-->
   </p>
   <a th:href="@{'/posts/'+${post.id}+'/update'}" th:if="${authorId==userId}">update</a>
-<!--  <a th:href="@{'/users/' + ${user.id}}" th:text="|${user.id}. ${user.email}. ${user.firstName}|">User</a>-->
-
 </div>
+<form th:action="@{'/posts/'+${post.id}+'/like'}" method="post" th:if="${!isLiked}">
+  <button type="submit">like</button>
+</form>
+<form th:action="@{'/posts/'+${post.id}+'/unlike'}" method="post" th:if="${isLiked}">
+  <button type="submit">unlike</button>
+</form>
 <div th:each="comment : ${comments}">
   <div style="border: black solid">
     <a th:href="@{'/users/'+${comment.author.id}}" th:text="|${comment.author.firstName} ${comment.author.lastName}|"></a>
     <p th:text="${comment.body}"></p>
   </div>
-<!--  <p  th:text="${comment.body}" th:href="@{/users/authorId(authorId=${comment.author.id})}">-->
 </div>
 </body>
 </html>

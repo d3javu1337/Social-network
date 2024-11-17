@@ -94,4 +94,26 @@ public class PostService {
         }
     }
 
+    @Transactional
+    public void like(Long id, User user){
+        var post = postRepository.findById(id).orElse(null);
+        if(post != null) {
+            post.like(user);
+            postRepository.saveAndFlush(post);
+        }else{
+            throw new NotFoundException("Post not found");
+        }
+    }
+
+    @Transactional
+    public void unlike(Long id, User user){
+        var post = postRepository.findById(id).orElse(null);
+        if(post != null) {
+            post.unlike(user);
+            postRepository.saveAndFlush(post);
+        }else{
+            throw new NotFoundException("Post not found");
+        }
+    }
+
 }
