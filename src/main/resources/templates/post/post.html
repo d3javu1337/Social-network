@@ -7,6 +7,7 @@
 <body>
 <div th:insert="~{fragments/logoutFragment :: header}"></div>
 <div>
+  <a th:href="@{'/users/'+${post.author.id}}" th:text="author"></a>
   <h3 th:text="${post.title}"></h3>
   <p th:text="${post.body}"></p>
   <p th:text="'liked by '+${post.likesCount}"></p>
