@@ -13,6 +13,7 @@ import org.d3javu.bd.repositories.TagRepository;
 import org.d3javu.bd.repositories.UserRepository;
 import org.d3javu.bd.service.UserService;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -30,6 +31,7 @@ public class TestController implements CommandLineRunner {
     private final TagRepository tagRepository;
     private final CommentRepository commentRepository;
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     @GetMapping
     public String index(Model model) {
@@ -48,9 +50,9 @@ public class TestController implements CommandLineRunner {
         var tag1 = tagRepository.findByBody("tag1").orElse(null);
         var tag2 = tagRepository.findByBody("tag2").orElse(null);
 
-        var user1 = new User("Ivan", "Ivanov", "vanya@jmail.org", "124");
-        var user2 = new User("Petr", "Petrov", "petya@jmail.org", "petya228");
-        var user4 = new User("Egor", "Trunov", "admin", "admin");
+        var user1 = new User("Ivan", "Ivanov", "vanya@jmail.org", this.passwordEncoder.encode("124"));
+        var user2 = new User("Petr", "Petrov", "petya@jmail.org", this.passwordEncoder.encode("petya228"));
+        var user4 = new User("Egor", "Trunov", "admin", this.passwordEncoder.encode("admin"));
         user4.setRole(Roles.admin);
         userRepository.save(user1);
         userRepository.save(user2);

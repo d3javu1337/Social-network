@@ -18,7 +18,7 @@ public class UserCreateMapper implements Mapper<UserCreateDto, User> {
         user.setFirstName(object.firstName);
         user.setLastName(object.lastName);
         user.setEmail(object.login);
-        user.setPassword("{noop}"+object.password);
+        user.setPassword(object.password);
         user.setRole(Roles.user);
         user.setPreferredTags(object.preferredTags);
         user.setPreferredTags(Optional.ofNullable(object.preferredTags).orElse(new HashSet<>()));

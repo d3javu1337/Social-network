@@ -74,7 +74,7 @@ public class User implements Serializable {
 //        this.roles = new ArrayList<>();
 //        this.roles.add(Roles.user);
         this.role = Roles.admin;
-        this.password = "{noop}"+password;
+        this.password = password;
     }
 
     public User(){

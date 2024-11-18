@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.MethodNotAllowedException;
@@ -37,6 +38,7 @@ public class UserService implements UserDetailsService {
     private final UserEditMapper userEditMapper;
     private final UserReadMapper userReadMapper;
     private final UserCreateMapper userCreateMapper;
+    private final PasswordEncoder passwordEncoder;
 //    private final AuthDataRepository authDataRepository;
 
 //    public Page<UserReadDto> findAll(UserFilter filter, Pageable pageable) {
@@ -79,7 +81,8 @@ public class UserService implements UserDetailsService {
 
         var login = userCreateDto.getLogin();
 //        var passwordHash = GetPasswordHash.hash(userCreateDto.getPassword());
-        var passwordHash = userCreateDto.getPassword();
+        var passwordHash = this.passwordEncoder.encode(userCreateDto.getPassword());
+        userCreateDto.setPassword(passwordHash);
         org.d3javu.bd.models.user.User User = Optional.of(userCreateDto).map(userCreateMapper::map).get();
 //        AuthData authData = new AuthData(login, passwordHash, User);
 //                User.map(userRepository::save);
@@ -105,6 +108,12 @@ public class UserService implements UserDetailsService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
              //need to do another but now ok
         }
+        if (userEditDto.getCustomLink() != null || !userEditDto.getCustomLink().isEmpty()) {
+            if (userEditDto.getCustomLink().charAt(0) >= '0' && userEditDto.getCustomLink().charAt(0) <= '9') {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            }
+        }
+
         return this.userRepository.findById(id)
                 .map(en -> this.userEditMapper.map(userEditDto, en))
                 .map(this.userRepository::saveAndFlush)

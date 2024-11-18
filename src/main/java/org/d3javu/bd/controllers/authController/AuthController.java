@@ -33,9 +33,7 @@ public class AuthController {
 
     @GetMapping("/registration")
     public String registration(Model model){
-        model.addAttribute("user", new UserCreateDto(
-                "", "", "", "", new HashSet<>()
-        ));
+        model.addAttribute("user", new UserCreateDto());
         model.addAttribute("tags", tagService.findAll());
         return "user/registration";
     }
