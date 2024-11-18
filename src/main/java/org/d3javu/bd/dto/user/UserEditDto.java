@@ -9,6 +9,7 @@ import java.util.Set;
 @Value
 public class UserEditDto {
 
+    public Long id;
     public String firstName;
     public String lastName;
     public String username;

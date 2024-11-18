@@ -105,15 +105,15 @@ public class TestController implements CommandLineRunner {
         postRepository.findAllByTagId(1L).forEach(e -> System.out.println(e.getBody()));
 
         System.out.println(userService.findById(1L));
-        UserReadDto actual = userService.create(new UserEditDto(
-                "Sanya",
-                "Aleksandrovich",
-                "sanya@jmail.org",
-                null,
-                "{noop}123",
-                new HashSet<>()
-        ));
-        System.out.println(actual);
+//        UserReadDto actual = userService.create(new UserEditDto(
+//                "Sanya",
+//                "Aleksandrovich",
+//                "sanya@jmail.org",
+//                null,
+//                "{noop}123",
+//                new HashSet<>()
+//        ));
+//        System.out.println(actual);
 //        System.out.println(userRepository.findAll());
 //        commentRepository.saveAll(post.getComments());
 

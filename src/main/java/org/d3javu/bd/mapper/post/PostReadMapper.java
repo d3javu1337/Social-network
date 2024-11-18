@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.post.PostReadDto;
 import org.d3javu.bd.mapper.Mapper;
 //import org.d3javu.bd.mapper.user.StaticUserReadMapper;
+import org.d3javu.bd.mapper.comment.CommentReadMapper;
 import org.d3javu.bd.mapper.user.UserReadMapper;
 import org.d3javu.bd.models.post.Post;
 import org.d3javu.bd.models.tag.Tag;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 public class PostReadMapper implements Mapper<Post, PostReadDto> {
 
     private final UserReadMapper userReadMapper;
+    private final CommentReadMapper commentReadMapper;
 //    private final CommentMapper commentMapper;
 
     @Override
@@ -31,10 +33,13 @@ public class PostReadMapper implements Mapper<Post, PostReadDto> {
                 object.getBody(),
                 object.getTags(),
                 userReadMapper.map(object.getAuthor()),
-                Optional.of(object.getViews().stream().map(userReadMapper::map).collect(Collectors.toSet())).orElse(new HashSet<>()),
-                Optional.of(object.getLikes().stream().map(userReadMapper::map).collect(Collectors.toSet())).orElse(new HashSet<>()),
-//                object.getComments().stream().map(commentM).collect(Collectors.toSet()),
-                new HashSet<>(),
+                Optional.of(object.getViews().stream().map(userReadMapper::map).collect(Collectors.toSet()))
+                        .orElse(new HashSet<>()),
+                Optional.of(object.getLikes().stream().map(userReadMapper::map).collect(Collectors.toSet()))
+                        .orElse(new HashSet<>()),
+                Optional.of(object.getComments().stream().map(commentReadMapper::map).collect(Collectors.toSet()))
+                        .orElse(new HashSet<>()),
+//                new HashSet<>(),
                 object.getCreatedAt()
         );
     }

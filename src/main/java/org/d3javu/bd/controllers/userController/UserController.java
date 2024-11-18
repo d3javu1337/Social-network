@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Objects;
+
 @RequestMapping("/users")
 @RequiredArgsConstructor
 @org.springframework.stereotype.Controller
@@ -79,6 +81,9 @@ public class UserController {
 
     @PostMapping("/{id}/update")
     public String update(@PathVariable("id") Long id, @ModelAttribute UserEditDto user){
+        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        var currentUser = this.userService.findByEmail(userEmail);
+        if(!Objects.equals(id, currentUser.getId())) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         return userService.update(id, user)
                 .map(it -> "redirect:/users/{id}")
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));

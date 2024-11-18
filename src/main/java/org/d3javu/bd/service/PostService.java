@@ -1,6 +1,7 @@
 package org.d3javu.bd.service;
 
 import lombok.RequiredArgsConstructor;
+import org.d3javu.bd.dto.comment.CommentReadDto;
 import org.d3javu.bd.dto.post.PostCreateDto;
 import org.d3javu.bd.dto.post.PostEditDto;
 import org.d3javu.bd.dto.post.PostReadDto;
@@ -72,6 +73,14 @@ public class PostService {
     }
 
     @Transactional
+    public Optional<PostReadDto> internalUpdate(Long id, Post post) {
+        return Optional.of(this.postReadMapper.map(this.postRepository.saveAndFlush(post)));
+//                .map(post -> this.postEditMapper.map(postEditDto, post))
+//                .map(this.postRepository::saveAndFlush)
+//                .map(this.postReadMapper::map);
+    }
+
+    @Transactional
     public boolean delete(Long id) {
         return this.postRepository.findById(id)
                 .map(post -> {
@@ -115,5 +124,7 @@ public class PostService {
             throw new NotFoundException("Post not found");
         }
     }
+
+
 
 }

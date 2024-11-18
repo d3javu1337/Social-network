@@ -23,6 +23,13 @@
 <form th:action="@{'/posts/'+${post.id}+'/unlike'}" method="post" th:if="${isLiked}">
   <button type="submit">unlike</button>
 </form>
+<form th:action="@{'/posts/'+${post.id}+'/comment/new'}" method="post">
+  <label for="body">
+    <input id="body" type="text" name="body" placeholder="comment it">
+  </label>
+  <button type="submit">send</button>
+</form>
+<h3>Comments</h3>
 <div th:each="comment : ${comments}">
   <div style="border: black solid">
     <a th:href="@{'/users/'+${comment.author.id}}" th:text="|${comment.author.firstName} ${comment.author.lastName}|"></a>
@@ -33,6 +40,9 @@
     </form>
     <form th:action="@{'/posts/'+${post.id}+'/comment/'+${comment.id}+'/unlike'}" th:if="${comment.likes.contains(currentUser)}" method="post">
       <button type="submit">unlike</button>
+    </form>
+    <form th:action="@{'/posts/'+${post.id}+'/comment/'+${comment.id}+'/edit'}" th:if="${userId==comment.author.id}" method="get">
+      <button type="submit">edit comment</button>
     </form>
   </div>
 </div>

@@ -9,11 +9,12 @@ import org.d3javu.bd.models.post.Post;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @NoArgsConstructor
 @Data
-@EqualsAndHashCode
+//@EqualsAndHashCode
 //@ToString
 @Entity
 @Table(name = "comments")
@@ -75,5 +76,18 @@ public class Comment {
                 ", body='" + body + '\'' +
                 ", createdAt=" + createdAt +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Comment comment = (Comment) o;
+        return Objects.equals(id, comment.id) && Objects.equals(body, comment.body) && Objects.equals(post, comment.post) && Objects.equals(user, comment.user) && Objects.equals(createdAt, comment.createdAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, body, post, user, createdAt);
     }
 }

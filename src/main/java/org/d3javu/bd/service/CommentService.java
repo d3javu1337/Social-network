@@ -29,13 +29,16 @@ public class CommentService {
     private final CommentEditMapper commentEditMapper;
     private final CommentReadMapper commentReadMapper;
 
+    private final PostService postService;
+
 
 //crud
 
     @Transactional
-    public CommentReadDto create(CommentCreateDto commentCreateDto) {
+    public CommentReadDto create(Long postId, CommentCreateDto commentCreateDto) {
         var comment = commentCreateMapper.map(commentCreateDto);
-        comment = commentRepository.saveAndFlush(comment);
+//        comment = commentRepository.saveAndFlush(comment);
+        this.addComment(postId, commentCreateDto);
         return commentReadMapper.map(comment);
     }
 
@@ -94,5 +97,16 @@ public class CommentService {
             return true;
         }).orElseThrow(() -> new NotFoundException("Comment not found"));
     }
+
+    @Transactional
+    public void addComment(Long postId, CommentCreateDto commentCreateDto) {
+        var post = this.postService.findPostById(postId).orElseThrow(() -> new NotFoundException("Post not found"));
+//        comment.setPost(post);
+        commentCreateDto.post = post;
+        var comment = this.commentCreateMapper.map(commentCreateDto);
+        this.commentRepository.save(comment);
+//        this.postService.internalUpdate(postId, post);
+    }
+
 
 }
