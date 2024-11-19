@@ -62,6 +62,8 @@ public class User implements Serializable {
     )
     private Set<Tag> preferredTags;
 
+    private String avatarPath = null;
+
 //    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 //    private List<Post> posts;
 

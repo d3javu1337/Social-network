@@ -7,17 +7,27 @@
 <body>
 <div th:insert="~{fragments/logoutFragment :: header}"></div>
 <div>
+  <div th:if="${user.avatar}">
+    <img th:src="@{/api/v1/users/{userId}/avatar(userId=${user.id})}" alt="image" style="width: 240px; height: 240px">
+  </div>
   <p th:text="${user.firstName}">firstname</p>
   <p th:text="${user.lastName}">lastname</p>
 <!--  <p th:text="${}">lastname</p>-->
   <p th:text="|${user.followers.size()} followed|"></p>
 </div>
-<form th:action="@{'/users/'+${user.id}+'/follow'}" method="post" th:if="${!isFollowed}">
-  <button type="submit">follow</button>
-</form>
-<form th:action="@{'/users/'+${user.id}+'/unfollow'}" method="post" th:if="${isFollowed}">
-  <button type="submit">unfollow</button>
-</form>
+<div th:if="${currentUser.id!=user.id}">
+  <form th:action="@{'/users/'+${user.id}+'/follow'}" method="post" th:if="${!isFollowed}">
+    <button type="submit">follow</button>
+  </form>
+  <form th:action="@{'/users/'+${user.id}+'/unfollow'}" method="post" th:if="${isFollowed}">
+    <button type="submit">unfollow</button>
+  </form>
+</div>
+<div th:if="${currentUser.id==user.id}">
+  <form th:action="@{'/users/'+${user.id}+'/update'}" method="get">
+    <button type="submit">edit profile</button>
+  </form>
+</div>
 <!--<a th:href="@{'/users/'+${user.id}+'/follow'}" th:method="post">Follow</a>-->
 </body>
 </html>

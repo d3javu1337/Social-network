@@ -18,7 +18,8 @@ public class UserMapper implements Mapper<User, UserReadDto> {
                 object.getEmail(),
                 object.getCustomLink(),
                 object.getCreatedAt(),
-                null
+                null,
+                object.getAvatarPath()
         );
     }
 

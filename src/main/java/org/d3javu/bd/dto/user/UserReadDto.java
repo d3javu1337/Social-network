@@ -15,6 +15,7 @@ public class UserReadDto {
     String customLink;
     LocalDateTime createdAt;
     Set<UserReadDto> followers;
+    String avatar;
 
 
 }

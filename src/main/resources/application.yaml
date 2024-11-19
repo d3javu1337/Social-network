@@ -16,6 +16,10 @@ spring:
 springdoc:
   swagger-ui:
     path: /swagger-ui/index.html
+
+app:
+  image:
+    bucket: C:\Users\egor\IdeaProjects\bd\src\images
 #  mvc:
 #    view:
 #      prefix: /WEB-INF/jsp/

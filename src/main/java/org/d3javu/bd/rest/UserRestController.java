@@ -55,6 +55,12 @@ public class UserRestController {
         }
     }
 
+    @GetMapping(value = "/{id}/avatar", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public byte[] findAvatar(@PathVariable("id") Long id){
+        return this.userService.findAvatar(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
 //    @GetMapping("/registration")
 //    public String registration(Model model, @ModelAttribute("user") UserCreateEditDto user){
 //        model.addAttribute("user", user);

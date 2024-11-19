@@ -6,7 +6,7 @@
 </head>
 <body>
     <div th:insert="~{fragments/logoutFragment :: header}"></div>
-    <form th:action="@{/users/{userId}/update(userId=${user.id})}" method="post" th:object="${user}">
+    <form th:action="@{/users/{userId}/update(userId=${user.id})}" method="post" th:object="${user}" enctype="multipart/form-data">
         <label for="firstName">Firstname:
             <input id="firstName" type="text" name="firstName" th:value="*{firstName}">
         </label><br>
@@ -19,6 +19,12 @@
         <label for="customLink">Custom Link:
             <input id="customLink" type="text" name="customLink" th:value="*{customLink}">
         </label><br>
+        <div th:if="${user.avatar}">
+            <img th:src="@{/api/v1/users/{userId}/avatar(userId=${user.id})}" alt="image" style="width: 240px; height: 240px">
+        </div>
+        <label for="avatar">
+            <input id="avatar" type="file" name="avatar">
+        </label>
 <!--        <label for="createdAt">Created at:-->
 <!--            <input id="createdAt" type="datetime-local" name="createdAt" th:value="*{createdAt}">-->
 <!--        </label><br>-->

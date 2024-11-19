@@ -25,7 +25,8 @@ public class UserReadMapper implements Mapper<User, UserReadDto> {
                 object.getEmail(),
                 object.getCustomLink(),
                 object.getCreatedAt(),
-                object.getFollowers().stream().map(userMapper::map).collect(Collectors.toSet())
+                object.getFollowers().stream().map(userMapper::map).collect(Collectors.toSet()),
+                object.getAvatarPath()
                 );
     }
 

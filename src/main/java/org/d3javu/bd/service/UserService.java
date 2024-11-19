@@ -1,5 +1,6 @@
 package org.d3javu.bd.service;
 
+import ch.qos.logback.core.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 //import org.d3javu.bd.auth.authData.AuthData;
 //import org.d3javu.bd.auth.userDetails.UserDetailsImpl;
@@ -20,9 +21,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.MethodNotAllowedException;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +43,7 @@ public class UserService implements UserDetailsService {
     private final UserReadMapper userReadMapper;
     private final UserCreateMapper userCreateMapper;
     private final PasswordEncoder passwordEncoder;
+    private final ImageService imageService;
 //    private final AuthDataRepository authDataRepository;
 
 //    public Page<UserReadDto> findAll(UserFilter filter, Pageable pageable) {
@@ -108,16 +113,31 @@ public class UserService implements UserDetailsService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
              //need to do another but now ok
         }
-        if (userEditDto.getCustomLink() != null || !userEditDto.getCustomLink().isEmpty()) {
+//        System.out.println(userEditDto.customLink);
+        if (userEditDto.getCustomLink() != null && !userEditDto.getCustomLink().isEmpty()) {
             if (userEditDto.getCustomLink().charAt(0) >= '0' && userEditDto.getCustomLink().charAt(0) <= '9') {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN);
             }
         }
 
         return this.userRepository.findById(id)
-                .map(en -> this.userEditMapper.map(userEditDto, en))
+                .map(en -> {
+                    uploadAvatar(userEditDto.avatar);
+                    return this.userEditMapper.map(userEditDto, en);
+                })
                 .map(this.userRepository::saveAndFlush)
                 .map(this.userReadMapper::map);
+    }
+
+    private void uploadAvatar(MultipartFile file) {
+        if(!file.isEmpty()){
+            try {
+                imageService.uploadAvatar(file.getOriginalFilename(), file.getInputStream());
+            }
+            catch (IOException e) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);//something other
+            }
+        }
     }
 
     @Transactional
@@ -194,5 +214,12 @@ public class UserService implements UserDetailsService {
                     return true;
                 })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    public Optional<byte[]> findAvatar(Long id){
+        return this.userRepository.findById(id)
+                .map(User::getAvatarPath)
+                .filter(StringUtils::hasText)
+                .flatMap(imageService::getAvatar);
     }
 }

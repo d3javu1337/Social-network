@@ -45,11 +45,12 @@ public class UserController {
                         model.addAttribute("user", user);
                         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
                         var currentUser = this.userService.findByEmail(userEmail);
-//                        model.addAttribute("currentUser", this.userReadMapper.map(currentUser));
+                        model.addAttribute("currentUser", this.userReadMapper.map(currentUser));
                         var bool = this.userService.findByEmail(user.getUsername()).getFollowers().contains(currentUser);
                         model.addAttribute("isFollowed", bool);
-                        if(currentUser.getId() == val) return "user/user";
-                        else return "user/userProfile";
+//                        if(currentUser.getId() == val) return "user/user";
+//                        else return "user/userProfile";
+                        return "user/userProfile";
                     })
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         }else{
@@ -59,10 +60,11 @@ public class UserController {
                         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
                         var currentUser = this.userService.findByEmail(userEmail);
                         var bool = this.userService.findByEmail(user.getUsername()).getFollowers().contains(currentUser);
-//                        model.addAttribute("currentUser", this.userReadMapper.map(currentUser));
+                        model.addAttribute("currentUser", this.userReadMapper.map(currentUser));
                         model.addAttribute("isFollowed", bool);
-                        if(currentUser.getCustomLink().equals(id)) return "user/user";
-                        else return "user/userProfile";
+//                        if(currentUser.getCustomLink().equals(id)) return "user/user";
+//                        else return "user/userProfile";
+                        return "user/userProfile";
                     })
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         }
@@ -77,6 +79,22 @@ public class UserController {
         }
         UserReadDto dto = userService.create(user);
         return "redirect:/users/" + dto.getId();
+    }
+
+    @GetMapping("/{id}/update")
+    public String forUpdate(@PathVariable("id") Long id, Model model){
+        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        var currentUser = this.userService.findByEmail(userEmail);
+        model.addAttribute("user", this.userService.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)));
+        if (currentUser.getId() == id) return "user/user";
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+
+//        if(!Objects.equals(id, currentUser.getId())) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+//        return userService.update(id, user)
+//                .map(it -> "redirect:/users/{id}")
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+//        return "redirect:/users/{id}";
     }
 
     @PostMapping("/{id}/update")
