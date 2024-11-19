@@ -1,7 +1,6 @@
 package org.d3javu.bd.service;
 
 import lombok.RequiredArgsConstructor;
-import org.d3javu.bd.dto.comment.CommentReadDto;
 import org.d3javu.bd.dto.post.PostCreateDto;
 import org.d3javu.bd.dto.post.PostEditDto;
 import org.d3javu.bd.dto.post.PostReadDto;
@@ -9,15 +8,19 @@ import org.d3javu.bd.filter.post.PostFilter;
 import org.d3javu.bd.mapper.post.PostCreateMapper;
 import org.d3javu.bd.mapper.post.PostEditMapper;
 import org.d3javu.bd.mapper.post.PostReadMapper;
-import org.d3javu.bd.mapper.post.StaticPostCreateMapper;
 import org.d3javu.bd.models.post.Post;
 import org.d3javu.bd.models.tag.Tag;
 import org.d3javu.bd.models.user.User;
 import org.d3javu.bd.repositories.PostRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import org.webjars.NotFoundException;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -31,12 +34,15 @@ public class PostService {
     private final PostCreateMapper postCreateMapper;
     private final PostEditMapper postEditMapper;
     private final PostReadMapper postReadMapper;
+    private final ImageService imageService;
 
 
-//crud
+    //crud
     @Transactional
     public PostReadDto create(PostCreateDto postCreateDto) {
+        var images = Optional.ofNullable(postCreateDto.getImages()).orElse(new ArrayList<>());
         var post = Optional.of(postCreateDto).map(this.postCreateMapper::map).get();
+        this.uploadImages(images);
         post = this.postRepository.saveAndFlush(post);
         return this.postReadMapper.map(post);
     }
@@ -66,10 +72,19 @@ public class PostService {
 
     @Transactional
     public Optional<PostReadDto> update(Long id, PostEditDto postEditDto) {
-        return this.postRepository.findById(id)
-                .map(post -> this.postEditMapper.map(postEditDto, post))
-                .map(this.postRepository::saveAndFlush)
-                .map(this.postReadMapper::map);
+        var post = this.findPostById(id);
+        this.uploadImages(postEditDto.getImages());
+        this.postRepository.saveAndFlush(this.postEditMapper.map(postEditDto, post.get()));
+        return Optional.ofNullable(this.postReadMapper.map(this.postRepository.findById(id).get()));
+//        return Optional.of(this.postReadMapper.map(post.get()));
+
+//        return this.postRepository.findById(id)
+//                .map(post -> this.postEditMapper.map(postEditDto, post))
+//                .map(e -> {
+//                    this.uploadImages(postEditDto.images);
+//                })
+//                .map(this.postRepository::saveAndFlush)
+//                .map(this.postReadMapper::map);
     }
 
     @Transactional
@@ -123,6 +138,38 @@ public class PostService {
         }else{
             throw new NotFoundException("Post not found");
         }
+    }
+
+    public void uploadImages(List<MultipartFile> images){
+        for(var x : images){
+            System.out.println("-------------------------------------");
+            if(!x.isEmpty()){
+                System.out.println("-------------------------------------");
+                try {
+                    imageService.uploadImage(x.getOriginalFilename(), x.getInputStream());
+//                    post.se
+                }
+                catch (IOException e) {
+                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);//something other
+                }
+            }
+        }
+    }
+
+    public List<byte[]> findImages(Long id){
+
+        var post = this.postRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        var images = post.getImages();
+        System.out.println(images);
+        List<byte[]> imagesList = new ArrayList<>(images.size());
+        for (int i = 0; i < images.size(); i++) {
+            imagesList.add(this.imageService.getImage(images.get(i).getPath()).orElse(null));
+        }
+        return imagesList;
+//        return this.postRepository.findById(id)
+//                .map(Post::getImages)
+//                .filter(StringUtils::hasText)
+//                .flatMap(imageService::getImage);
     }
 
 

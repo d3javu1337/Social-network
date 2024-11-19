@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.d3javu.bd.models.comment.Comment;
+import org.d3javu.bd.models.images.Images;
 import org.d3javu.bd.models.tag.Tag;
 import org.d3javu.bd.models.user.User;
 
@@ -61,6 +62,9 @@ public class Post {
             inverseJoinColumns=@JoinColumn(name="tag_id")
     )
     private Set<Tag> tags;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Images> images;
 
     public Post(String title, String body, Set<Tag> tags) {
         this.title = title;

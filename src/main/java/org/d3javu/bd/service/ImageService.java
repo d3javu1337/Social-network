@@ -19,7 +19,7 @@ public class ImageService {
     @Value("${app.image.bucket}")
     private String bucket;
 
-    private final String forPost = bucket+"\\postimages";
+    private final String forPost = bucket+"postimages";
 //    private final String  forAvatar = bucket+"\\profileimages";
 
     @Transactional
@@ -36,6 +36,24 @@ public class ImageService {
     @SneakyThrows
     public Optional<byte[]> getAvatar(String path) {
         Path p = Path.of(bucket, "profileimages", path);
+
+        return Files.exists(p) ? Optional.of(Files.readAllBytes(p)) : Optional.empty();
+    }
+
+    @Transactional
+    public void uploadImage(String path, InputStream content) throws IOException {
+        Path p = Path.of(bucket, "postimages", path);
+//        System.out.println("--------------------------------"+true);
+        try(content){
+            Files.createDirectories(p.getParent());
+            Files.write(p, content.readAllBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        }
+
+    }
+
+    @SneakyThrows
+    public Optional<byte[]> getImage(String path) {
+        Path p = Path.of(bucket, "postimages", path);
 
         return Files.exists(p) ? Optional.of(Files.readAllBytes(p)) : Optional.empty();
     }

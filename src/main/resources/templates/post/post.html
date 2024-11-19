@@ -24,6 +24,14 @@
 <form th:action="@{'/posts/'+${post.id}+'/unlike'}" method="post" th:if="${isLiked}">
   <button type="submit">unlike</button>
 </form>
+
+<div th:if="${post.images}" th:with="images=@{/api/v1/posts/{postId}/images(postId=${post.id})}">
+  <div th:each="img : *{images}">
+    <img th:src="${img}" alt="image" style="width: 240px; height: 240px">
+<!--    <a th:text="img"></a>-->
+  </div>
+</div>
+
 <form th:action="@{'/posts/'+${post.id}+'/comment/new'}" method="post">
   <label for="body">
     <input id="body" type="text" name="body" placeholder="comment it">

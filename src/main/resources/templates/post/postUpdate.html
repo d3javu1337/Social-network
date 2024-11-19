@@ -6,13 +6,16 @@
 </head>
 <body>
 <div th:insert="~{fragments/logoutFragment :: header}"></div>
-<form th:action="@{/posts/{postId}/update(postId=${post.id})}" method="post">
+<form th:action="@{/posts/{postId}/update(postId=${post.id})}" method="post" enctype="multipart/form-data">
     <label for="title">Title:<br>
         <input id="title" type="text" name="title" th:value="*{post.title}">
     </label><br>
     <label for="body">Body<br>
         <input id="body" type="text" name="body" th:value="*{post.body}">
     </label><br>
+    <label for="images">
+        <input id="images" type="file" name="images" multiple>
+    </label>
     <ul>
         <li th:each="tag : ${tags}">
             <div class="ui checkbox">

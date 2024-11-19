@@ -129,7 +129,8 @@ public class UserService implements UserDetailsService {
                 .map(this.userReadMapper::map);
     }
 
-    private void uploadAvatar(MultipartFile file) {
+    @Transactional
+    public void uploadAvatar(MultipartFile file) {
         if(!file.isEmpty()){
             try {
                 imageService.uploadAvatar(file.getOriginalFilename(), file.getInputStream());

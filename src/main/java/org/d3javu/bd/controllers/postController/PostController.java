@@ -49,7 +49,7 @@ public class PostController {
         var user = SecurityContextHolder.getContext().getAuthentication().getName();
         var author = this.userService.findByEmail(user);
         postCreateDto.setAuthor(author);
-        System.out.println(post+"++++++++++++++++++++++++++++++++");
+//        System.out.println(post+"++++++++++++++++++++++++++++++++");
         var p = this.postService.create(postCreateDto);
         return "redirect:/posts/" + p.getId();
     }
