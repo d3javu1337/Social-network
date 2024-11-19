@@ -1,8 +1,6 @@
-package org.d3javu.bd.controllers.zalupa;
+package org.d3javu.bd.controllers.shit;
 
 import lombok.RequiredArgsConstructor;
-import org.d3javu.bd.dto.user.UserEditDto;
-import org.d3javu.bd.dto.user.UserReadDto;
 import org.d3javu.bd.models.post.Post;
 import org.d3javu.bd.models.tag.Tag;
 import org.d3javu.bd.models.user.Roles;
@@ -19,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @RequiredArgsConstructor

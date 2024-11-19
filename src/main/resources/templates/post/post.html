@@ -14,8 +14,9 @@
   <div th:each="tag : ${tags}">
     <a th:href="@{'/posts/tag/'+${tag.id}}" th:text="${tag.body}" th:value="${tag.id}"></a>
   </div>
-  </p>
-  <a th:href="@{'/posts/'+${post.id}+'/update'}" th:if="${authorId==userId}">update</a>
+  <form th:action="@{'/posts/'+${post.id}+'/update'}" method="get" th:if="${authorId==userId}">
+    <button type="submit">update</button>
+  </form>
 </div>
 <form th:action="@{'/posts/'+${post.id}+'/like'}" method="post" th:if="${!isLiked}">
   <button type="submit">like</button>
