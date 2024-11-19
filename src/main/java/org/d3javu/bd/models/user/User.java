@@ -87,9 +87,9 @@ public class User implements Serializable {
 //        return this.posts.add(post);
 //    }
 
-    public void addComment(String text, Post post) {
-        var comm = new Comment(text, post, this);
-    }
+//    public void addComment(String text, Post post) {
+//        var comm = new Comment(text, post, this);
+//    }
 
     public void follow(User user) {
         if (follows == null) this.follows = new HashSet<>();

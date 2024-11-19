@@ -72,7 +72,8 @@ public class TestController implements CommandLineRunner {
         post2.linkUser(user2);
         postRepository.save(post2);
 
-        user2.addComment("ololo", post1);
+//        user2.addComment("ololo", post1);
+//        commentRepository.save()
 
         user1.follow(user2);
         user2.follow(user1);

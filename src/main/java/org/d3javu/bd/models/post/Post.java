@@ -50,7 +50,7 @@ public class Post {
 
     private Long likesCount = 0L;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "post")
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "post")
     private Set<Comment> comments = new HashSet<>();
 
     private LocalDateTime createdAt;
