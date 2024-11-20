@@ -9,6 +9,7 @@ import org.d3javu.bd.models.user.User;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Value
@@ -24,5 +25,6 @@ public class PostReadDto {
     public Set<UserReadDto> likes;
     public Set<CommentReadDto> comments;
     public LocalDateTime createdAt;
+    public List<String> images;
 
 }

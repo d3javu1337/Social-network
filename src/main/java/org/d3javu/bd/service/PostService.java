@@ -73,6 +73,7 @@ public class PostService {
     @Transactional
     public Optional<PostReadDto> update(Long id, PostEditDto postEditDto) {
         var post = this.findPostById(id);
+        post.get().getImages().clear();
         this.uploadImages(postEditDto.getImages());
         this.postRepository.saveAndFlush(this.postEditMapper.map(postEditDto, post.get()));
         return Optional.ofNullable(this.postReadMapper.map(this.postRepository.findById(id).get()));
@@ -142,9 +143,7 @@ public class PostService {
 
     public void uploadImages(List<MultipartFile> images){
         for(var x : images){
-            System.out.println("-------------------------------------");
             if(!x.isEmpty()){
-                System.out.println("-------------------------------------");
                 try {
                     imageService.uploadImage(x.getOriginalFilename(), x.getInputStream());
 //                    post.se

@@ -25,12 +25,23 @@
   <button type="submit">unlike</button>
 </form>
 
-<div th:if="${post.images}" th:with="images=@{/api/v1/posts/{postId}/images(postId=${post.id})}">
-  <div th:each="img : *{images}">
-    <img th:src="${img}" alt="image" style="width: 240px; height: 240px">
-<!--    <a th:text="img"></a>-->
+<!--<div th:if="${post.images}" th:with="images=@{/api/v1/posts/{postId}/images(postId=${post.id})}">-->
+<!--  <div th:each="img : *{images}">-->
+<!--    <p th:text="${images}"></p>-->
+<!--    <p th:src="@{img}"></p>-->
+<!--&lt;!&ndash;    <img th:src="${img}" alt="image" style="width: 240px; height: 240px">&ndash;&gt;-->
+<!--&lt;!&ndash;    <a th:text="img"></a>&ndash;&gt;-->
+<!--  </div>-->
+<!--</div>-->
+
+<div>
+  <div th:each="t : ${post.images}">
+<!--    <p th:text="${t.path}"></p>-->
+    <img th:src="@{'/api/v1/posts/'+${post.id}+'/images/'+${t.path}}">
   </div>
 </div>
+
+
 
 <form th:action="@{'/posts/'+${post.id}+'/comment/new'}" method="post">
   <label for="body">

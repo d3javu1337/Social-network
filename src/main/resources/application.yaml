@@ -8,7 +8,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     properties.hibernate:
-      show_sql: false
+      show_sql: true
       format_sql: true
     hibernate:
       ddl-auto: create-drop
@@ -20,7 +20,3 @@ springdoc:
 app:
   image:
     bucket: C:\Users\egor\IdeaProjects\bd\src\images
-#  mvc:
-#    view:
-#      prefix: /WEB-INF/jsp/
-#      suffix: .jsp

@@ -13,7 +13,7 @@
   <p th:text="${user.firstName}">firstname</p>
   <p th:text="${user.lastName}">lastname</p>
 <!--  <p th:text="${}">lastname</p>-->
-  <p th:text="|${user.followers.size()} followed|"></p>
+  <p th:text="|followed by ${user.followers.size()}|"></p>
 </div>
 <div th:if="${currentUser.id!=user.id}">
   <form th:action="@{'/users/'+${user.id}+'/follow'}" method="post" th:if="${!isFollowed}">
