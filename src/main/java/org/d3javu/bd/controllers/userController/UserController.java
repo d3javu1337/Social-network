@@ -1,13 +1,17 @@
 package org.d3javu.bd.controllers.userController;
 
-import io.swagger.v3.oas.annotations.servers.ServerVariable;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
+import org.d3javu.bd.dto.comment.CommentReadDto;
+import org.d3javu.bd.dto.post.PostReadDto;
 import org.d3javu.bd.dto.user.UserEditDto;
 import org.d3javu.bd.filter.user.UserFilter;
 import org.d3javu.bd.dto.user.UserReadDto;
+import org.d3javu.bd.mapper.user.UserEditMapper;
 import org.d3javu.bd.mapper.user.UserReadMapper;
+import org.d3javu.bd.models.comment.Comment;
 import org.d3javu.bd.repositories.UserRepository;
+import org.d3javu.bd.service.CommentService;
+import org.d3javu.bd.service.PostService;
 import org.d3javu.bd.service.UserService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -18,6 +22,8 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -26,6 +32,8 @@ public class UserController {
 
     private final UserRepository userRepository;
     private final UserService userService;
+    private final PostService postService;
+    private final CommentService commentService;
     private final UserReadMapper userReadMapper;
 
     @GetMapping
@@ -38,6 +46,8 @@ public class UserController {
     //    @PreAuthorize("hasAnyAuthority('admin')")
     @GetMapping("/{id}")
     public String findById(@PathVariable("id") String id, Model model){
+        model.addAttribute("follows", this.userService.findFollowsById(id));
+        model.addAttribute("posts", this.userService.findPostsByUser(id));
         if(isNumber(id)){
             var val = Long.parseLong(id);
             return userService.findById(val)
@@ -145,6 +155,51 @@ public class UserController {
         }
         return "redirect:/users/" + id;
     }
+
+    @GetMapping("/follows/{id}")
+    public String followers(@PathVariable("id") String id, Model model){
+        model.addAttribute("users", this.userService.findFollowsById(id));
+        return "user/users";
+    }
+
+    @GetMapping("/followers/{id}")
+    public String follows(@PathVariable("id") String id, Model model){
+        Long val;
+        try{
+            val = Long.parseLong(id);
+        }catch(NumberFormatException e){
+            val = this.userService.findByCustomLink(id)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)).getId();
+        }
+        model.addAttribute("users", this.userService.findById(val)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)).getFollowers());
+        return "user/users";
+    }
+
+    @GetMapping("/liked/post/{id}")
+    public String likedPost(@PathVariable("id") Long id, Model model){
+        var liked = this.postService.findById(id)
+                .map(PostReadDto::getLikes)
+//                .map(e -> (Set<CommentReadDto>)e. )
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        model.addAttribute("users", liked);
+        return "user/users";
+    }
+
+
+    @GetMapping("/liked/comment/{id}")
+    public String likedComment(@PathVariable("id") Long id, Model model){
+        var liked = this.commentService.findById(id)
+//                .map(CommentReadDto::getLikes)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
+                .getLikes()
+                .stream()
+                .map(this.userReadMapper::map);
+//                .collect(Collectors.toSet());
+        model.addAttribute("users", liked);
+        return "user/users";
+    }
+
 
     public boolean isNumber(String id){
         try{

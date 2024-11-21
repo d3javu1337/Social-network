@@ -30,5 +30,16 @@ public class UserReadMapper implements Mapper<User, UserReadDto> {
                 );
     }
 
-
+//    @Override
+//    public UserReadDto map(User from, UserReadDto to) {
+//        to.setId(from.getId());
+//        to.setFirstName(from.getFirstName());
+//        to.setLastName(from.getLastName());
+//        to.setUsername(from.getEmail());
+//        to.setCustomLink(from.getCustomLink());
+//        to.setCreatedAt(from.getCreatedAt());
+//        to.setFollowers(from.getFollowers().stream().map(userMapper::map).collect(Collectors.toSet()));
+//        to.setAvatar(from.getAvatarPath());
+//        return to;
+//    }
 }

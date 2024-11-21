@@ -26,6 +26,15 @@
     </ul>
     <button type="submit">Update</button>
 </form>
+<div>
+    <div th:each="t : ${post.images}">
+        <!--    <p th:text="${t.path}"></p>-->
+        <img th:src="@{'/api/v1/posts/'+${post.id}+'/images/'+${t}}">
+        <form th:action="@{'/posts/'+${post.id}+'/images/'+${t}+'/delete'}" method="post">
+            <button type="submit">delete image</button>
+        </form>
+    </div>
+</div>
 <form th:action="@{/posts/{postId}/update/delete(postId=${post.id})}" method="post">
     <button type="submit">Delete</BUTTON>
 </form>

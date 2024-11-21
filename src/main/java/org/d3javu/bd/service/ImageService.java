@@ -1,6 +1,8 @@
 package org.d3javu.bd.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.d3javu.bd.repositories.ImagesRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,9 +14,12 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class ImageService {
+
+    private final ImagesRepository imagesRepository;
 
     @Value("${app.image.bucket}")
     private String bucket;
@@ -56,6 +61,11 @@ public class ImageService {
         Path p = Path.of(bucket, "postimages", path);
 
         return Files.exists(p) ? Optional.of(Files.readAllBytes(p)) : Optional.empty();
+    }
+
+    @Transactional
+    public void deleteImage(Long postId, String path) {
+        this.imagesRepository.deleteImagesByPostIdAndPath(postId, path);
     }
 
 }

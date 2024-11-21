@@ -8,11 +8,14 @@
 <div th:insert="~{fragments/logoutFragment :: header}"></div>
 <div>
   <a th:href="@{'/users/'+${post.author.id}}" th:text="author"></a>
-  <h3 th:text="${post.title}"></h3>
-  <p th:text="${post.body}"></p>
-  <p th:text="'liked by '+${post.likesCount}"></p>
+  <h3 th:text="${post.title}">title</h3>
+  <p th:text="${post.body}">body</p>
+  <div>
+    <p th:text="'liked by '+${post.likesCount}">liked by</p>
+    <a th:href="@{'/users/liked/post/'+${post.id}}">get all</a>
+  </div>
   <div th:each="tag : ${tags}">
-    <a th:href="@{'/posts/tag/'+${tag.id}}" th:text="${tag.body}" th:value="${tag.id}"></a>
+    <a th:href="@{'/posts/tag/'+${tag.id}}" th:text="${tag.body}" th:value="${tag.id}">tags</a>
   </div>
   <form th:action="@{'/posts/'+${post.id}+'/update'}" method="get" th:if="${authorId==userId}">
     <button type="submit">update</button>
@@ -35,9 +38,8 @@
 <!--</div>-->
 
 <div>
-  <div th:each="t : ${post.images}">
-<!--    <p th:text="${t.path}"></p>-->
-    <img th:src="@{'/api/v1/posts/'+${post.id}+'/images/'+${t.path}}">
+  <div th:each="t : ${post.images}" th:if="${not t.path.isEmpty()}">
+    <img th:src="@{'/api/v1/posts/'+${post.id}+'/images/'+${t.path}}" >
   </div>
 </div>
 
@@ -54,7 +56,11 @@
   <div style="border: black solid">
     <a th:href="@{'/users/'+${comment.author.id}}" th:text="|${comment.author.firstName} ${comment.author.lastName}|"></a>
     <p th:text="${comment.body}"></p>
-    <p th:text="|liked by : ${comment.likes.size()}|"></p>
+    <div>
+      <p th:text="'liked by '+${comment.likes.size()}">liked by</p>
+      <a th:href="@{'/users/liked/comment/'+${comment.id}}">get all</a>
+    </div>
+<!--    <p th:text="|liked by : ${comment.likes.size()}|"></p>-->
     <form th:action="@{'/posts/'+${post.id}+'/comment/'+${comment.id}+'/like'}" th:if="${!comment.likes.contains(currentUser)}" method="post">
       <button type="submit">like</button>
     </form>

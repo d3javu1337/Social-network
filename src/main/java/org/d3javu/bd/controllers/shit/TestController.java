@@ -81,7 +81,7 @@ public class TestController implements CommandLineRunner {
         user1 = userRepository.findAll().get(0);
         user2 = userRepository.findAll().get(1);
 
-        var user3 = userRepository.findFollowersById(user2.getId()).get(0);
+        var user3 = userRepository.findFollowsById(user2.getId()).get(0);
 
         System.out.println(user1.equals(user3));
         System.out.println(user1);

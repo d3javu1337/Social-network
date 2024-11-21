@@ -19,4 +19,5 @@ springdoc:
 
 app:
   image:
-    bucket: C:\Users\egor\IdeaProjects\bd\src\images
+    bucket: src/images
+#    bucket: C:\Users\egor\IdeaProjects\bd\src\images

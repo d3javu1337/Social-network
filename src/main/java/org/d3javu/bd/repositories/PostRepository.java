@@ -24,4 +24,6 @@ public interface PostRepository extends JpaRepository<Post, Long>, FilterPostRep
 
     List<Post> findAllByOrderByCreatedAtAsc();
 
+    Set<Post> findAllByAuthorId(Long id);
+
 }

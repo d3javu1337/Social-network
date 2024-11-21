@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -172,5 +173,10 @@ public class PostService {
     }
 
 
-
+    public Set<PostReadDto> findAllByAuthorId(long id) {
+        return this.postRepository.findAllByAuthorId(id)
+                .stream()
+                .map(this.postReadMapper::map)
+                .collect(Collectors.toSet());
+    }
 }

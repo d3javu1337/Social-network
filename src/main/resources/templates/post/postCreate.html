@@ -22,7 +22,7 @@
     <li th:each="tag : ${tags}">
       <div class="ui checkbox">
         <input type="checkbox" th:field="${post.tags}" th:value="${tag.id}">
-        <label th:text="${tag.body}"></label>
+        <label th:text="${tag.body}">tag</label>
       </div>
     </li>
   </ul>

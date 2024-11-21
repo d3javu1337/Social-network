@@ -8,10 +8,7 @@ import org.d3javu.bd.mapper.post.PostEditMapper;
 import org.d3javu.bd.mapper.post.PostReadMapper;
 import org.d3javu.bd.mapper.tag.DtoToTagMapper;
 import org.d3javu.bd.models.post.Post;
-import org.d3javu.bd.service.CommentService;
-import org.d3javu.bd.service.PostService;
-import org.d3javu.bd.service.TagService;
-import org.d3javu.bd.service.UserService;
+import org.d3javu.bd.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -31,6 +28,7 @@ public class PostController {
     private final UserService userService;
     private final TagService tagService;
     private final CommentService commentService;
+    private final ImageService imageService;
     private final PostEditMapper postEditMapper;
     private final PostReadMapper postReadMapper;
     private final DtoToTagMapper dtoToTagMapper;
@@ -44,6 +42,7 @@ public class PostController {
         model.addAttribute("checked", new HashSet<>());
         return "/post/postCreate";
     }
+
     @PostMapping("/create")
     public String create(@ModelAttribute PostCreateDto postCreateDto, @ModelAttribute Post post) {
         var user = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -71,7 +70,7 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public String findById(@PathVariable Long id, Model model){
+    public String findById(@PathVariable Long id, Model model) {
         var user = this.userService.findByEmail(SecurityContextHolder.getContext()
                 .getAuthentication().getName());
         var userId = user.getId();
@@ -97,7 +96,7 @@ public class PostController {
     }
 
     @GetMapping("/{id}/update")
-    public String update(Model model, @PathVariable Long id){
+    public String update(Model model, @PathVariable Long id) {
         var post = this.postService.findById(id).get();
         model.addAttribute("post", post);
         model.addAttribute("tags", this.tagService.findAll());
@@ -106,24 +105,24 @@ public class PostController {
 
 
     @PostMapping("/{id}/update")
-    public String update(@PathVariable("id") Long id, @ModelAttribute PostEditDto postEditDto){
+    public String update(@PathVariable("id") Long id, @ModelAttribute PostEditDto postEditDto) {
         return postService.update(id, postEditDto)
                 .map(it -> "redirect:/posts/{id}")
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping("/{id}/update/delete")
-    public String delete(@PathVariable("id") Long id){
+    public String delete(@PathVariable("id") Long id) {
         var res = postService.delete(id);
-        if(res){
+        if (res) {
             return "redirect:/posts";
-        }else{
+        } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping("/{id}/like")
-    public String like(@PathVariable("id") Long id){
+    public String like(@PathVariable("id") Long id) {
         var user = this.userService.findByEmail(SecurityContextHolder.getContext()
                 .getAuthentication().getName());
         this.postService.like(id, user);
@@ -131,11 +130,21 @@ public class PostController {
     }
 
     @PostMapping("/{id}/unlike")
-    public String unlike(@PathVariable("id") Long id){
+    public String unlike(@PathVariable("id") Long id) {
         var user = this.userService.findByEmail(SecurityContextHolder.getContext()
                 .getAuthentication().getName());
         this.postService.unlike(id, user);
         return "redirect:/posts/" + id;
     }
 
+    @PostMapping("/{id}/images/{path}/delete")
+    public String deleteImage(@PathVariable("id") Long id, @PathVariable("path") String path) {
+        this.imageService.deleteImage(id, path);
+        return "redirect:/posts/%s/update".formatted(id);
+    }
+
 }
+
+//    @GetMapping("/{id}/liked")
+
+

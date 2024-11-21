@@ -10,9 +10,9 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long>, FilterUserRepository, QuerydslPredicateExecutor<User> {
 
-    @Query(value = "select * from users where id in (select f.follower_id from follows f where f.followed_id = :id)",
+    @Query(value = "select * from users where id in (select f.followed_id from follows f where f.follower_id = :id)",
             nativeQuery = true)
-    List<User> findFollowersById(Long id);
+    List<User> findFollowsById(Long id);
 
     Optional<User> findByEmail(String username);
 

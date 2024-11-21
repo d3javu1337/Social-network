@@ -83,5 +83,12 @@ public class CommentController {
         System.out.println(bool + " " + comm);
         return "redirect:/posts/" + postId;
     }
+//
+//    @GetMapping("/all")
+//    public String all(@PathVariable("postId") Long postId, Model model) {
+//
+//
+//        return "comment/comments";
+//    }
 
 }
