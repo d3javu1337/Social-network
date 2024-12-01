@@ -4,10 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.post.PostCreateDto;
 import org.d3javu.bd.dto.post.PostEditDto;
 import org.d3javu.bd.dto.post.PostReadDto;
+import org.d3javu.bd.mapper.post.PostCreateMapper;
 import org.d3javu.bd.mapper.post.PostEditMapper;
 import org.d3javu.bd.mapper.post.PostReadMapper;
 import org.d3javu.bd.mapper.tag.DtoToTagMapper;
+import org.d3javu.bd.mapper.user.UserReadMapper;
 import org.d3javu.bd.models.post.Post;
+import org.d3javu.bd.models.user.User;
 import org.d3javu.bd.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,8 +19,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequestMapping("/posts")
 @RequiredArgsConstructor
@@ -32,6 +39,7 @@ public class PostController {
     private final PostEditMapper postEditMapper;
     private final PostReadMapper postReadMapper;
     private final DtoToTagMapper dtoToTagMapper;
+    private final UserReadMapper userReadMapper;
 
     @GetMapping("/create")
     public String create(Model model) {
@@ -44,7 +52,7 @@ public class PostController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute PostCreateDto postCreateDto, @ModelAttribute Post post) {
+    public String create(@ModelAttribute PostCreateDto postCreateDto) {
         var user = SecurityContextHolder.getContext().getAuthentication().getName();
         var author = this.userService.findByEmail(user);
         postCreateDto.setAuthor(author);
@@ -58,14 +66,28 @@ public class PostController {
         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         var user = this.userService.findByEmail(userEmail);
         var tags = user.getPreferredTags();
-        List<PostReadDto> posts = this.postService.findByPreferred(tags);
+        var posts = this.postService.findAll()
+                .stream()
+                .sorted(Comparator.comparing(en -> en.createdAt))
+                .collect(Collectors.toList());
+        var currentUser = this.userReadMapper.map(this.userService.findByEmail(SecurityContextHolder.getContext()
+                .getAuthentication().getName()));
+//        List<PostReadDto> posts = this.postService.findByPreferred(tags);
         model.addAttribute("posts", posts);
+        model.addAttribute("currentUser", currentUser);
         return "/post/posts";
     }
 
     @GetMapping
     public String findAll(Model model) {
-        model.addAttribute("posts", this.postService.findAll());
+        var user = this.userReadMapper.map(this.userService.findByEmail(SecurityContextHolder.getContext()
+                .getAuthentication().getName()));
+        var posts = this.postService.findAll()
+                .stream()
+                .sorted(Comparator.comparing(en -> en.createdAt))
+                .collect(Collectors.toList());
+        model.addAttribute("posts", posts);
+        model.addAttribute("currentUser", user);
         return "/post/posts";
     }
 
@@ -92,6 +114,7 @@ public class PostController {
     @GetMapping("/tag/{id}")
     public String findAllByTag(@PathVariable("id") Long tagId, Model model) {
         model.addAttribute("posts", postService.findAllByTagId(tagId));
+        model.addAttribute("currentUser", this.getCurrentUser());
         return "/post/posts";
     }
 
@@ -141,6 +164,11 @@ public class PostController {
     public String deleteImage(@PathVariable("id") Long id, @PathVariable("path") String path) {
         this.imageService.deleteImage(id, path);
         return "redirect:/posts/%s/update".formatted(id);
+    }
+
+    public User getCurrentUser(){
+        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        return this.userService.findByEmail(userEmail);
     }
 
 }

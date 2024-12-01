@@ -1,22 +1,66 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>Post</title>
-  <link rel="stylesheet" th:href="@{/css/tmp.css}" href="/static/css/tmp.css">
+    <meta charset="UTF-8">
+    <title>Post</title>
+    <link rel="stylesheet" th:href="@{/css/forAll.css}" href="/static/css/forAll.css">
+    <link rel="stylesheet" th:href="@{/css/post/posts.css}" href="/static/css/post/posts.css">
+<!--    <script th:src="@{https://code.jquery.com/jquery-3.2.1.slim.min.js}" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>-->
+    <script th:src="@{https://code.jquery.com/jquery-3.1.1.min.js}"></script>
+    <script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js}" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script th:src="@{/js/posts.js}" src="/static/js/posts.js"></script>
 </head>
+
 <body>
-<div th:insert="~{fragments/logoutFragment :: header}"></div>
+<header th:insert="~{fragments/headerFragment :: header(${currentUser})}"></header>
 <main>
-  <b><a th:href="@{'/posts/create'}">create</a></b>
-  <div th:each="post : ${posts}" style="text-align: center; font-size: 20px; position: relative; vertical-align: center; margin: 100px">
-    <div style="border: solid black; border-radius: 10px">
-      <a th:href="@{'/users/'+${post.author.id}}" th:text="${post.author.firstName}">Author</a>
-      <h3 th:text="${post.title}"></h3>
-      <p th:text="${post.body}"></p>
-      <a th:href="@{'/posts/'+${post.id}}" style="margin-bottom: 15px">полный пост</a>
-    </div><br>
-  </div>
+<div>
+    <a th:href="@{/posts/preferred}">preferred</a>
+    <a th:href="@{/posts}">all</a>
+</div>
+    <div th:each="post : ${posts}" class="posts-wrapper">
+        <div class="post-unit" th:id="'post'+${post.id}">
+            <div class="author-wrapper">
+                <a th:href="@{'/users/'+${post.author.id}}" class="author-info">
+                    <img th:src="@{/api/v1/users/{userId}/avatar(userId=${post.author.id})}" alt="avatar" class="author-avatar_post">
+                    <p th:text="|${post.author.firstName} ${post.author.lastName}|" class="author"></p>
+                </a>
+                <div class="created-date-wrapper">
+                    <p th:text="${#temporals.format(post.createdAt, 'dd MMMM yyyy HH:mm')}"></p>
+                </div>
+            </div>
+            <div class="post">
+                <div class="post-title">
+                    <p th:text="${post.title}"></p>
+                </div>
+                <div class="post-body">
+                    <p th:text="${post.body}"></p>
+                </div>
+                <div class="full-post-link">
+                    <a th:href="@{'/posts/'+${post.id}}">полный пост</a>
+                </div>
+                <div class="actions-wrapper">
+                    <div class="actions">
+                        <div class="like-block">
+                            <form th:action="@{'/posts/'+${post.id}+'/like'}" method="post" th:if="${!post.likes.contains(currentUser)}" class="post_like-form">
+                                <button type="submit" class="like-button">like</button>
+                            </form>
+                            <form th:action="@{'/posts/'+${post.id}+'/unlike'}" method="post" th:if="${post.likes.contains(currentUser)}" class="post_unlike-form">
+                                <button type="submit" class="like-button">unlike</button>
+                            </form>
+                            <p th:text="${post.likes.size()}" class="post_like-count">likes count</p>
+                        </div>
+                        <div class="comment-block">
+                            <a th:href="@{'/api/v1/comments/'+${post.id}}" class="comments-button">
+                                comments
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+    </div>
 </main>
 </body>
 </html>

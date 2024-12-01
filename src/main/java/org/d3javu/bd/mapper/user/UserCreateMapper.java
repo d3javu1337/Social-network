@@ -22,6 +22,7 @@ public class UserCreateMapper implements Mapper<UserCreateDto, User> {
         user.setRole(Roles.user);
         user.setPreferredTags(object.preferredTags);
         user.setPreferredTags(Optional.ofNullable(object.preferredTags).orElse(new HashSet<>()));
+        user.setAvatarPath("base-avatar.jpg");
         return user;
     }
 

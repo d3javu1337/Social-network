@@ -23,7 +23,7 @@ public class PostReadDto {
 //    public Long viewsCount;
     public Set<UserReadDto> views;
     public Set<UserReadDto> likes;
-    public Set<CommentReadDto> comments;
+//    public List<CommentReadDto> comments;
     public LocalDateTime createdAt;
     public List<String> images;
 

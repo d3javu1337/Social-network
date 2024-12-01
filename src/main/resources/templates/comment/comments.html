@@ -1,10 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-
+    <h1>comments</h1>
+    <div class="comments-wrapper">
+        <div th:each="comment : ${comments}" style="border:1px solid black">
+            <p th:text="${comment.body}"></p>
+        </div>
+    </div>
 </body>
 </html>

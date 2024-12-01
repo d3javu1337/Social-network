@@ -5,7 +5,7 @@
   <title>Post</title>
 </head>
 <body>
-<div th:insert="~{fragments/logoutFragment :: header}"></div>
+<div th:insert="~{fragments/headerFragment :: header(${currentUser})}"></div>
 <div>
   <a th:href="@{'/users/'+${post.author.id}}" th:text="author"></a>
   <h3 th:text="${post.title}">title</h3>

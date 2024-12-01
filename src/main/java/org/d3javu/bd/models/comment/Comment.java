@@ -37,7 +37,7 @@ public class Comment {
             joinColumns=@JoinColumn(name="comment_id"),
             inverseJoinColumns=@JoinColumn(name="user_id")
     )
-    private Set<User> likes;
+    private Set<User> likes = new HashSet<>();
 
     private Long likesCount = 0L;
 

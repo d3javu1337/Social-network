@@ -22,7 +22,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, FilterPostRep
 //    nativeQuery = true)
     List<Post> findAllByTags(Set<Tag> tags);
 
-    List<Post> findAllByOrderByCreatedAtAsc();
+//    List<Post> findAllByOrderByCreatedAtAsc();
 
     Set<Post> findAllByAuthorId(Long id);
 

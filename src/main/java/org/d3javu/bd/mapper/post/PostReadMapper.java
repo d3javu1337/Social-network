@@ -10,9 +10,11 @@ import org.d3javu.bd.models.images.Images;
 import org.d3javu.bd.models.post.Post;
 import org.d3javu.bd.models.tag.Tag;
 import org.d3javu.bd.models.user.User;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -38,8 +40,8 @@ public class PostReadMapper implements Mapper<Post, PostReadDto> {
                         .orElse(new HashSet<>()),
                 Optional.of(object.getLikes().stream().map(userReadMapper::map).collect(Collectors.toSet()))
                         .orElse(new HashSet<>()),
-                Optional.of(object.getComments().stream().map(commentReadMapper::map).collect(Collectors.toSet()))
-                        .orElse(new HashSet<>()),
+//                Optional.of(object.getComments().stream().map(commentReadMapper::map).collect(Collectors.toList()))
+//                        .orElse(new ArrayList<>()),
 //                new HashSet<>(),
                 object.getCreatedAt(),
                 object.getImages().stream().map(Images::getPath).collect(Collectors.toList())

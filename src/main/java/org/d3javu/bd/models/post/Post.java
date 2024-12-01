@@ -1,5 +1,6 @@
 package org.d3javu.bd.models.post;
 
+import com.querydsl.codegen.utils.model.Types;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,6 +10,8 @@ import org.d3javu.bd.models.comment.Comment;
 import org.d3javu.bd.models.images.Images;
 import org.d3javu.bd.models.tag.Tag;
 import org.d3javu.bd.models.user.User;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeRegistration;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -28,6 +31,8 @@ public class Post {
 
     private String title;
 
+//    @Type(type = "org.hibernate.type.TextType")
+    @Column(columnDefinition = "text")
     private String body;
 
     @ManyToOne

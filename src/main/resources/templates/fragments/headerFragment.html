@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>logout</title>
+    <link rel="stylesheet" th:href="@{/css/forAll.css}" href="/static/css/forAll.css">
+</head>
+<body>
+    <header th:fragment="header(currentUser)" >
+<!--        style="display: flex; align-items: center; justify-content: space-evenly; border: solid black; border-radius: 5px; padding-bottom: 5px"-->
+<!--        <div>-->
+<!--            <ul>-->
+<!--                <li>-->
+<!--                    <div>-->
+<!--                        <a th:href="@{/logout}">logout</a>-->
+<!--                    </div>-->
+<!--                </li>-->
+<!--                <li>-->
+<!--                    <div>-->
+<!--                        <a th:href="@{/posts}">posts</a>-->
+<!--                    </div>-->
+<!--                </li>-->
+<!--                <li>-->
+<!--                    <div>-->
+<!--                        <a th:href="@{'/users/'+${currentUser.id}}">profile</a>-->
+<!--                    </div>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--        </div>-->
+        <div id="header-wrapper">
+            <div class="header-element">
+                <a th:href="@{/logout}">logout</a>
+            </div>
+            <div class="header-element">
+                <a th:href="@{/posts}">posts</a>
+            </div>
+            <div class="header-element">
+                <a th:href="@{'/users/'+${currentUser.id}}">profile</a>
+            </div>
+        </div>
+
+<!--        <form action="/logout" method="post">-->
+<!--            <button type="submit" >logout</button>-->
+<!--        </form>-->
+<!--        <form action="/posts" method="get">-->
+<!--            <button type="submit">posts</button>-->
+<!--        </form>-->
+
+<!--        <a th:href="@{/logout}" class="btn btn-success btn-block">logout</a>-->
+<!--        <a th:href="@{/posts}" class="btn btn-success btn-block">posts</a>-->
+
+<!--        <a th:href="@{'/users/'+${currentUser.id}}">profile</a>-->
+    </header>
+</body>
+</html>

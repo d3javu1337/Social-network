@@ -1,6 +1,7 @@
 package org.d3javu.bd.controllers.shit;
 
 import lombok.RequiredArgsConstructor;
+import org.d3javu.bd.models.comment.Comment;
 import org.d3javu.bd.models.post.Post;
 import org.d3javu.bd.models.tag.Tag;
 import org.d3javu.bd.models.user.Roles;
@@ -50,6 +51,10 @@ public class TestController implements CommandLineRunner {
         var user1 = new User("Ivan", "Ivanov", "vanya@jmail.org", this.passwordEncoder.encode("124"));
         var user2 = new User("Petr", "Petrov", "petya@jmail.org", this.passwordEncoder.encode("petya228"));
         var user4 = new User("Egor", "Trunov", "admin", this.passwordEncoder.encode("admin"));
+        user1.setAvatarPath("base-avatar.jpg");
+        user2.setAvatarPath("base-avatar.jpg");
+        user4.setAvatarPath("base-avatar.jpg");
+
         user4.setRole(Roles.admin);
         userRepository.save(user1);
         userRepository.save(user2);
@@ -68,6 +73,12 @@ public class TestController implements CommandLineRunner {
         var post2 = new Post("testPost2", "xaxaxaxaxaxax",  Set.of((tags1.toArray(new Tag[0]))));
         post2.linkUser(user2);
         postRepository.save(post2);
+
+        commentRepository.save(new Comment("test", post1, user2));
+        commentRepository.save(new Comment("test1", post2, user1));
+
+//        post1.getComments().add(new Comment("test", post1, user2));
+//        post2.getComments().add(new Comment("test1", post2, user1));
 
 //        user2.addComment("ololo", post1);
 //        commentRepository.save()

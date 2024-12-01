@@ -5,7 +5,7 @@
   <title>Tag</title>
 </head>
 <body>
-<div th:insert="~{fragments/logoutFragment :: header}"></div>
+<div th:insert="~{fragments/headerFragment :: header}"></div>
   <form th:action="@{/admin/tags/{tagId}/update(tagId=${tag.id})}" method="post">
     <label for="body">Body
       <input id="body" type="text" name="body" th:value="${tag.body}">

@@ -1,12 +1,18 @@
 package org.d3javu.bd.rest;
 
 import lombok.RequiredArgsConstructor;
+import org.d3javu.bd.dto.post.PostReadDto;
+import org.d3javu.bd.mapper.post.PostReadMapper;
 import org.d3javu.bd.models.images.Images;
+import org.d3javu.bd.models.user.User;
 import org.d3javu.bd.service.ImageService;
 import org.d3javu.bd.service.PostService;
+import org.d3javu.bd.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.WebRequest;
@@ -22,6 +28,8 @@ public class PostRestController {
 
     private final PostService postService;
     private final ImageService imageService;
+    private final UserService userService;
+    private final PostReadMapper postReadMapper;
 
     @GetMapping(value = "/{id}/images/{imagePath}", produces = MediaType.IMAGE_PNG_VALUE)
     public byte[] findImages(@PathVariable Long id, @PathVariable("imagePath") String imagePath) {
@@ -34,6 +42,35 @@ public class PostRestController {
 //        }else{
 //            return new byte[0];
 //        }
+    }
+
+    @GetMapping("/{postId}/like")
+    public ResponseEntity<PostReadDto> like(@PathVariable Long postId) {
+//        this.postService.findPostById(postId)
+//                .map(en ->{
+//                    en.like(this.getCurrentUser());
+//                    this.postService.up
+//                    return new ResponseEntity<>(en, HttpStatus.OK);
+//                });
+        this.postService.like(postId, this.getCurrentUser());
+        var post = this.postService.findPostById(postId)
+                .map(this.postReadMapper::map)
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND));
+        return new ResponseEntity<>(post, HttpStatus.OK);
+    }
+
+    @GetMapping("/{postId}/unlike")
+    public ResponseEntity<PostReadDto> unlike(@PathVariable Long postId) {
+        this.postService.unlike(postId, this.getCurrentUser());
+        var post = this.postService.findPostById(postId)
+                .map(this.postReadMapper::map)
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND));
+        return new ResponseEntity<>(post, HttpStatus.OK);
+    }
+
+    public User getCurrentUser(){
+        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        return this.userService.findByEmail(userEmail);
     }
 
 //    @GetMapping(value = "/{id}/images", produces = MediaType.APPLICATION_JSON_VALUE)

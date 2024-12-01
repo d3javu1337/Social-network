@@ -56,7 +56,8 @@ public class PostService {
     }
 
     public List<PostReadDto> findAll() {
-        return this.postRepository.findAllByOrderByCreatedAtAsc().stream().map(this.postReadMapper::map).toList();
+//        return this.postRepository.findAllByOrderByCreatedAtAsc().stream().map(this.postReadMapper::map).toList();
+        return this.postRepository.findAll().stream().map(this.postReadMapper::map).toList();
     }
 
     public List<PostReadDto> findByPreferred(Set<Tag> preferredTags) {

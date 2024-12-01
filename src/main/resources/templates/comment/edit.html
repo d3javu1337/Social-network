@@ -5,7 +5,7 @@
   <title>User</title>
 </head>
 <body>
-<div th:insert="~{fragments/logoutFragment :: header}"></div>
+<div th:insert="~{fragments/headerFragment :: header(${currentUser})}"></div>
 <form th:action="@{'/posts/'+${postId}+'/comment/'+${comment.id}+'/edit'}" method="post">
   <label for="body">Body: <br>
     <input id="body" type="text" name="body" th:value="*{comment.body}">

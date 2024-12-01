@@ -1,67 +1,136 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>User</title>
+    <meta charset="UTF-8">
+    <title>User</title>
+    <link rel="stylesheet" th:href="@{/css/user/userProfile.css}" href="/static/css/user/userProfile.css">
+    <link rel="stylesheet" th:href="@{/css/forAll.css}" href="/static/css/forAll.css">
 </head>
 <body>
-<div th:insert="~{fragments/logoutFragment :: header}"></div>
-<div>
-  <div th:if="${user.avatar}">
-    <img th:src="@{/api/v1/users/{userId}/avatar(userId=${user.id})}" alt="image" style="width: 240px; height: 240px">
-  </div>
-  <p th:text="${user.firstName}">firstname</p>
-  <p th:text="${user.lastName}">lastname</p>
-<!--  <p th:text="${}">lastname</p>-->
-  <p th:text="|followed by ${user.followers.size()}|"></p>
-</div>
-<div th:if="${currentUser.id!=user.id}">
-  <form th:action="@{'/users/'+${user.id}+'/follow'}" method="post" th:if="${!isFollowed}">
-    <button type="submit">follow</button>
-  </form>
-  <form th:action="@{'/users/'+${user.id}+'/unfollow'}" method="post" th:if="${isFollowed}">
-    <button type="submit">unfollow</button>
-  </form>
-</div>
-<div>
-<!--  <h3>Подписчики</h3>-->
-  <a th:href="@{'/users/followers/'+${user.id}}" th:text="followers"></a>
-</div>
-<div>
-<!--  <h3>Подписки</h3>-->
-  <a th:href="@{'/users/follows/'+${user.id}}" th:text="follows"></a>
-</div>
+<header th:insert="~{fragments/headerFragment :: header(${currentUser})}"></header>
+<main>
+    <div class="userdata_wrapper">
+        <div class="main-data">
+            <div class="user-avatar-wrapper">
+                <img th:src="@{/api/v1/users/{userId}/avatar(userId=${user.id})}" alt="avatar" class="user-avatar">
+            </div>
+            <p th:text="|${user.firstName} ${user.lastName}|" class="userdata-fi"></p>
+            <!--            <p th:text="${user.firstName}">firstname</p>-->
+<!--            <p th:text="${user.lastName}">lastname</p>-->
+        </div>
+<!--        <div class="follow-block">-->
+<!--            <div>-->
+<!--                <p>followed by</p>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                <p th:text="${user.followers.size()}"></p>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                <a th:href="@{'/users/followers/'+${user.id}}" th:text="followers">followers</a>-->
+<!--            </div>-->
+<!--        </div>-->
 
-<div th:each="post : ${posts}" style="text-align: center; font-size: 20px; position: relative; vertical-align: center; margin: 100px">
-  <div style="border: solid black; border-radius: 10px">
-    <a th:href="@{'/users/'+${post.author.id}}" th:text="${post.author.firstName}">Author</a>
-    <h3 th:text="${post.title}"></h3>
-    <p th:text="${post.body}"></p>
-    <a th:href="@{'/posts/'+${post.id}}" style="margin-bottom: 15px">полный пост</a>
-  </div><br>
+        <a th:href="@{'/users/followers/'+${user.id}}" class="follow-block">
+            <div>
+                <p>followed by</p>
+            </div>
+            <div>
+                <p th:text="${user.followers.size()}"></p>
+            </div>
+        </a>
+
+        <a th:href="@{'/users/follows/'+${user.id}}" class="follow-block">
+            <div>
+                <p>follows</p>
+            </div>
+            <div>
+                <p th:text="${follows.size()}"></p>
+            </div>
+        </a>
+
+<!--        <div class="follow-block">-->
+<!--            <p>following</p>-->
+<!--            <p th:text="${follows.size()}"></p>-->
+<!--            <a  th:text="follows">follows</a>-->
+<!--        </div>-->
+        <div class="edit-profile-wrapper">
+            <form th:action="@{'/users/'+${user.id}+'/update'}" th:if="${currentUser.id==user.id}" method="get" class="edit-profile-form">
+                <button type="submit" class="edit-profile-button">edit profile</button>
+            </form>
+            <div th:if="${currentUser.id!=user.id}" class="follow-buttons-block">
+                <form th:action="@{'/users/'+${user.id}+'/follow'}" method="post" th:if="${!isFollowed}" class="follow-button-wrapper">
+                    <button type="submit" class="follow-button">follow</button>
+                </form>
+                <form th:action="@{'/users/'+${user.id}+'/unfollow'}" method="post" th:if="${isFollowed}" class="follow-button-wrapper">
+                    <button type="submit" class="follow-button">unfollow</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--for removal-->
+    <br>
+    <!---->
+<div class="post-create-wrapper" th:if="${currentUser.id==user.id}">
+    <form th:action="@{'/posts/create'}" method="post" enctype="multipart/form-data"  class="post-create">
+        <label for="title">
+            <input id="title" type="text" name="title" placeholder="title" required>
+        </label><br>
+        <label for="body">
+            <textarea id="body" type="text" name="body" placeholder="body" aria-multiline="true" required></textarea>
+        </label><br>
+        <label for="images">
+            <input id="images" type="file" name="images" multiple>
+        </label><br>
+        <button type="submit" class="create-button">create</button>
+    </form>
 </div>
-
-
-<!--<h3 style="text-align: center; position: relative">Подписчики</h3>-->
-<!--<div th:each="follower : ${user.followers}">-->
-<!--  <div style="text-align: center; font-size: 20px; position: relative; vertical-align: center; margin: 100px; border-style: solid; border-radius: 10px">-->
-<!--    <p th:text="|${follower.firstName} ${follower.lastName}|"></p>-->
-<!--    <a th:href="@{'/users/'+${follower.id}}">ссылка на подписчика</a>-->
-<!--  </div>-->
-<!--</div>-->
-
-<!--<h3 style="text-align: center; position: relative">Подписки</h3>-->
-<!--<div th:each="follow : ${follows}">-->
-<!--  <div style="text-align: center; font-size: 20px; position: relative; vertical-align: center; margin: 100px; border-style: solid; border-radius: 10px">-->
-<!--    <p th:text="|${follow.firstName} ${follow.lastName}|"></p>-->
-<!--    <a th:href="@{'/users/'+${follow.id}}">ссылка на подписчика</a>-->
-<!--  </div>-->
-<!--</div>-->
-<div th:if="${currentUser.id==user.id}">
-  <form th:action="@{'/users/'+${user.id}+'/update'}" method="get">
-    <button type="submit">edit profile</button>
-  </form>
-</div>
-<!--<a th:href="@{'/users/'+${user.id}+'/follow'}" th:method="post">Follow</a>-->
+    <div th:each="post : ${posts}" class="user-posts_wrapper">
+        <div class="post-unit">
+<!--            <div class="author-wrapper">-->
+<!--                <img th:src="@{/api/v1/users/{userId}/avatar(userId=${post.author.id})}" alt="avatar" class="author-avatar_post">-->
+<!--                <a th:href="@{'/users/'+${post.author.id}}" th:text="|${post.author.firstName} ${post.author.lastName}|" class="author">Author</a>-->
+<!--            </div>-->
+            <div class="author-wrapper">
+                <a th:href="@{'/users/'+${post.author.id}}" class="author-info">
+                    <img th:src="@{/api/v1/users/{userId}/avatar(userId=${post.author.id})}" alt="avatar" class="author-avatar_post">
+                    <p th:text="|${post.author.firstName} ${post.author.lastName}|" class="author"></p>
+                </a>
+                <div class="created-date-wrapper">
+<!--                    <p th:text="${post.createdAt}"></p>-->
+                    <p th:text="${#temporals.format(post.createdAt, 'dd MMMM yyyy HH:mm')}"></p>
+<!--                    <p th:text="${{post.createdAt}}"></p>-->
+                </div>
+            </div>
+            <div class="post">
+                <div class="post-title">
+                    <p th:text="${post.title}"></p>
+                </div>
+                <div class="post-body">
+                    <p th:text="${post.body}"></p>
+                </div>
+                <div class="full-post-link">
+                    <a th:href="@{'/posts/'+${post.id}}">полный пост</a>
+                </div>
+                <div class="actions-wrapper">
+                    <div class="actions">
+                        <div class="like-block">
+                            <form th:action="@{'/posts/'+${post.id}+'/like'}" method="post" th:if="${!post.likes.contains(currentUser)}">
+                                <button type="submit" class="like-button">like</button>
+                            </form>
+                            <form th:action="@{'/posts/'+${post.id}+'/unlike'}" method="post" th:if="${post.likes.contains(currentUser)}">
+                                <button type="submit" class="like-button">unlike</button>
+                            </form>
+                        </div>
+                        <div class="comment-block">
+                            <p>placeholder</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+    </div>
+</main>
 </body>
 </html>

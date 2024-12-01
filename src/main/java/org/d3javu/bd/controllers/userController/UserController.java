@@ -9,6 +9,7 @@ import org.d3javu.bd.dto.user.UserReadDto;
 import org.d3javu.bd.mapper.user.UserEditMapper;
 import org.d3javu.bd.mapper.user.UserReadMapper;
 import org.d3javu.bd.models.comment.Comment;
+import org.d3javu.bd.models.user.User;
 import org.d3javu.bd.repositories.UserRepository;
 import org.d3javu.bd.service.CommentService;
 import org.d3javu.bd.service.PostService;
@@ -39,6 +40,7 @@ public class UserController {
     @GetMapping
     public String findAll(Model model, UserFilter filter, Pageable pageable) {
 //        model.addAttribute("users", userService.findAll(filter, pageable));
+        model.addAttribute("currentUser", this.getCurrentUser());
         model.addAttribute("users", userService.findAll(filter));
         return "user/users";
     }
@@ -159,11 +161,13 @@ public class UserController {
     @GetMapping("/follows/{id}")
     public String followers(@PathVariable("id") String id, Model model){
         model.addAttribute("users", this.userService.findFollowsById(id));
+        model.addAttribute("currentUser", this.getCurrentUser());
         return "user/users";
     }
 
     @GetMapping("/followers/{id}")
     public String follows(@PathVariable("id") String id, Model model){
+        model.addAttribute("currentUser", this.getCurrentUser());
         Long val;
         try{
             val = Long.parseLong(id);
@@ -192,9 +196,9 @@ public class UserController {
         var liked = this.commentService.findById(id)
 //                .map(CommentReadDto::getLikes)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
-                .getLikes()
-                .stream()
-                .map(this.userReadMapper::map);
+                .getLikes();
+//                .stream()
+//                .map(this.userReadMapper::map);
 //                .collect(Collectors.toSet());
         model.addAttribute("users", liked);
         return "user/users";
@@ -209,4 +213,10 @@ public class UserController {
         }
         return true;
     }
+
+    public User getCurrentUser(){
+        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        return this.userService.findByEmail(userEmail);
+    }
+
 }

@@ -15,8 +15,11 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +27,8 @@ import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.webjars.NotFoundException;
 
 import java.util.List;
@@ -46,17 +51,30 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(CsrfConfigurer::disable)
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         auth -> auth
                                 .requestMatchers("/login", "/registration").permitAll()
                                 .requestMatchers("/admin/**").hasAuthority(admin.getAuthority())
                                 .requestMatchers(AntPathRequestMatcher.antMatcher("/users/{\\d}/delete")).hasRole(admin.getAuthority())
                                 .anyRequest().authenticated()
+//                                .anyRequest().permitAll()
                 )
 //                .httpBasic(Customizer.withDefaults());
-                .formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/users").permitAll())
+                .formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/posts", true)
+                        .permitAll())
                 .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/login").deleteCookies("JSESSIONID"));
         return http.build();
+    }
+
+    @Bean
+    UrlBasedCorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("https://example.com"));
+        configuration.setAllowedMethods(List.of("GET","POST"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean
@@ -74,9 +92,15 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
+    public UserDetailsService userDetailsService() throws UsernameNotFoundException {
         return username -> {
-            User user = userService.findByEmail(username);
+            User user;
+
+//            try{
+                user = userService.findByEmail(username);
+//            }catch (UsernameNotFoundException e){
+//                throw new UsernameNotFoundException(username);
+//            }
             if (user != null) {
                 return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
                         List.of(user.getRole()));

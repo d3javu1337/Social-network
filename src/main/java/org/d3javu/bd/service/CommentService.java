@@ -8,6 +8,7 @@ import org.d3javu.bd.dto.comment.CommentReadDto;
 import org.d3javu.bd.mapper.comment.CommentCreateMapper;
 import org.d3javu.bd.mapper.comment.CommentEditMapper;
 import org.d3javu.bd.mapper.comment.CommentReadMapper;
+import org.d3javu.bd.models.comment.Comment;
 import org.d3javu.bd.models.user.User;
 import org.d3javu.bd.repositories.CommentRepository;
 import org.springframework.stereotype.Service;
@@ -36,9 +37,11 @@ public class CommentService {
 
     @Transactional
     public CommentReadDto create(Long postId, CommentCreateDto commentCreateDto) {
-        var comment = commentCreateMapper.map(commentCreateDto);
+//        var comment = commentCreateMapper.map(commentCreateDto);
 //        comment = commentRepository.saveAndFlush(comment);
-        this.addComment(postId, commentCreateDto);
+        var comment = this.addComment(postId, commentCreateDto);
+//        var comment = this.commentRepository.saveAndFlush(this.commentCreateMapper.map(commentCreateDto));
+//        return this.commentRepository.saveAllAndFlush(comment)
         return commentReadMapper.map(comment);
     }
 
@@ -99,12 +102,12 @@ public class CommentService {
     }
 
     @Transactional
-    public void addComment(Long postId, CommentCreateDto commentCreateDto) {
+    public Comment addComment(Long postId, CommentCreateDto commentCreateDto) {
         var post = this.postService.findPostById(postId).orElseThrow(() -> new NotFoundException("Post not found"));
 //        comment.setPost(post);
         commentCreateDto.post = post;
         var comment = this.commentCreateMapper.map(commentCreateDto);
-        this.commentRepository.save(comment);
+        return this.commentRepository.save(comment);
 //        this.postService.internalUpdate(postId, post);
     }
 

@@ -5,6 +5,7 @@ import org.d3javu.bd.dto.comment.CommentCreateDto;
 import org.d3javu.bd.dto.comment.CommentEditDto;
 import org.d3javu.bd.dto.comment.CommentReadDto;
 import org.d3javu.bd.mapper.comment.CommentReadMapper;
+import org.d3javu.bd.models.user.User;
 import org.d3javu.bd.service.CommentService;
 import org.d3javu.bd.service.PostService;
 import org.d3javu.bd.service.UserService;
@@ -26,6 +27,13 @@ public class CommentController {
     private final UserService userService;
     private final CommentReadMapper commentReadMapper;
 //    private final PostService postService;
+
+
+    @GetMapping("/all")
+    public String all(@PathVariable Long postId, Model model) {
+        model.addAttribute("comments", this.commentService.findAllByPostId(postId));
+        return "comment/comments";
+    }
 
     @PostMapping("/{id}/like")
     public String like(@PathVariable("id") Long commentId, @PathVariable("postId") Long postId) {
@@ -49,23 +57,24 @@ public class CommentController {
 
     @PostMapping("/new")
     public String createComment(@PathVariable("postId") Long postId, @ModelAttribute CommentCreateDto commentCreateDto) {
-        var user = this.userService.findByEmail(SecurityContextHolder.getContext()
-                .getAuthentication().getName());
-        commentCreateDto.user = user;
+//        var user = this.userService.findByEmail(SecurityContextHolder.getContext()
+//                .getAuthentication().getName());
+        commentCreateDto.user = this.getCurrentUser();
         this.commentService.create(postId, commentCreateDto);
         return "redirect:/posts/" + postId;
     }
 
     @GetMapping("/{id}/edit")
     public String edit(@PathVariable("id") Long commentId,@PathVariable("postId") Long postId, Model model) {
-        var user = this.userService.findByEmail(SecurityContextHolder.getContext()
-                .getAuthentication().getName());
+//        var user = this.userService.findByEmail(SecurityContextHolder.getContext()
+//                .getAuthentication().getName());
+        var user = this.getCurrentUser();
         var comment = this.commentService.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("not found id : "+commentId));
-        if(!user.equals(comment.getAuthor())) {throw new ResponseStatusException(HttpStatus.FORBIDDEN);}
+        if(!user.getId().equals(comment.getAuthor().getId())) {throw new ResponseStatusException(HttpStatus.FORBIDDEN);}
         model.addAttribute("comment", comment);
         model.addAttribute("postId", postId);
-        model.addAttribute("userId",user.getId());
+        model.addAttribute("currentUser",user);
         return "comment/edit";
     }
 
@@ -90,5 +99,11 @@ public class CommentController {
 //
 //        return "comment/comments";
 //    }
+
+    public User getCurrentUser(){
+        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        return this.userService.findByEmail(userEmail);
+    }
+
 
 }

@@ -1,6 +1,8 @@
 package org.d3javu.bd.dto.comment;
 
 import lombok.Value;
+import org.d3javu.bd.dto.post.PostReadDto;
+import org.d3javu.bd.dto.user.UserReadDto;
 import org.d3javu.bd.models.post.Post;
 import org.d3javu.bd.models.user.User;
 
@@ -13,9 +15,9 @@ public class CommentReadDto {
 
     public Long id;
     public String body;
-    public Post post;
-    public User author;
-    public Set<User> likes;
+    public PostReadDto post;
+    public UserReadDto author;
+    public Set<UserReadDto> likes;
     public LocalDateTime createdAt;
 
 }

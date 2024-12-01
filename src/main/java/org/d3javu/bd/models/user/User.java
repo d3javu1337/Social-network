@@ -6,6 +6,7 @@ import lombok.*;
 import org.d3javu.bd.models.comment.Comment;
 import org.d3javu.bd.models.post.Post;
 import org.d3javu.bd.models.tag.Tag;
+import org.hibernate.annotations.Cascade;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -62,6 +63,7 @@ public class User implements Serializable {
     )
     private Set<Tag> preferredTags;
 
+//    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private String avatarPath = null;
 
 //    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
