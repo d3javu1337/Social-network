@@ -82,16 +82,16 @@ public class UserController {
         }
     }
 
-    @PostMapping("/registration")
-    public String create(@ModelAttribute UserEditDto user, RedirectAttributes redirectAttributes){
-        if (false){
-//            redirectAttributes.addAttribute("")
-            redirectAttributes.addFlashAttribute("user", user);
-            return "redirect:/users/registration";
-        }
-        UserReadDto dto = userService.create(user);
-        return "redirect:/users/" + dto.getId();
-    }
+//    @PostMapping("/registration")
+//    public String create(@ModelAttribute UserEditDto user, RedirectAttributes redirectAttributes){
+//        if (false){
+////            redirectAttributes.addAttribute("")
+//            redirectAttributes.addFlashAttribute("user", user);
+//            return "redirect:/users/registration";
+//        }
+//        UserReadDto dto = userService.create(user);
+//        return "redirect:/users/" + dto.getId();
+//    }
 
     @GetMapping("/{id}/update")
     public String forUpdate(@PathVariable("id") Long id, Model model){

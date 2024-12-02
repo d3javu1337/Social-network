@@ -1,39 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Registration</title>
+    <link rel="stylesheet" th:href="@{/css/user/registration.css}">
+    <link rel="stylesheet" th:href="@{https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css}">
+    <script th:src="@{https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/js/multi-select-tag.js}"></script>
 </head>
 <body>
-    <div style="color: red" th:if="${param.error}">
+<div class="registration_wrapper">
+    <div style="color: red" th:if="${param.error}" class="error-message">
         Invalid auth data
     </div>
-    <form th:action="@{/registration}" method="post" th:object="${user}">
-        <label for="firstName">Firstname:
-            <input id="firstName" type="text" name="firstName" required>
-        </label><br>
-        <label for="lastName">Lastname:
-            <input id="lastName" type="text" name="lastName" required>
-        </label><br>
-        <label for="login">Email:
-            <input id="login" type="email" name="login" required>
-        </label><br>
-        <label for="password">Password:
-            <input id="password" type="password" name="password" required>
-        </label><br>
-        <ul>
-            <li th:each="tag : ${tags}">
-                <div class="ui checkbox">
-                    <input type="checkbox" th:field="${user.preferredTags}" th:value="${tag.id}">
-                    <label th:text="${tag.body}"></label>
-                </div>
-            </li>
-        </ul>
+    <div class="registration-form_wrapper">
+    <form th:action="@{/registration}" method="post" th:object="${user}" class="registration-form">
+        <div class="firstname-label_wrapper">
+            <label for="firstName" class="firstname_wrapper">
+                <input id="firstName" type="text" name="firstName" placeholder="First name" required>
+            </label>
+        </div>
+        <div class="lastname-label_wrapper">
+            <label for="lastName" class="lastname_wrapper">
+                <input id="lastName" type="text" name="lastName" placeholder="Last name" required>
+            </label>
+        </div>
+        <div class="login-label_wrapper">
+            <label for="login" class="login_wrapper">
+                <input id="login" type="email" name="login" placeholder="Email" required>
+            </label>
+        </div>
+        <div class="password-label_wrapper">
+            <label for="password" class="password-wrapper">
+                <input id="password" type="password" name="password" placeholder="password" required>
+            </label>
+        </div>
+<!--        <ul class="tags-list">-->
+<!--            <li th:each="tag : ${tags}" class="tag-row">-->
+<!--                <div class="tag-unit">-->
+<!--                    <input type="checkbox" th:field="${user.preferredTags}" th:value="${tag.id}" class="tag">-->
+<!--                    <label th:text="${tag.body}" class="tag-body"></label>-->
+<!--                </div>-->
+<!--            </li>-->
+<!--        </ul>-->
 
-        <!--        <label for="createdAt">Created at:-->
-<!--            <input id="createdAt" type="datetime-local" name="createdAt" th:value="*{createdAt}">-->
-<!--        </label><br>-->
-        <button type="submit">Register</button>
+        <div class="tags-label_wrapper">
+            <div class="tags-info">
+                <p>Choose your preferred tags:</p>
+            </div>
+        <label class="tags-label">
+            <select name="tags" th:id="tags-list" th:value="${chosenTags}" multiple>
+                <option th:each="tag : ${tags}" th:value="${tag.id}" class="tag-unit" th:text="${tag.body}">
+                </option>
+            </select>
+        </label>
+        </div>
+        <div class="registration-button_wrapper">
+            <button type="submit" class="registration-button">Register</button>
+        </div>
     </form>
+    </div>
+    </div>
+<script>
+    new MultiSelectTag('tags-list', {
+        rounded: true,    // default true
+        // shadow: true,      // default false
+        placeholder: 'Search',  // default Search...
+        tagColor: {
+            textColor : '#101720',
+            borderColor: '#7972c2',
+            bgColor: '#ebcef2',
+        }
+    });
+</script>
 </body>
 </html>

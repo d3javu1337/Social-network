@@ -1,0 +1,147 @@
+body, html{
+    width: 100%;
+    height: 100%;
+    background-color: #F0F0F0;
+    /*background-color: #000;*/
+    display: flex;
+    /*flex-direction: column;*/
+    justify-content: center;
+    align-items: center;
+}
+
+.registration_wrapper{
+    height: 50%;
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    /*justify-content: center;*/
+    /*align-items: center;*/
+    background-color: #ffffff;
+}
+
+.registration-form{
+    margin-top: 10%;
+    width: 50%;
+    height: 100%;
+}
+
+.registration-form_wrapper{
+    width: 100%;
+    /*height: 80%;*/
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#firstName{
+    background-color: #eee;
+    border: none;
+    margin: 8px 0;
+    padding: 10px 15px;
+    font-size: 13px;
+    border-radius: 8px;
+    width: 100%;
+    outline: none;
+}
+
+#lastName{
+    background-color: #eee;
+    border: none;
+    margin: 8px 0;
+    padding: 10px 15px;
+    font-size: 13px;
+    border-radius: 8px;
+    width: 100%;
+    outline: none;
+}
+
+#login{
+    background-color: #eee;
+    border: none;
+    margin: 8px 0;
+    padding: 10px 15px;
+    font-size: 13px;
+    border-radius: 8px;
+    width: 100%;
+    outline: none;
+}
+
+#password{
+    background-color: #eee;
+    border: none;
+    margin: 8px 0;
+    padding: 10px 15px;
+    font-size: 13px;
+    border-radius: 8px;
+    width: 100%;
+    outline: none;
+}
+
+.registration-button_wrapper{
+    width: 100%;
+    display: flex;
+    justify-content: right;
+    margin: 10px;
+    /*margin: 8px 0;*/
+}
+
+.registration-button{
+    width: 70px;
+    /*width: 100%;*/
+    /*width: ;*/
+    border-radius: 5px;
+    /*margin-left: 10px;*/
+    /*margin: 8px 0;*/
+    margin-right: -10px;
+    /*background: #f0f0f0;*/
+    height: 25px;
+    border: 0;
+    background: #ebcef2;
+    font-weight: bold;
+    color: #101720;
+    /*letter-spacing: 1px;*/
+}
+
+.login-label_wrapper{
+    margin: 10px;
+}
+
+.password-label_wrapper{
+    margin: 10px;
+}
+
+.firstname-label_wrapper{
+    margin: 10px;
+}
+
+.lastname-label_wrapper{
+    margin: 10px;
+}
+
+.tags-label_wrapper{
+    width: 103%;
+    /*display: flex;*/
+    /*justify-content: center;*/
+    /*align-items: end;*/
+    margin-left: 10px;
+    /*margin: 8px 0;*/
+}
+
+.tags-info{
+    display: flex;
+    justify-content: center;
+    margin-top: -10px;
+}
+
+.tags-info p{
+    font-size: 13px;
+    font-weight: bolder;
+}
+
+/*.mult-select-tag{*/
+/*    width: 10%;*/
+/*}*/
+

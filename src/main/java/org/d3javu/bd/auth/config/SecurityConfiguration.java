@@ -55,6 +55,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(
                         auth -> auth
                                 .requestMatchers("/login", "/registration").permitAll()
+                                .requestMatchers("/css/**").permitAll()
                                 .requestMatchers("/admin/**").hasAuthority(admin.getAuthority())
                                 .requestMatchers(AntPathRequestMatcher.antMatcher("/users/{\\d}/delete")).hasRole(admin.getAuthority())
                                 .anyRequest().authenticated()
@@ -63,7 +64,7 @@ public class SecurityConfiguration {
 //                .httpBasic(Customizer.withDefaults());
                 .formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/posts", true)
                         .permitAll())
-                .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/login").deleteCookies("JSESSIONID"));
+                .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/login").deleteCookies("JSESSIONID").permitAll());
         return http.build();
     }
 

@@ -1,26 +1,39 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>login</title>
+    <meta charset="UTF-8">
+    <title>login</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}" href="static/css/login/login.css">
 </head>
-<header>123</header>
-  <body style="text-align: center; font-size: 20px; position: relative; vertical-align: center" >
-    <div style="color: red" th:if="${param.error}">
-      Invalid auth data
+<body>
+    <div class="login_wrapper">
+        <div style="color: red"  class="error-message">
+            <div>
+                <p th:if="${param.error}">
+                    Invalid auth data
+                </p>
+            </div>
+        </div>
+        <div class="login-form_wrapper">
+            <form action="/login" method="post" class="login-form">
+                <div class="username-label_wrapper">
+                    <label for="username" class="username_wrapper">
+                        <input id="username" type="text" name="username" placeholder="email">
+                    </label>
+                </div>
+                <div class="password-label_wrapper">
+                    <label for="password" class="password-wrapper">
+                        <input id="password" type="password" name="password" placeholder="Password">
+                    </label><br>
+                </div>
+                <div class="login-button_wrapper">
+                    <button type="submit" class="login-button">login</button>
+                </div>
+            </form>
+        </div>
+        <div class="registration-link_wrapper">
+            <a href="/registration" class="registration-link">registration</a>
+        </div>
     </div>
-    <form action="/login" method="post">
-      <label for="username">email
-        <input id="username" type="text" name="username">
-      </label><br>
-      <label for="password">Password
-        <input id="password" type="password" name="password">
-      </label><br>
-      <button type="submit">login</button>
-    </form>
-    <form action="/registration">
-      <button type="submit">register</button>
-    </form>
-  </body>
-<!--<footer>123</footer>-->
+</body>
 </html>
