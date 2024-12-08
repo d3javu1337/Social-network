@@ -1,6 +1,7 @@
 package org.d3javu.bd.rest;
 
 import lombok.RequiredArgsConstructor;
+import org.d3javu.bd.dto.comment.CommentCreateDto;
 import org.d3javu.bd.dto.comment.CommentReadDto;
 import org.d3javu.bd.mapper.comment.CommentReadMapper;
 import org.d3javu.bd.models.user.User;
@@ -62,6 +63,16 @@ public class CommentRestController {
 
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
+
+    @PostMapping("/{postId}/create")
+    public ResponseEntity<CommentReadDto> create(@RequestParam String body, @PathVariable long postId) {
+        var commentCreateDto = new CommentCreateDto();
+        commentCreateDto.setBody(body);
+        commentCreateDto.setUser(this.getCurrentUser());
+        var comment = this.commentService.create(postId, commentCreateDto);
+        return new ResponseEntity<>(comment, HttpStatus.OK);
+    }
+
 
     public User getCurrentUser(){
         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();

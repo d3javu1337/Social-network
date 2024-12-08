@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.post.PostCreateDto;
 import org.d3javu.bd.dto.post.PostEditDto;
 import org.d3javu.bd.dto.post.PostReadDto;
+import org.d3javu.bd.dto.tag.PreferredTagsDto;
 import org.d3javu.bd.mapper.post.PostCreateMapper;
 import org.d3javu.bd.mapper.post.PostEditMapper;
 import org.d3javu.bd.mapper.post.PostReadMapper;
@@ -20,11 +21,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RequestMapping("/posts")
 @RequiredArgsConstructor
@@ -52,10 +51,11 @@ public class PostController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute PostCreateDto postCreateDto) {
+    public String create(@ModelAttribute PostCreateDto postCreateDto, @ModelAttribute PreferredTagsDto chosenTags) {
         var user = SecurityContextHolder.getContext().getAuthentication().getName();
         var author = this.userService.findByEmail(user);
         postCreateDto.setAuthor(author);
+        postCreateDto.setTags(chosenTags.getTags());
 //        System.out.println(post+"++++++++++++++++++++++++++++++++");
         var p = this.postService.create(postCreateDto);
         return "redirect:/posts/" + p.getId();
@@ -75,6 +75,7 @@ public class PostController {
 //        List<PostReadDto> posts = this.postService.findByPreferred(tags);
         model.addAttribute("posts", posts);
         model.addAttribute("currentUser", currentUser);
+        model.addAttribute("tags", this.tagService.findAll());
         return "/post/posts";
     }
 
@@ -88,6 +89,16 @@ public class PostController {
                 .collect(Collectors.toList());
         model.addAttribute("posts", posts);
         model.addAttribute("currentUser", user);
+        model.addAttribute("tags", this.tagService.findAll());
+        return "/post/posts";
+    }
+
+    @GetMapping("/bytags")
+    public String findByTags(Model model, @ModelAttribute PreferredTagsDto tags) {
+        var posts = this.postService.findByPreferred(tags.getTags());
+        model.addAttribute("posts", posts);
+        model.addAttribute("currentUser", this.userReadMapper.map(this.getCurrentUser()));
+        model.addAttribute("tags", this.tagService.findAll());
         return "/post/posts";
     }
 

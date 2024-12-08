@@ -9,15 +9,32 @@
     <script th:src="@{https://code.jquery.com/jquery-3.1.1.min.js}"></script>
     <script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js}" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script th:src="@{/js/posts.js}" src="/static/js/posts.js"></script>
+    <link rel="stylesheet" th:href="@{https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css}">
+    <script th:src="@{https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/js/multi-select-tag.js}"></script>
 </head>
 
 <body>
 <header th:insert="~{fragments/headerFragment :: header(${currentUser})}"></header>
 <main>
-<div>
-    <a th:href="@{/posts/preferred}">preferred</a>
-    <a th:href="@{/posts}">all</a>
-</div>
+    <div class="feed-actions_wrapper">
+        <div class="feed_switch">
+            <a th:href="@{/posts/preferred}">preferred</a>
+            <a th:href="@{/posts}">all</a>
+        </div>
+        <div class="search">
+            <div class="tags-label_wrapper">
+                <form th:action="@{/posts/bytags}" method="get" class="search-form">
+                <label class="tags-label">
+                    <select name="tags" th:id="tags-list" th:value="${chosenTags}" multiple>
+                        <option th:each="tag : ${tags}" th:value="${tag.id}" class="tag-unit" th:text="${tag.body}">
+                        </option>
+                    </select>
+                </label>
+                    <button type="submit" class="search-button">search</button>
+                </form>
+            </div>
+        </div>
+    </div>
     <div th:each="post : ${posts}" class="posts-wrapper">
         <div class="post-unit" th:id="'post'+${post.id}">
             <div class="author-wrapper">
@@ -36,9 +53,31 @@
                 <div class="post-body">
                     <p th:text="${post.body}"></p>
                 </div>
-                <div class="full-post-link">
-                    <a th:href="@{'/posts/'+${post.id}}">полный пост</a>
+
+<!--                <div class="images">-->
+<!--                    <div th:each="t : ${post.images}" th:if="${not t.isEmpty()}">-->
+<!--                        <img th:src="@{'/api/v1/posts/'+${post.id}+'/images/'+${t}}" >-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="images">-->
+<!--                    <img th:each="t : ${post.images}" th:if="${not t.isEmpty()}" th:src="@{'/api/v1/posts/'+${post.id}+'/images/'+${t}}">-->
+<!--                </div>-->
+                <div class="images_wrapper" th:if="${not post.images.isEmpty() && post.images!=null}">
+                    <div class="images" th:if="${not post.images.isEmpty()}">
+                        <a th:each="t : ${post.images}" th:if="${not t.isEmpty()}" th:href="@{'/api/v1/posts/'+${post.id}+'/images/'+${t}}" th:target="_blank" th:rel="noopener"  class="image_wrapper">
+                            <img th:src="@{'/api/v1/posts/'+${post.id}+'/images/'+${t}}">
+                        </a>
+                    </div>
                 </div>
+                <div class="post-tags_wrapper" th:if="${not post.tags.isEmpty()}">
+                    <div class="tag_wrapper" th:each="tag : ${post.tags}">
+                        <a th:href="@{'/posts/tag/'+${tag.id}}" th:text="${tag.body}"></a>
+                    </div>
+                </div>
+<!--                <div class="full-post-link">-->
+<!--                    <a th:href="@{'/posts/'+${post.id}}">полный пост</a>-->
+<!--                </div>-->
                 <div class="actions-wrapper">
                     <div class="actions">
                         <div class="like-block">
@@ -62,5 +101,16 @@
         <br>
     </div>
 </main>
+<script>
+    new MultiSelectTag('tags-list', {
+        rounded: true,
+        placeholder: 'Search',
+        tagColor: {
+            textColor : '#101720',
+            borderColor: '#7972c2',
+            bgColor: '#ebcef2',
+        }
+    });
+</script>
 </body>
 </html>

@@ -3,12 +3,14 @@ package org.d3javu.bd.controllers.adminController;
 import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.tag.TagDto;
 import org.d3javu.bd.models.tag.Tag;
+import org.d3javu.bd.models.user.User;
 import org.d3javu.bd.repositories.TagRepository;
 import org.d3javu.bd.repositories.UserRepository;
 import org.d3javu.bd.service.PostService;
 import org.d3javu.bd.service.TagService;
 import org.d3javu.bd.service.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +28,7 @@ public class AdminController {
 
     @GetMapping("/tags")
     public String tags(Model model) {
+        model.addAttribute("currentUser", this.getCurrentUser());
         model.addAttribute("tags", tagService.findAll());
         return "admin/tags";
     }
@@ -51,6 +54,11 @@ public class AdminController {
             this.tagService.create(dto);
             return "redirect:/admin/tags";
         }
+    }
+
+    public User getCurrentUser(){
+        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        return this.userService.findByEmail(userEmail);
     }
 
 //        return userService.update(id, user)

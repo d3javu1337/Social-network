@@ -1,7 +1,12 @@
 $(document).ready(function (){
     $('.comments-button').click(function (event){
         event.preventDefault();
-        let resp = getComments(event);
+        console.log(event);
+        let href = event.currentTarget.href;
+        let commentsWrapper = event.currentTarget.parentNode.parentNode.parentNode.parentNode.nextElementSibling;
+        // let forRemove = event.currentTarget.parentNode.parentNode.parentNode.parentNode.nextElementSibling;
+        // let resp = getComments(event);
+        getComments(href, commentsWrapper);
     });
 
     $('.post_like-form').submit(function (event){
@@ -25,17 +30,21 @@ $(document).ready(function (){
 // });
 
 
-function getComments(event){
+function getComments(href, commentsWrapper){
+
+    commentsWrapper = commentsWrapper || undefined;
+
     // console.log(href)
 
-    let href = event.currentTarget.href
+    // let href = event.currentTarget.href
 
     // event.nextElementSibling
 
     // console.log(event.currentTarget.parentNode.parentNode.parentNode.parentNode.nextElementSibling.className);
 
-    if(event.currentTarget.parentNode.parentNode.parentNode.parentNode.nextElementSibling !== null){
-        return ;
+    if(commentsWrapper !== undefined && commentsWrapper !== null){
+        commentsWrapper.parentNode.removeChild(commentsWrapper);
+        return;
     }
 
     // console.log(event.currentTarget.parentNode.parentNode.parentNode.nextSibling)
@@ -67,6 +76,31 @@ function getComments(event){
         h.textContent = 'Comments';
 
         commentsWrapper.append(h);
+
+        let createCommentWrapper = document.createElement('div');
+        createCommentWrapper.className = 'create-comment_wrapper';
+
+        let commentCreateForm = document.createElement('form');
+        // commentCreateForm.action = '/api/v1/comments/create';
+        commentCreateForm.action = '/posts/'+splittedPath[splittedPath.length-1]+'/comment/new';
+        commentCreateForm.method = 'post';
+
+        let commentCreateButton = document.createElement('button');
+        commentCreateButton.type = 'submit';
+        commentCreateButton.innerText = 'create comment';
+
+        let commentTextArea = document.createElement('textarea');
+        commentTextArea.className = 'comment-create-body';
+        commentTextArea.ariaMultiLine = 'true';
+        commentTextArea.placeholder = 'write your opinion';
+
+        commentCreateForm.append(commentTextArea);
+        commentCreateForm.append(commentCreateButton);
+        commentCreateForm.addEventListener('submit', createComment);
+
+        createCommentWrapper.append(commentCreateForm);
+
+        commentsWrapper.append(createCommentWrapper);
 
         comments.forEach(el =>{
             let authorId = el['author']['id'];
@@ -277,4 +311,25 @@ function likePost(event){
         // event.target.nextElementSibling.innerText= 10;
         // console.log(event.target.nextElementSibling);
     });
+}
+
+function createComment(event){
+    event.preventDefault();
+    // console.log(event.target.action);
+    let commentContent = event.currentTarget.firstChild.value;
+    let splittedPath = event.currentTarget.action.split('/');
+    let postId = splittedPath[splittedPath.length-3];
+    console.log(postId);
+    let url = '/api/v1/comments/'+postId+'/create';
+    $.post(
+        url,
+        {
+            body: commentContent,
+        }
+    ).done(function (data, textStatus, jqHXR){
+        event.target.parentNode.parentNode.parentNode.removeChild(event.target.parentNode.parentNode.parentNode.lastElementChild);
+        getComments('/api/v1/comments/'+postId);
+        // getComments('/api/v1/comments/'+postId ,event.target.parentNode.parentNode.parentNode.lastElementChild)
+    });
+
 }

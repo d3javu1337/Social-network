@@ -26,7 +26,9 @@ public class PostCreateMapper implements Mapper<PostCreateDto, Post> {
         List<Images> images = new ArrayList<>();
         if(object.getImages() != null) {
             for (var x : object.getImages()) {
-                images.add(new Images(post, x.getOriginalFilename()));
+                if(!x.getOriginalFilename().isEmpty()){
+                    images.add(new Images(post, x.getOriginalFilename()));
+                }
             }
 
             post.setImages(images);

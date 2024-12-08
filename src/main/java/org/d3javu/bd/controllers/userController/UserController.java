@@ -3,6 +3,7 @@ package org.d3javu.bd.controllers.userController;
 import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.comment.CommentReadDto;
 import org.d3javu.bd.dto.post.PostReadDto;
+import org.d3javu.bd.dto.tag.PreferredTagsDto;
 import org.d3javu.bd.dto.user.UserEditDto;
 import org.d3javu.bd.filter.user.UserFilter;
 import org.d3javu.bd.dto.user.UserReadDto;
@@ -10,9 +11,11 @@ import org.d3javu.bd.mapper.user.UserEditMapper;
 import org.d3javu.bd.mapper.user.UserReadMapper;
 import org.d3javu.bd.models.comment.Comment;
 import org.d3javu.bd.models.user.User;
+import org.d3javu.bd.repositories.TagRepository;
 import org.d3javu.bd.repositories.UserRepository;
 import org.d3javu.bd.service.CommentService;
 import org.d3javu.bd.service.PostService;
+import org.d3javu.bd.service.TagService;
 import org.d3javu.bd.service.UserService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,6 +40,7 @@ public class UserController {
     private final PostService postService;
     private final CommentService commentService;
     private final UserReadMapper userReadMapper;
+    private final TagService tagService;
 
     @GetMapping
     public String findAll(Model model, UserFilter filter, Pageable pageable) {
@@ -50,6 +55,8 @@ public class UserController {
     public String findById(@PathVariable("id") String id, Model model){
         model.addAttribute("follows", this.userService.findFollowsById(id));
         model.addAttribute("posts", this.userService.findPostsByUser(id));
+        model.addAttribute("chosenTags", new PreferredTagsDto(new HashSet<>()));
+        model.addAttribute("tags", this.tagService.findAll());
         if(isNumber(id)){
             var val = Long.parseLong(id);
             return userService.findById(val)

@@ -5,6 +5,11 @@
     <title>User</title>
     <link rel="stylesheet" th:href="@{/css/user/userProfile.css}" href="/static/css/user/userProfile.css">
     <link rel="stylesheet" th:href="@{/css/forAll.css}" href="/static/css/forAll.css">
+    <script th:src="@{https://code.jquery.com/jquery-3.1.1.min.js}"></script>
+    <script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js}"></script>
+    <script th:src="@{/js/posts.js}" src="/static/js/posts.js"></script>
+    <link rel="stylesheet" th:href="@{https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css}">
+    <script th:src="@{https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/js/multi-select-tag.js}"></script>
 </head>
 <body>
 <header th:insert="~{fragments/headerFragment :: header(${currentUser})}"></header>
@@ -74,32 +79,123 @@
 <div class="post-create-wrapper" th:if="${currentUser.id==user.id}">
     <form th:action="@{'/posts/create'}" method="post" enctype="multipart/form-data"  class="post-create">
         <label for="title">
-            <input id="title" type="text" name="title" placeholder="title" required>
+            <input id="title" type="text" name="title" placeholder="title" maxlength="255" required>
         </label><br>
         <label for="body">
-            <textarea id="body" type="text" name="body" placeholder="body" aria-multiline="true" required></textarea>
+            <textarea id="body" type="text" name="body" placeholder="body" aria-multiline="true" spellcheck="false" required></textarea>
         </label><br>
         <label for="images">
-            <input id="images" type="file" name="images" multiple>
+                <input id="images" accept="image/*" onchange="getImages(this)" type="file" name="images" multiple>
         </label><br>
-        <button type="submit" class="create-button">create</button>
+        <div id="pickedImages" style="display: none"></div>
+        <div class="tags-label_wrapper">
+            <div class="tags-info">
+                <p>Choose tags for your post:</p>
+            </div>
+            <label class="tags-label">
+                <select name="tags" th:id="tags-list" th:value="${chosenTags}" multiple>
+                    <option th:each="tag : ${tags}" th:value="${tag.id}" class="tag-unit" th:text="${tag.body}">
+                    </option>
+                </select>
+            </label>
+        </div>
+        <div class="create-button_wrapper">
+            <button type="submit" class="create-button">create</button>
+        </div>
     </form>
 </div>
-    <div th:each="post : ${posts}" class="user-posts_wrapper">
-        <div class="post-unit">
+    <script>
+        new MultiSelectTag('tags-list', {
+            rounded: true,    // default true
+            // shadow: true,      // default false
+            placeholder: 'Search',  // default Search...
+            tagColor: {
+                textColor : '#101720',
+                borderColor: '#7972c2',
+                bgColor: '#ebcef2',
+            }
+        });
+    </script>
+
+    <script type="text/javascript">
+        function getImages(event){
+            // document.getElementById('images').src = window.URL.createObjectURL(this.files[0]);
+            let picked = event.files;
+            // event.
+            // console.log(picked);
+            let wrapper = document.getElementById('pickedImages');
+            wrapper.style.display = 'flex';
+            // let wrapper = document.createElement('div');
+            wrapper.id = 'pickedImages';
+            Array.from(picked).forEach(el =>{
+                // console.log(el);
+                let imageName = el.name;
+                el = window.URL.createObjectURL(el);
+                let img = document.createElement('img');
+                img.src = el;
+                img.alt = imageName;
+                wrapper.append(img);
+            });
+        }
+    </script>
+
+
+<!--    <div th:each="post : ${posts}" class="user-posts_wrapper">-->
+<!--        <div class="post-unit">-->
+<!--&lt;!&ndash;            <div class="author-wrapper">&ndash;&gt;-->
+<!--&lt;!&ndash;                <img th:src="@{/api/v1/users/{userId}/avatar(userId=${post.author.id})}" alt="avatar" class="author-avatar_post">&ndash;&gt;-->
+<!--&lt;!&ndash;                <a th:href="@{'/users/'+${post.author.id}}" th:text="|${post.author.firstName} ${post.author.lastName}|" class="author">Author</a>&ndash;&gt;-->
+<!--&lt;!&ndash;            </div>&ndash;&gt;-->
 <!--            <div class="author-wrapper">-->
-<!--                <img th:src="@{/api/v1/users/{userId}/avatar(userId=${post.author.id})}" alt="avatar" class="author-avatar_post">-->
-<!--                <a th:href="@{'/users/'+${post.author.id}}" th:text="|${post.author.firstName} ${post.author.lastName}|" class="author">Author</a>-->
+<!--                <a th:href="@{'/users/'+${post.author.id}}" class="author-info">-->
+<!--                    <img th:src="@{/api/v1/users/{userId}/avatar(userId=${post.author.id})}" alt="avatar" class="author-avatar_post">-->
+<!--                    <p th:text="|${post.author.firstName} ${post.author.lastName}|" class="author"></p>-->
+<!--                </a>-->
+<!--                <div class="created-date-wrapper">-->
+<!--&lt;!&ndash;                    <p th:text="${post.createdAt}"></p>&ndash;&gt;-->
+<!--                    <p th:text="${#temporals.format(post.createdAt, 'dd MMMM yyyy HH:mm')}"></p>-->
+<!--&lt;!&ndash;                    <p th:text="${{post.createdAt}}"></p>&ndash;&gt;-->
+<!--                </div>-->
 <!--            </div>-->
+<!--            <div class="post">-->
+<!--                <div class="post-title">-->
+<!--                    <p th:text="${post.title}"></p>-->
+<!--                </div>-->
+<!--                <div class="post-body">-->
+<!--                    <p th:text="${post.body}"></p>-->
+<!--                </div>-->
+<!--                <div class="full-post-link">-->
+<!--                    <a th:href="@{'/posts/'+${post.id}}">полный пост</a>-->
+<!--                </div>-->
+<!--                <div class="actions-wrapper">-->
+<!--                    <div class="actions">-->
+<!--                        <div class="like-block">-->
+<!--                            <form th:action="@{'/posts/'+${post.id}+'/like'}" method="post" th:if="${!post.likes.contains(currentUser)}">-->
+<!--                                <button type="submit" class="like-button">like</button>-->
+<!--                            </form>-->
+<!--                            <form th:action="@{'/posts/'+${post.id}+'/unlike'}" method="post" th:if="${post.likes.contains(currentUser)}">-->
+<!--                                <button type="submit" class="like-button">unlike</button>-->
+<!--                            </form>-->
+<!--                        </div>-->
+<!--                        <div class="comment-block">-->
+<!--                            <p>placeholder</p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <br>-->
+<!--    </div>-->
+
+    <div th:each="post : ${posts}" class="user-posts_wrapper">
+        <div class="post-unit" th:id="'post'+${post.id}">
             <div class="author-wrapper">
                 <a th:href="@{'/users/'+${post.author.id}}" class="author-info">
                     <img th:src="@{/api/v1/users/{userId}/avatar(userId=${post.author.id})}" alt="avatar" class="author-avatar_post">
                     <p th:text="|${post.author.firstName} ${post.author.lastName}|" class="author"></p>
                 </a>
                 <div class="created-date-wrapper">
-<!--                    <p th:text="${post.createdAt}"></p>-->
                     <p th:text="${#temporals.format(post.createdAt, 'dd MMMM yyyy HH:mm')}"></p>
-<!--                    <p th:text="${{post.createdAt}}"></p>-->
                 </div>
             </div>
             <div class="post">
@@ -109,21 +205,31 @@
                 <div class="post-body">
                     <p th:text="${post.body}"></p>
                 </div>
-                <div class="full-post-link">
-                    <a th:href="@{'/posts/'+${post.id}}">полный пост</a>
+                <div class="images_wrapper" th:if="${not post.images.isEmpty()}">
+                    <div class="images" th:if="${not post.images.isEmpty()}">
+                        <a th:each="t : ${post.images}" th:if="${not t.isEmpty()}" th:href="@{'/api/v1/posts/'+${post.id}+'/images/'+${t}}" th:target="_blank" th:rel="noopener" class="image_wrapper">
+                            <img th:src="@{'/api/v1/posts/'+${post.id}+'/images/'+${t}}">
+                        </a>
+                    </div>
                 </div>
+<!--                <div class="full-post-link">-->
+<!--                    <a th:href="@{'/posts/'+${post.id}}">полный пост</a>-->
+<!--                </div>-->
                 <div class="actions-wrapper">
                     <div class="actions">
                         <div class="like-block">
-                            <form th:action="@{'/posts/'+${post.id}+'/like'}" method="post" th:if="${!post.likes.contains(currentUser)}">
+                            <form th:action="@{'/posts/'+${post.id}+'/like'}" method="post" th:if="${!post.likes.contains(currentUser)}" class="post_like-form">
                                 <button type="submit" class="like-button">like</button>
                             </form>
-                            <form th:action="@{'/posts/'+${post.id}+'/unlike'}" method="post" th:if="${post.likes.contains(currentUser)}">
+                            <form th:action="@{'/posts/'+${post.id}+'/unlike'}" method="post" th:if="${post.likes.contains(currentUser)}" class="post_unlike-form">
                                 <button type="submit" class="like-button">unlike</button>
                             </form>
+                            <p th:text="${post.likes.size()}" class="post_like-count">likes count</p>
                         </div>
                         <div class="comment-block">
-                            <p>placeholder</p>
+                            <a th:href="@{'/api/v1/comments/'+${post.id}}" class="comments-button">
+                                comments
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -131,6 +237,7 @@
         </div>
         <br>
     </div>
+
 </main>
 </body>
 </html>

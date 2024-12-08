@@ -20,9 +20,9 @@
 *.rar
 
 # images
-images/postimages
-images/profileimages
-
+#images/postimages
+#images/profileimages
+/images/**
 # for compiled
 */target/**
 
