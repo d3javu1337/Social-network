@@ -3,23 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <title>Users</title>
+    <link rel="stylesheet" th:href="@{/css/forAll.css}" href="/static/css/forAll.css">
+    <link rel="stylesheet" th:href="@{/css/user/users.css}">
 </head>
 <body>
 <header th:insert="~{fragments/headerFragment :: header(${currentUser})}"></header>
-<form action="/users">
-    <label for="firstName">Firstname:
-        <input id="firstName" type="text" name="firstName">
-    </label>
-    <label for="lastName">Lastname:
-        <input id="LastName" type="text" name="lastName">
-    </label>
-    <label for="email">email:
-        <input id="email" type="text" name="email">
-    </label>
-    <button type="submit">Filter</button>
-</form>
-  <div th:each="user : ${users}">
-    <a th:href="@{'/users/' + ${user.id}}" th:text="|${user.id}. ${user.username}. ${user.firstName}|">User</a>
-  </div>
+<main>
+    <!--<form action="/users">-->
+    <!--    <label for="firstName">Firstname:-->
+    <!--        <input id="firstName" type="text" name="firstName">-->
+    <!--    </label>-->
+    <!--    <label for="lastName">Lastname:-->
+    <!--        <input id="LastName" type="text" name="lastName">-->
+    <!--    </label>-->
+    <!--    <label for="email">email:-->
+    <!--        <input id="email" type="text" name="email">-->
+    <!--    </label>-->
+    <!--    <button type="submit">Filter</button>-->
+    <!--</form>-->
+    <div class="users_wrapper">
+        <div th:each="user : ${users}" class="user">
+            <a th:href="@{'/users/' + ${user.id}}" class="user-link">
+                <div class="main-data">
+                    <div class="user-avatar-wrapper">
+                        <img th:src="@{/api/v1/users/{userId}/avatar(userId=${user.id})}" alt="avatar" class="user-avatar">
+                    </div>
+                    <p th:text="|${user.firstName} ${user.lastName}|" class="userdata-fi"></p>
+                    <!--            <p th:text="${user.firstName}">firstname</p>-->
+                    <!--            <p th:text="${user.lastName}">lastname</p>-->
+                </div>
+            </a>
+        </div>
+    </div>
+
+</main>
 </body>
 </html>

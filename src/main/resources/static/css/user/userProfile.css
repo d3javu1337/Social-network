@@ -625,3 +625,35 @@ body{
     justify-content: space-between;
     align-items: center;
 }
+
+.post-tags_wrapper{
+    margin-top: 15px;
+    /*margin: 10px;*/
+    /*margin-left: 30px;*/
+    width: 100%;
+    display: inline-flex;
+    height: 50px;
+    /*overflow: scroll;*/
+    overflow-inline: scroll;
+    /*justify-content: normal;*/
+
+    /*justify-content: space-between;*/
+}
+
+.tag_wrapper{
+    display: inline-flex;
+    width: fit-content;
+}
+
+.post-tags_wrapper a{
+    padding: 7px;
+    font-size: 14px;
+    font-weight: bolder;
+    /*overflow-inline: visible;*/
+    /*margin: 10px;*/
+    /*width: fit-content;*/
+    display: inline-flex;
+    /*height: 20px;*/
+    white-space: nowrap;
+    width: fit-content;
+}

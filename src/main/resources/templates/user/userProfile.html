@@ -212,6 +212,11 @@
                         </a>
                     </div>
                 </div>
+                <div class="post-tags_wrapper" th:if="${not post.tags.isEmpty()}">
+                    <div class="tag_wrapper" th:each="tag : ${post.tags}">
+                        <a th:href="@{'/posts/tag/'+${tag.id}}" th:text="${tag.body}"></a>
+                    </div>
+                </div>
 <!--                <div class="full-post-link">-->
 <!--                    <a th:href="@{'/posts/'+${post.id}}">полный пост</a>-->
 <!--                </div>-->

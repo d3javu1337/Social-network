@@ -11,6 +11,14 @@ body{
     /*background-color: #ede9e8;*/
     /*background-color: #e0dede;*/
     background-color: #F0F0F0;
+        /*background-color: #101720;*/
+        /*background-color: #292929;*/
+        /*background-color: #0b1215;*/
+        /*color: #d7d8db;*/
+        /*font-family: "ui-sans-serif";*/
+        font-family: Tahoma, sans-serif;
+        font-size: 18px;
+        font-weight: normal;
 }
 
 div{
@@ -21,6 +29,7 @@ div{
 a{
     text-decoration: none;
     color: #7972c2;
+    /*font-size: 16px;*/
 }
 
 #header-wrapper{
@@ -44,6 +53,7 @@ a{
 .header-element a{
     vertical-align: center;
     font-size: 16px;
+    /*font-weight: bolder;*/
 }
 
 .header-element a:hover{
