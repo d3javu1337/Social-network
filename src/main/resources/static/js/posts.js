@@ -82,20 +82,32 @@ function getComments(href, commentsWrapper){
 
         let commentCreateForm = document.createElement('form');
         // commentCreateForm.action = '/api/v1/comments/create';
+        commentCreateForm.className = 'comment-create-form'
         commentCreateForm.action = '/posts/'+splittedPath[splittedPath.length-1]+'/comment/new';
         commentCreateForm.method = 'post';
 
         let commentCreateButton = document.createElement('button');
         commentCreateButton.type = 'submit';
         commentCreateButton.innerText = 'create comment';
+        commentCreateButton.className = 'comment-create-button';
 
         let commentTextArea = document.createElement('textarea');
         commentTextArea.className = 'comment-create-body';
         commentTextArea.ariaMultiLine = 'true';
         commentTextArea.placeholder = 'write your opinion';
+        commentTextArea.spellcheck = false;
 
-        commentCreateForm.append(commentTextArea);
-        commentCreateForm.append(commentCreateButton);
+        let textAreaLabel = document.createElement('label');
+        textAreaLabel.htmlFor = 'comment-create-body';
+        textAreaLabel.append(commentTextArea);
+
+        let buttonLabel = document.createElement('label');
+        buttonLabel.className = 'create-comment-button_wrapper';
+        buttonLabel.htmlFor = 'comment-create-button';
+        buttonLabel.append(commentCreateButton);
+
+        commentCreateForm.append(textAreaLabel);
+        commentCreateForm.append(buttonLabel);
         commentCreateForm.addEventListener('submit', createComment);
 
         createCommentWrapper.append(commentCreateForm);
@@ -315,8 +327,8 @@ function likePost(event){
 
 function createComment(event){
     event.preventDefault();
-    // console.log(event.target.action);
-    let commentContent = event.currentTarget.firstChild.value;
+    // console.log(event.target.);
+    let commentContent = event.currentTarget.firstChild.firstChild.value;
     let splittedPath = event.currentTarget.action.split('/');
     let postId = splittedPath[splittedPath.length-3];
     console.log(postId);

@@ -134,6 +134,7 @@ public class PostController {
         var post = this.postService.findById(id).get();
         model.addAttribute("post", post);
         model.addAttribute("tags", this.tagService.findAll());
+        model.addAttribute("currentUser", this.getCurrentUser());
         return "/post/postUpdate";
     }
 

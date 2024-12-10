@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.comment.CommentCreateDto;
 import org.d3javu.bd.dto.comment.CommentReadDto;
 import org.d3javu.bd.mapper.comment.CommentReadMapper;
+import org.d3javu.bd.mapper.user.CompactUserReadMapper;
 import org.d3javu.bd.models.user.User;
 import org.d3javu.bd.service.CommentService;
 import org.d3javu.bd.service.UserService;
@@ -30,17 +31,19 @@ public class CommentRestController {
     private final CommentService commentService;
     private final CommentReadMapper commentReadMapper;
     private final UserService userService;
+    private final CompactUserReadMapper compactUserReadMapper;
 
 
-    @GetMapping(value = "/{postId}")
+    @GetMapping(value = "/{postId}", produces = MediaType.APPLICATION_JSON_VALUE)
 //    public List<CommentReadDto> getComments(@PathVariable long postId) {
     public Map<String, Object> getComments(@PathVariable long postId) {
 //        System.out.println(123);
         var comments = new ArrayList<>(this.commentService.findAllByPostId(postId));
+//        System.out.println(comments.get(0).post);
         var currentUser = this.getCurrentUser();
         var map = new HashMap<String, Object>();
         map.put("comments", comments);
-        map.put("currentUser", currentUser);
+        map.put("currentUser", this.compactUserReadMapper.map(currentUser));
         return map;
     }
 

@@ -94,6 +94,18 @@
                                 comments
                             </a>
                         </div>
+                        <div class="edit-block">
+                            <form th:action="@{'/posts/'+${post.id}+'/update'}" method="get">
+                                <button type="submit" class="post-edit-button" th:if="${post.author.id == currentUser.id}" th:text="edit"></button>
+                            </form>
+
+                            <!--                            <button type="button" onclick="edit(this)" class="post-edit-button" th:if="${post.author.id == currentUser.id}" th:text="edit"></button>-->
+                            <script>
+                                function edit(target){
+                                    console.log(target.className);
+                                }
+                            </script>
+                        </div>
                     </div>
                 </div>
             </div>

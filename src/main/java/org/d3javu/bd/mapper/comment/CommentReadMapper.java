@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.comment.CommentReadDto;
 import org.d3javu.bd.mapper.Mapper;
 import org.d3javu.bd.mapper.post.PostReadMapper;
+import org.d3javu.bd.mapper.user.CompactUserReadMapper;
 import org.d3javu.bd.mapper.user.UserMapper;
 import org.d3javu.bd.mapper.user.UserReadMapper;
 import org.d3javu.bd.models.comment.Comment;
@@ -22,12 +23,12 @@ import java.util.stream.Collectors;
 @Component
 public class CommentReadMapper implements Mapper<Comment, CommentReadDto> {
 
-    private final UserReadMapper userReadMapper;
     private final PostReadMapper postReadMapper;
+    private final CompactUserReadMapper compactUserReadMapper;
 
-    CommentReadMapper(@Lazy final UserReadMapper userReadMapper, @Lazy final PostReadMapper postReadMapper) {
-        this.userReadMapper = userReadMapper;
+    CommentReadMapper(@Lazy final PostReadMapper postReadMapper, @Lazy final CompactUserReadMapper compactUserReadMapper) {
         this.postReadMapper = postReadMapper;
+        this.compactUserReadMapper = compactUserReadMapper;
     }
 
     @Override
@@ -36,8 +37,8 @@ public class CommentReadMapper implements Mapper<Comment, CommentReadDto> {
                 object.getId(),
                 object.getBody(),
                 this.postReadMapper.map(object.getPost()),
-                this.userReadMapper.map(object.getUser()),
-                object.getLikes().stream().map(this.userReadMapper::map).collect(Collectors.toSet()),
+                this.compactUserReadMapper.map(object.getUser()),
+                object.getLikes().stream().map(this.compactUserReadMapper::map).collect(Collectors.toSet()),
 //                Optional.ofNullable(object.getLikes()).map(this.userMapper::map).orElse(new HashSet<>()),
                 object.getCreatedAt()
         );
