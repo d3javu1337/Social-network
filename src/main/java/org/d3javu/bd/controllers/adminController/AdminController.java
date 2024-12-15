@@ -56,6 +56,16 @@ public class AdminController {
         }
     }
 
+    @PostMapping("/posts/best/{count}")
+    public String posts(@PathVariable("count") Integer count) {
+        return "redirect:/admin/posts/report";
+    }
+
+    @GetMapping("/posts/report")
+    public String report(Model model) {
+        return "";
+    }
+
     public User getCurrentUser(){
         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         return this.userService.findByEmail(userEmail);

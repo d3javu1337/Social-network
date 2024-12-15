@@ -8,7 +8,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     properties.hibernate:
-      show_sql: false
+      show_sql: true
       format_sql: true
     hibernate:
 #      ddl-auto: create-drop
@@ -26,4 +26,6 @@ springdoc:
 app:
   image:
     bucket: src/images
+  report:
+    bucket: reports
 #    bucket: C:\Users\egor\IdeaProjects\bd\src\images

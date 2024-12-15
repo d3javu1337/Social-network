@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.comment.CommentReadDto;
 import org.d3javu.bd.dto.post.PostReadDto;
 import org.d3javu.bd.dto.tag.PreferredTagsDto;
+import org.d3javu.bd.dto.user.CompactUserReadDto;
 import org.d3javu.bd.dto.user.UserEditDto;
 import org.d3javu.bd.filter.user.UserFilter;
 import org.d3javu.bd.dto.user.UserReadDto;
@@ -167,7 +168,16 @@ public class UserController {
 
     @GetMapping("/follows/{id}")
     public String followers(@PathVariable("id") String id, Model model){
-        model.addAttribute("users", this.userService.findFollowsById(id));
+        var users = this.userService.findFollowsById(id)
+                .stream()
+                .map(en -> new CompactUserReadDto(
+                        en.getId(),
+                        en.getFirstName(),
+                        en.getLastName(),
+                        en.getAvatar()
+                ))
+                .collect(Collectors.toList());
+        model.addAttribute("users", users);
         model.addAttribute("currentUser", this.getCurrentUser());
         return "user/users";
     }
@@ -183,7 +193,17 @@ public class UserController {
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)).getId();
         }
         model.addAttribute("users", this.userService.findById(val)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)).getFollowers());
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
+                .getFollowers()
+                .stream()
+                .map(en -> new CompactUserReadDto(
+                        en.getId(),
+                        en.getFirstName(),
+                        en.getLastName(),
+                        en.getAvatar()
+                ))
+                .collect(Collectors.toList())
+        );
         return "user/users";
     }
 

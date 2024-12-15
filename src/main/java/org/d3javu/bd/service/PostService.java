@@ -12,6 +12,7 @@ import org.d3javu.bd.models.post.Post;
 import org.d3javu.bd.models.tag.Tag;
 import org.d3javu.bd.models.user.User;
 import org.d3javu.bd.repositories.PostRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -141,6 +142,14 @@ public class PostService {
         }else{
             throw new NotFoundException("Post not found");
         }
+    }
+
+        public List<PostReadDto> findTopN(int n){
+        return this.postRepository.findAllByOrderByViewsDescLikesCountDesc(PageRequest.of(0, n))
+                .stream()
+//                .limit(n)
+                .map(this.postReadMapper::map)
+                .collect(Collectors.toList());
     }
 
     public void uploadImages(List<MultipartFile> images){
