@@ -30,33 +30,23 @@ values
     ('2024-12-07 22:28:34.809435','base-avatar.jpg',null,'pavel80@mail.ru','Павел','Жернаков','$2a$13$10WZdwurTIulYZrqDOIlBuceEpq/S.It30megP7uxY93ldIs.Iar.','user'),
     ('2024-12-07 22:28:49.165863','base-avatar.jpg',null,'alina.ahmetova@yandex.ru','Алина','Ахметова','$2a$13$DnyQno/7v/yrY0vfVIfF4O.qHxfahHLJ7ZCZuEOnP/fVMsV7daN5W','user'),
     ('2024-12-07 22:29:07.170219','base-avatar.jpg',null,'anastasiya60@outlook.com','Анастасия','Тенишева','$2a$13$rXCAxoiKKJpndyf35v0feeE.rqsUocXpXftIkJ14qEvDsxAx15Sou','user'),
-    ('2024-12-07 22:29:32.999201','base-avatar.jpg',null,'ignat7637@hotmail.com','Игнат','Гилёв','$2a$13$u8n7V33rgj52w7HfsJ8n..DzyRWe3AkMReTjFXeE/S0T.lsQPRyOC','user');
+    ('2024-12-07 22:29:32.999201','base-avatar.jpg',null,'ignat7637@hotmail.com','Игнат','Гилёв','$2a$13$u8n7V33rgj52w7HfsJ8n..DzyRWe3AkMReTjFXeE/S0T.lsQPRyOC','user'),
+    ('2024-12-07 22:30:00', 'base-avatar.jpg', null, 'admin', 'Егор', 'Трунов', '$2a$13$ZjBIZaNcoV2xOEPKPD3PeumV4AQs3SZDg.ts.LX24ywarZJmet3Hm', 'admin');
 
 
 insert into tags
-    (id, body, description)
+    (body, description)
 values
-    (0, 'Научно-популярное', 'Научные статьи от авторитетных и неавторитетных авторов'),
-    (1, 'Программирование', ''),
-    (2, 'Игры', ''),
-    (3, 'Музыка', ''),
-    (4, 'Автомобили', ''),
-    (5, 'Техника', ''),
-    (6, 'Еда', ''),
-    (7, 'Путешествия', ''),
-    (8, 'Спорт', ''),
-    (9, 'Анекдоты', ''),
-    (10, '', ''),
-    (11, 'Наука', ''),
-    (12, 'Наука', ''),
-    (13, 'Наука', ''),
-    (14, 'Наука', ''),
-    (15, 'Наука', ''),
-    (16, 'Наука', ''),
-    (17, 'Наука', ''),
-    (18, 'Наука', ''),
-    (19, 'Наука', ''),
-    (20, 'Наука', '');
+    ('Научно-популярное', 'Научные статьи от авторитетных и неавторитетных авторов'),
+    ('Программирование', ''),
+    ('Игры', ''),
+    ('Музыка', ''),
+    ('Автомобили', ''),
+    ('Техника', ''),
+    ('Еда', ''),
+    ('Путешествия', ''),
+    ('Спорт', ''),
+    ('Анекдоты', '');
 
 -- insert into posts
 --     (author_id, created_at, id, likes_count, views_count, body, title)

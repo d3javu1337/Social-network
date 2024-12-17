@@ -1,0 +1,57 @@
+version: '3.9'
+
+volumes:
+  pg_social:
+    external: true
+  jsReports:
+
+services:
+#  pg_social:
+#    image: postgres
+#    restart: always
+#    environment:
+#      POSTGRES_DB: db
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: postgres
+#      PGDATA: /var/lib/postgresql/data/pgdata
+#    volumes:
+##      - ../2. Init Database:/docker-entrypoint-initdb.d
+#      - pg_social:/var/lib/postgresql/data
+#    ports:
+#      - "127.0.0.1:5433:5432"
+#
+
+  pg_social_alpine:
+    image: postgres:17-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+#      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+#      - ../2. Init Database:/docker-entrypoint-initdb.d
+      - ./pgdata:/var/lib/postgresql/data
+      - ./src/main/resources/sql/create.sql:/docker-entrypoint-initdb.d/001.sql
+      - ./src/main/resources/sql/insert.sql:/docker-entrypoint-initdb.d/002.sql
+    ports:
+      - "127.0.0.1:5433:5432"
+    tty: true
+
+
+#    command:
+#      - run chmod 0700 /var/lib/postgresql/data
+
+
+  jsReports:
+#    image: jsreport/jsreport:4.7.0-full
+    image: jsreport/jsreport:4.7.0
+    restart: always
+#    environment:
+    volumes:
+      - jsReports:/var/lib/jsreports/data
+    ports:
+      - "127.0.0.1:5488:5488"
+#    depends_on:
+#      pg_social:
+#        condition: service_started

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DiffGenerationConfig" isInitGenerateDdl="true">
+    <option name="initGenerateDdl" value="true" />
+    <option name="snapshotDb" value="false" />
+    <option name="snapshotDbValue" value="1f6c15e8-8bff-436a-98d7-6f6619249001" />
+    <option name="snapshotDirValue" value="$PROJECT_DIR$/src/main/resources/sql" />
+    <option name="snapshotModelValue" value="bd:entityManagerFactory" />
+    <option name="sourceModelValue" value="bd:entityManagerFactory" />
+    <option name="targetDbValue" value="1f6c15e8-8bff-436a-98d7-6f6619249001" />
+  </component>
+</project>
