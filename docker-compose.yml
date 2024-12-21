@@ -1,8 +1,8 @@
 version: '3.9'
 
 volumes:
-  pg_social:
-    external: true
+#  pg_social:
+#    external: true
   jsReports:
 
 services:
@@ -21,23 +21,23 @@ services:
 #      - "127.0.0.1:5433:5432"
 #
 
-  pg_social_alpine:
-    image: postgres:17-alpine
-    restart: always
-    environment:
-      POSTGRES_DB: db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-#      PGDATA: /var/lib/postgresql/data/pgdata
-    volumes:
-#      - ../2. Init Database:/docker-entrypoint-initdb.d
-      - ./pgdata:/var/lib/postgresql/data
-      - ./src/main/resources/sql/create.sql:/docker-entrypoint-initdb.d/001.sql
-      - ./src/main/resources/sql/insert.sql:/docker-entrypoint-initdb.d/002.sql
-    ports:
-      - "127.0.0.1:5433:5432"
-    tty: true
-
+#  pg_social_alpine:
+#    image: postgres:17-alpine
+#    restart: always
+#    environment:
+#      POSTGRES_DB: db
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: postgres
+##      PGDATA: /var/lib/postgresql/data/pgdata
+#    volumes:
+##      - ../2. Init Database:/docker-entrypoint-initdb.d
+#      - ./pgdata:/var/lib/postgresql/data
+#      - ./src/main/resources/sql/create.sql:/docker-entrypoint-initdb.d/001.sql
+#      - ./src/main/resources/sql/insert.sql:/docker-entrypoint-initdb.d/002.sql
+#    ports:
+#      - "127.0.0.1:5433:5432"
+#    tty: true
+#
 
 #    command:
 #      - run chmod 0700 /var/lib/postgresql/data

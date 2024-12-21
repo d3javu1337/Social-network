@@ -555,6 +555,7 @@ body{
     display: inline-flex;
     /*flex-direction: row;*/
     overflow-inline: scroll;
+    /*overflow-y: scroll;*/
     margin-bottom: 10px;
     border-radius: 0;
 }

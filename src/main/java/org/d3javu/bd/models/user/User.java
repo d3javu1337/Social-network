@@ -69,17 +69,17 @@ public class User implements Serializable {
 //    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 //    private List<Post> posts;
 
-    public User(String firstName, String lastName, String email, String password) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-//        this.customLink = customLink;
-        this.createdAt = LocalDateTime.now();
-//        this.roles = new ArrayList<>();
-//        this.roles.add(Roles.user);
-        this.role = Roles.admin;
-        this.password = password;
-    }
+//    public User(String firstName, String lastName, String email, String password) {
+//        this.firstName = firstName;
+//        this.lastName = lastName;
+//        this.email = email;
+////        this.customLink = customLink;
+//        this.createdAt = LocalDateTime.now();
+////        this.roles = new ArrayList<>();
+////        this.roles.add(Roles.user);
+//        this.role = Roles.admin;
+//        this.password = password;
+//    }
 
     public User(){
         this.createdAt = LocalDateTime.now();

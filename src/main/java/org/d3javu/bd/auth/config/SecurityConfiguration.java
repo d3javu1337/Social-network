@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.models.user.User;
 import org.d3javu.bd.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -43,6 +44,12 @@ public class SecurityConfiguration {
 
     private final UserService userService;
 
+    @Value("${app.report.generator.port}")
+    private int port;
+
+    @Value("${app.report.generator.host}")
+    private String host;
+
     @Autowired
     public SecurityConfiguration(@Lazy UserService userService) {
         this.userService = userService;
@@ -58,11 +65,13 @@ public class SecurityConfiguration {
                                 .requestMatchers("/css/**").permitAll()
                                 .requestMatchers("/admin/**").hasAuthority(admin.getAuthority())
                                 .requestMatchers(AntPathRequestMatcher.antMatcher("/users/{\\d}/delete")).hasRole(admin.getAuthority())
+//                                .requestMatchers("/api/**").permitAll()
+//                                .requestMatchers("/swagger-ui/**").permitAll()
                                 .anyRequest().authenticated()
 //                                .anyRequest().permitAll()
                 )
 //                .httpBasic(Customizer.withDefaults());
-                .formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/posts", true)
+                .formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/posts", false)
                         .permitAll())
                 .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/login").deleteCookies("JSESSIONID").permitAll());
         return http.build();
@@ -71,7 +80,7 @@ public class SecurityConfiguration {
     @Bean
     UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://example.com"));
+        configuration.setAllowedOrigins(List.of("http://" + this.host + ":" + this.port));
         configuration.setAllowedMethods(List.of("GET","POST"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

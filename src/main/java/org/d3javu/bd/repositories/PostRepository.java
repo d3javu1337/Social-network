@@ -27,6 +27,6 @@ public interface PostRepository extends JpaRepository<Post, Long>, FilterPostRep
 
     Set<Post> findAllByAuthorId(Long id);
 
-    List<Post> findAllByOrderByViewsDescLikesCountDesc(Pageable pageable);
+    List<Post> findAllByOrderByLikesCountDesc(Pageable pageable);
 
 }

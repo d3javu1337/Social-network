@@ -53,16 +53,6 @@
                 <div class="post-body">
                     <p th:text="${post.body}"></p>
                 </div>
-
-<!--                <div class="images">-->
-<!--                    <div th:each="t : ${post.images}" th:if="${not t.isEmpty()}">-->
-<!--                        <img th:src="@{'/api/v1/posts/'+${post.id}+'/images/'+${t}}" >-->
-<!--                    </div>-->
-<!--                </div>-->
-
-<!--                <div class="images">-->
-<!--                    <img th:each="t : ${post.images}" th:if="${not t.isEmpty()}" th:src="@{'/api/v1/posts/'+${post.id}+'/images/'+${t}}">-->
-<!--                </div>-->
                 <div class="images_wrapper" th:if="${not post.images.isEmpty() && post.images!=null}">
                     <div class="images" th:if="${not post.images.isEmpty()}">
                         <a th:each="t : ${post.images}" th:if="${not t.isEmpty()}" th:href="@{'/api/v1/posts/'+${post.id}+'/images/'+${t}}" th:target="_blank" th:rel="noopener"  class="image_wrapper">
@@ -75,9 +65,6 @@
                         <a th:href="@{'/posts/tag/'+${tag.id}}" th:text="${tag.body}"></a>
                     </div>
                 </div>
-<!--                <div class="full-post-link">-->
-<!--                    <a th:href="@{'/posts/'+${post.id}}">полный пост</a>-->
-<!--                </div>-->
                 <div class="actions-wrapper">
                     <div class="actions">
                         <div class="like-block">

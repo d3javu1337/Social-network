@@ -145,7 +145,7 @@ public class PostService {
     }
 
         public List<PostReadDto> findTopN(int n){
-        return this.postRepository.findAllByOrderByViewsDescLikesCountDesc(PageRequest.of(0, n))
+        return this.postRepository.findAllByOrderByLikesCountDesc(PageRequest.of(0, n))
                 .stream()
 //                .limit(n)
                 .map(this.postReadMapper::map)

@@ -40,7 +40,7 @@ public class Comment {
     )
     private Set<User> likes = new HashSet<>();
 
-    private Long likesCount = 0L;
+//    private Long likesCount = 0L;
 
     private LocalDateTime createdAt;
 
@@ -59,20 +59,20 @@ public class Comment {
     public void like(User user) {
         if (this.likes == null) this.likes = new HashSet<>();
         this.likes.add(user);
-        this.likesCount = (long) this.likes.size();
+//        this.likesCount = (long) this.likes.size();
     }
 
     public void unlike(User user) {
         if (this.likes != null){
             this.likes.remove(user);
-            this.likesCount = (long) this.likes.size();
+//            this.likesCount = (long) this.likes.size();
         }
     }
 
     @Override
     public String toString() {
         return "Comment{" +
-                "likesCount=" + likesCount +
+//                "likesCount=" + likesCount +
                 ", user=" + user +
                 ", body='" + body + '\'' +
                 ", createdAt=" + createdAt +

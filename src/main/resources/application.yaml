@@ -2,8 +2,8 @@ spring:application:name: bd
 
 spring:
   datasource:
-#    url: jdbc:postgresql://localhost:5432/bd
-    url: jdbc:postgresql://localhost:5433/db
+    url: jdbc:postgresql://localhost:5432/bd
+#    url: jdbc:postgresql://localhost:5433/db
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -30,4 +30,8 @@ app:
     bucket: src/images
   report:
     bucket: reports
-#    bucket: C:\Users\egor\IdeaProjects\bd\src\images
+    generator:
+      port: 5488
+      host: localhost
+      route: /api/v1/generator/generate
+
