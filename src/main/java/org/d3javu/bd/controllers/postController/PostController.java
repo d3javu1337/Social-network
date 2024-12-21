@@ -3,27 +3,24 @@ package org.d3javu.bd.controllers.postController;
 import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.post.PostCreateDto;
 import org.d3javu.bd.dto.post.PostEditDto;
-import org.d3javu.bd.dto.post.PostReadDto;
 import org.d3javu.bd.dto.tag.PreferredTagsDto;
-import org.d3javu.bd.mapper.post.PostCreateMapper;
 import org.d3javu.bd.mapper.post.PostEditMapper;
 import org.d3javu.bd.mapper.post.PostReadMapper;
 import org.d3javu.bd.mapper.tag.DtoToTagMapper;
 import org.d3javu.bd.mapper.user.UserReadMapper;
-import org.d3javu.bd.models.post.Post;
+import org.d3javu.bd.models.post.PostForReport;
 import org.d3javu.bd.models.user.User;
 import org.d3javu.bd.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RequestMapping("/posts")
 @RequiredArgsConstructor
@@ -76,6 +73,11 @@ public class PostController {
         model.addAttribute("posts", posts);
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("tags", this.tagService.findAll());
+
+        System.out.println("----------------------");
+        System.out.println(model.asMap().keySet());
+        System.out.println("----------------------");
+
         return "/post/posts";
     }
 
@@ -90,6 +92,15 @@ public class PostController {
         model.addAttribute("posts", posts);
         model.addAttribute("currentUser", user);
         model.addAttribute("tags", this.tagService.findAll());
+        return "/post/posts";
+    }
+
+//    @GetMapping("/byIds")
+    public String findAllByIds(ExtendedModelMap model, Set<Long> ids) {
+//        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        var posts = this.postService.findAllByIds(ids);
+        model.addAttribute("posts", posts);
+        model.addAttribute("currentUser", this.getCurrentUser());
         return "/post/posts";
     }
 

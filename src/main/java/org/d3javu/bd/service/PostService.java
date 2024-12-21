@@ -7,8 +7,10 @@ import org.d3javu.bd.dto.post.PostReadDto;
 import org.d3javu.bd.filter.post.PostFilter;
 import org.d3javu.bd.mapper.post.PostCreateMapper;
 import org.d3javu.bd.mapper.post.PostEditMapper;
+import org.d3javu.bd.mapper.post.PostForReportMapper;
 import org.d3javu.bd.mapper.post.PostReadMapper;
 import org.d3javu.bd.models.post.Post;
+import org.d3javu.bd.models.post.PostForReport;
 import org.d3javu.bd.models.tag.Tag;
 import org.d3javu.bd.models.user.User;
 import org.d3javu.bd.repositories.PostRepository;
@@ -37,6 +39,7 @@ public class PostService {
     private final PostEditMapper postEditMapper;
     private final PostReadMapper postReadMapper;
     private final ImageService imageService;
+    private final PostForReportMapper postForReportMapper;
 
 
     //crud
@@ -70,6 +73,13 @@ public class PostService {
     public List<PostReadDto> findAllByTagId(Long tagId) {
         return this.postRepository.findAllByTagId(tagId)
                 .stream().map(postReadMapper::map)
+                .toList();
+    }
+
+    public List<PostForReport> findAllByIds(Set<Long> ids) {
+        return this.postRepository.findAllByIdIn(ids)
+                .stream()
+                .map(this.postForReportMapper::map)
                 .toList();
     }
 
@@ -144,11 +154,10 @@ public class PostService {
         }
     }
 
-        public List<PostReadDto> findTopN(int n){
+        public List<PostForReport> findTopN(int n){
         return this.postRepository.findAllByOrderByLikesCountDesc(PageRequest.of(0, n))
                 .stream()
-//                .limit(n)
-                .map(this.postReadMapper::map)
+                .map(this.postForReportMapper::map)
                 .collect(Collectors.toList());
     }
 

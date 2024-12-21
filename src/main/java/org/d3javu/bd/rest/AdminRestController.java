@@ -5,14 +5,18 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.d3javu.bd.controllers.postController.PostController;
 import org.d3javu.bd.dto.post.PostReadDto;
 import org.d3javu.bd.dto.user.CompactUserReadDto;
+import org.d3javu.bd.mapper.post.PostForReportMapper;
+import org.d3javu.bd.models.post.PostForReport;
 import org.d3javu.bd.service.PostService;
 import org.d3javu.bd.service.ReportService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -32,6 +36,7 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -42,6 +47,8 @@ public class AdminRestController {
     private final ReportService reportService;
     private final ThymeleafViewResolver thymeleafViewResolver;
     private final LocaleResolver localeResolver;
+    private final PostController postController;
+    private final PostForReportMapper postForReportMapper;
 
     @Value("${app.report.generator.port}")
     private int port;
@@ -77,20 +84,28 @@ public class AdminRestController {
 //        t.put("avatarPath", "netu");
 //
 //
+
+
 //
-//        Gson gson = new GsonBuilder()
-//                .setPrettyPrinting()
-//                .registerTypeAdapter(LocalDateTime.class, (JsonSerializer<LocalDateTime>) (localDateTime, type, jsonSerializationContext) ->
-//                        new JsonPrimitive(localDateTime.format(DateTimeFormatter.ISO_DATE_TIME)))
-//                .create();
-//        String json = gson.toJson(this.postService.findTopN(n));
-//        System.out.println("-------------------------------------------------------------------");
-//        System.out.println(json);
-//        System.out.println("-------------------------------------------------------------------");
-        var topPosts = this.postService.findTopN(n);
-        var temp = new RestTemplate().postForObject(url, topPosts, String.class);
+//        var topPosts = this.postService.findTopN(n)
+//                .stream()
+//                .map(en -> this.postForReportMapper.map(en))
+//                .collect(Collectors.toList());
+//        var temp = new RestTemplate().postForObject(url, topPosts, String.class);
+        var emm = new ExtendedModelMap();
+        var html = this.postController.findAllByIds(emm, this.postService.findTopN(n)
+                .stream()
+                .map(PostForReport::id)
+                .collect(Collectors.toSet())
+        );
+        var map = new HashMap<String, ExtendedModelMap>();
+
+        System.out.println(html);
+
+
+        var temp = new RestTemplate().postForObject(url, html, String.class);
         System.out.println(temp);
-        System.out.printf("%s %s%n", n, topPosts.size());
+//        System.out.printf("%s %s%n", n, topPosts.size());
 
 //        this.reportService.exportReport(n);
         return new ResponseEntity<>(temp, HttpStatus.OK);

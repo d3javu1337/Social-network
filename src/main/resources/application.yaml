@@ -1,6 +1,8 @@
-spring:application:name: bd
+#spring:application:name: bd
 
 spring:
+  application:
+    name: bd
   datasource:
     url: jdbc:postgresql://localhost:5432/bd
 #    url: jdbc:postgresql://localhost:5433/db
