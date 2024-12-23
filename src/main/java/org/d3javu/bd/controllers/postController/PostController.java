@@ -1,5 +1,6 @@
 package org.d3javu.bd.controllers.postController;
 
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.post.PostCreateDto;
 import org.d3javu.bd.dto.post.PostEditDto;
@@ -16,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -95,13 +97,21 @@ public class PostController {
         return "/post/posts";
     }
 
-//    @GetMapping("/byIds")
-    public String findAllByIds(ExtendedModelMap model, Set<Long> ids) {
+    @GetMapping("/byids")
+    public String findAllByIds(Model model, @RequestAttribute List<Long> ids) {
+//        List<Long> ids = new ArrayList<>();
+//        for(var x : vals.keySet()) {
+//            ids = vals.get(x);
+//        }
 //        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        var posts = this.postService.findAllByIds(ids);
+        System.out.println("------------------------");
+//        System.out.println(posts);
+        System.out.println(ids);
+        System.out.println("------------------------");
+        var posts = this.postService.findAllByIds(Set.of(ids.toArray(new Long[0])));
         model.addAttribute("posts", posts);
-        model.addAttribute("currentUser", this.getCurrentUser());
-        return "/post/posts";
+//        model.addAttribute("currentUser", this.getCurrentUser());
+        return "/post/report";
     }
 
     @GetMapping("/bytags")

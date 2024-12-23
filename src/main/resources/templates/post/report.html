@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Post</title>
+</head>
+<body>
+<main>
+  <div th:each="post : ${posts}" class="posts-wrapper">
+    <div class="post-unit" th:id="'post'+${post.id()}">
+      <div class="author-wrapper">
+          <p th:text="|${post.authorFirstName()} ${post.authorLastName()}|" class="author"></p>
+        <div class="created-date-wrapper">
+          <p th:text="${post.createdAt()}"></p>
+        </div>
+      </div>
+      <div class="post">
+        <div class="post-title">
+          <p th:text="${post.title()}"></p>
+        </div>
+        <div class="post-body">
+          <p th:text="${post.body()}"></p>
+        </div>
+      </div>
+    </div>
+    <div class="full-post-link">
+      <a th:href="@{${post.postLink()}}"></a>
+    </div>
+    <br>
+  </div>
+</main>
+</body>
+</html>

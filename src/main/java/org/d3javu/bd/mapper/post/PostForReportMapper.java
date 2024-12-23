@@ -19,7 +19,7 @@ public class PostForReportMapper implements Mapper<Post, PostForReport> {
                 object.getCreatedAt().format(DateTimeFormatter.ofPattern("d MMMM yyyy HH:mm")),
                 object.getAuthor().getFirstName(),
                 object.getAuthor().getLastName(),
-                "http:/localhost:8080/posts/" + object.getId()
+                "http://localhost:8080/posts/" + object.getId()
         );
     }
 }
