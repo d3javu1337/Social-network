@@ -96,6 +96,8 @@ function getComments(href, commentsWrapper){
         commentTextArea.ariaMultiLine = 'true';
         commentTextArea.placeholder = 'write your opinion';
         commentTextArea.spellcheck = false;
+        commentTextArea.ariaRequired = 'true';
+        commentTextArea.ariaValueMin = '30';
 
         let textAreaLabel = document.createElement('label');
         textAreaLabel.htmlFor = 'comment-create-body';
@@ -161,12 +163,12 @@ function getComments(href, commentsWrapper){
             unlikeButton.innerText = 'unlike';
 
             likeForm.append(likeCount);
-            likeForm.action = '/posts/'+el['post']['id']+'/comment/'+el['id']+'/like'; //change
+            likeForm.action = '/posts/'+el['postId']+'/comment/'+el['id']+'/like'; //change
             likeForm.method = 'post';
             likeForm.className = 'like-form';
 
             unlikeForm.append(likeCount);
-            unlikeForm.action = '/posts/'+el['post']['id']+'/comment/'+el['id']+'/unlike'; //change
+            unlikeForm.action = '/posts/'+el['postId']+'/comment/'+el['id']+'/unlike'; //change
             unlikeForm.method = 'post';
             unlikeForm.className = 'unlike-form';
 
@@ -174,18 +176,26 @@ function getComments(href, commentsWrapper){
 
             for(let x of el['likes']){
                 // console.log(x);
-                if (x.id === currentUser['id']){
+                if (x === currentUser['id']){
                     isLiked = true;
                     break;
                 }
             }
 
+            let unlikeButtonWrapper = document.createElement('div');
+            unlikeButtonWrapper.className = 'unlike-button_wrapper';
+            unlikeButtonWrapper.append(unlikeButton)
+
+            let likeButtonWrapper = document.createElement('div');
+            likeButtonWrapper.className = 'like-button_wrapper';
+            likeButtonWrapper.append(likeButton);
+
             if(isLiked){
-                unlikeForm.append(unlikeButton);
+                unlikeForm.append(unlikeButtonWrapper);
                 unlikeForm.addEventListener('submit', like);
                 likeBlock.append(unlikeForm);
             }else{
-                likeForm.append(likeButton);
+                likeForm.append(likeButtonWrapper);
                 likeForm.addEventListener('submit', like);
                 likeBlock.append(likeForm);
             }
@@ -200,7 +210,7 @@ function getComments(href, commentsWrapper){
 
             editForm.append(editButton);
             // editForm.action = '/api/v1/comments/'+el[id]+'/edit';
-            editForm.action = '/posts/'+el['post']['id']+'/comment/'+el['id']+'/edit';
+            editForm.action = '/posts/'+el['postId']+'/comment/'+el['id']+'/edit';
             editForm.method = 'get';
             editForm.className = 'comment-edit-form';
             // editForm.addEventListener('submit', edit)
@@ -251,12 +261,12 @@ function like(event){
         if(event.target.className === 'like-form'){
             event.target.className = 'unlike-form';
             event.target.action = '/posts/'+resp['post']['id']+'/comment/'+resp['id']+'/unlike';
-            event.target.firstChild.textContent = 'unlike';
+            event.target.firstChild.firstChild.textContent = 'unlike';
         }
         else{
             event.target.className = 'like-form';
             event.target.action = '/posts/'+resp['post']['id']+'/comment/'+resp['id']+'/like';
-            event.target.firstChild.textContent = 'like';
+            event.target.firstChild.firstChild.textContent = 'like';
         }
 
         event.target.nextSibling.innerText = resp['likes'].length;

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tags</title>
+    <link rel="stylesheet" th:href="@{/css/forAll.css}" href="/static/css/forAll.css">
+    <link rel="stylesheet" th:href="@{/css/admin/admin.css}" href="/static/css/admin/admin.css">
+</head>
+<body>
+<header th:insert="~{fragments/headerFragment :: header(${currentUser})}"></header>
+<main>
+    <div class="tags_wrapper">
+        <div class="tag-unit" th:each="tag : ${tags}">
+            <a th:href="@{'/admin/tags/'+${tag.id}}" th:text="${tag.body} +' | '+ ${tag.description}">Tag</a>
+        </div>
+    </div>
+    <div class="add-tag_wrapper">
+        <form th:action="@{'/admin/tags/new'}" method="post" class="add-tag_form">
+            <label for="body">Body<br>
+                <input id="body" type="text" name="body">
+            </label><br>
+            <label for="description">Description<br>
+                <input id="description" type="text" name="description">
+            </label><br>
+            <div class="add-tag_button">
+                <button type="submit">Add tag</button>
+            </div>
+        </form>
+    </div>
+    <div class="get-report_wrapper">
+        <form th:action="@{'/api/v1/admin/report'}" method="get" class="get-report_form">
+            <label for="n">Best posts count you need
+                <input id="n" type="number" name="n" min="1">
+            </label>
+            <div class="get-report_button">
+                <button type="submit">Get report</button>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>

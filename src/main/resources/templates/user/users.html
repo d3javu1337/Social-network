@@ -9,18 +9,6 @@
 <body>
 <header th:insert="~{fragments/headerFragment :: header(${currentUser})}"></header>
 <main>
-    <!--<form action="/users">-->
-    <!--    <label for="firstName">Firstname:-->
-    <!--        <input id="firstName" type="text" name="firstName">-->
-    <!--    </label>-->
-    <!--    <label for="lastName">Lastname:-->
-    <!--        <input id="LastName" type="text" name="lastName">-->
-    <!--    </label>-->
-    <!--    <label for="email">email:-->
-    <!--        <input id="email" type="text" name="email">-->
-    <!--    </label>-->
-    <!--    <button type="submit">Filter</button>-->
-    <!--</form>-->
     <div class="users_wrapper">
         <div th:each="user : ${users}" class="user">
             <a th:href="@{'/users/' + ${user.id}}" class="user-link">
@@ -29,8 +17,6 @@
                         <img th:src="@{/api/v1/users/{userId}/avatar(userId=${user.id})}" alt="avatar" class="user-avatar">
                     </div>
                     <p th:text="|${user.firstName} ${user.lastName}|" class="userdata-fi"></p>
-                    <!--            <p th:text="${user.firstName}">firstname</p>-->
-                    <!--            <p th:text="${user.lastName}">lastname</p>-->
                 </div>
             </a>
         </div>

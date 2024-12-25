@@ -1,0 +1,138 @@
+main{
+    width: 100%;
+    /*display: block;*/
+    /*background-color: green;*/
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    border-radius: 20px;
+    /*width: 70%;*/
+}
+
+.tags_wrapper{
+    :first-child{
+        margin-top: 10px;
+    }
+    width: 50%;
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.tag-unit{
+    padding-left: 10px;
+    margin: 5px;
+    display: flex;
+    height: 50px;
+    /*justify-content: center;*/
+    width: fit-content;
+    overflow: scroll;
+}
+
+.add-tag_wrapper{
+    width: 50%;
+    display: flex;
+    /*flex-direction: column;*/
+    justify-content: center;
+}
+
+.add-tag_form{
+    width: 100%;
+    margin: 20px;
+    line-height: 30px;
+    label{
+        /*display: flex;*/
+        width: 100%;
+        /*justify-content: center;*/
+    }
+}
+
+#body{
+    width: 97%;
+    background-color: #eee;
+    border: none;
+    margin: 8px 0;
+    padding: 10px 15px;
+    font-size: 13px;
+    border-radius: 8px;
+    /*width: 100%;*/
+    outline: none;
+}
+
+#description{
+    width: 97%;
+    background-color: #eee;
+    border: none;
+    margin: 8px 0;
+    padding: 10px 15px;
+    font-size: 13px;
+    border-radius: 8px;
+    /*width: 100%;*/
+    outline: none;
+}
+
+.add-tag_button {
+    button {
+        width: 120px;
+        /*width: ;*/
+        border-radius: 5px;
+        /*margin-left: 10px;*/
+        /*background: #f0f0f0;*/
+        height: 25px;
+        border: 0;
+        background: #ebcef2;
+        font-weight: bold;
+        color: #101720;
+        /*letter-spacing: 1px;*/
+    }
+    width: 100%;
+    display: flex;
+    justify-content: right;
+    margin-top: 10px;
+}
+
+.get-report_wrapper{
+    width: 50%;
+    display: flex;
+    justify-content: center;
+
+    .get-report_form {
+        margin: 20px;
+        width: 100%;
+        line-height: 30px;
+        /*display: flex;*/
+
+        #n {
+            width: 97%;
+            background-color: #eee;
+            border: none;
+            margin: 8px 0;
+            padding: 10px 15px;
+            font-size: 13px;
+            border-radius: 8px;
+            /*width: 100%;*/
+            outline: none;
+        }
+        .get-report_button {
+            width: 100%;
+            display: flex;
+            justify-content: right;
+            button {
+                width: 120px;
+                /*width: ;*/
+                border-radius: 5px;
+                /*margin-left: 10px;*/
+                /*background: #f0f0f0;*/
+                height: 25px;
+                border: 0;
+                background: #ebcef2;
+                font-weight: bold;
+                color: #101720;
+                /*letter-spacing: 1px;*/
+            }
+        }
+    }
+}

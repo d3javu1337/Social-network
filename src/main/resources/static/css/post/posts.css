@@ -418,7 +418,7 @@ body{
     display: flex;
     flex-direction: row;
     /*justify-items: stretch;*/
-    justify-content: stretch;
+    /*justify-content: stretch;*/
 }
 
 .comment-actions div{
@@ -675,3 +675,42 @@ body{
 /*    !*margin-right: 10px;*!*/
 /*    !*margin-bottom: 10px;*!*/
 /*}*/
+
+.like-form{
+    display: inline-flex;
+    justify-content: left;
+    margin-left: -18px;
+    /*padding: 0;*/
+
+}
+
+.like-button_wrapper{
+    width: 100%;
+    display: flex;
+    justify-content: left;
+}
+
+.unlike-form{
+    display: inline-flex;
+    justify-content: left;
+    margin-left: -18px;
+    /*padding: 0;*/
+
+}
+.unlike-button_wrapper{
+    /*margin-left: -30px;*/
+    width: 100%;
+    display: flex;
+    justify-content: left;
+}
+
+.comment-actions .like-block{
+    /*margin: 0;*/
+    width: 70%;
+    display: flex;
+    justify-content: left;
+}
+
+.comment-edit-form{
+    margin-left: 60px;
+}

@@ -35,7 +35,7 @@ public class TestController implements CommandLineRunner {
     public String index(Model model) {
 
 
-        return "index";
+        return "redirect:/posts";
     }
 
     @Transactional

@@ -1,0 +1,79 @@
+main{
+    width: 100%;
+    /*display: block;*/
+    /*background-color: green;*/
+    display: flex;
+    /*flex-direction: column;*/
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    /*vertical-align: center;*/
+    /*align-content: center;*/
+    height: 100%;
+    border-radius: 20px;
+    position: absolute;
+    /*width: 70%;*/
+}
+
+.tag-edit_wrapper{
+    /*height: 50%;*/
+    margin-top: -150px;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .tag-edit_form{
+        width: 100%;
+        /*display: flex;*/
+        margin: 20px;
+        line-height: 30px;
+        justify-content: center;
+        flex-direction: column;
+        label{
+            width: 100%;
+            margin-top: 10px;
+        }
+        #body{
+            width: 97%;
+            background-color: #eee;
+            border: none;
+            margin: 8px 0;
+            padding: 10px 15px;
+            font-size: 13px;
+            border-radius: 8px;
+            /*width: 100%;*/
+            outline: none;
+        }
+
+        #description{
+            width: 97%;
+            background-color: #eee;
+            border: none;
+            margin: 8px 0;
+            padding: 10px 15px;
+            font-size: 13px;
+            border-radius: 8px;
+            /*width: 100%;*/
+            outline: none;
+        }
+        .tag-edit_button{
+            button {
+                width: 120px;
+                /*width: ;*/
+                border-radius: 5px;
+                /*margin-left: 10px;*/
+                /*background: #f0f0f0;*/
+                height: 25px;
+                border: 0;
+                background: #ebcef2;
+                font-weight: bold;
+                color: #101720;
+                /*letter-spacing: 1px;*/
+            }
+            width: 100%;
+            display: flex;
+            justify-content: right;
+            margin-top: 10px;
+        }
+    }
+}

@@ -3,17 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <title>Tag</title>
+  <link rel="stylesheet" th:href="@{/css/forAll.css}" href="/static/css/forAll.css">
+  <link rel="stylesheet" th:href="@{/css/admin/tag.css}" href="/static/css/admin/tag.css">
 </head>
 <body>
-<div th:insert="~{fragments/headerFragment :: header}"></div>
-  <form th:action="@{/admin/tags/{tagId}/update(tagId=${tag.id})}" method="post">
-    <label for="body">Body
-      <input id="body" type="text" name="body" th:value="${tag.body}">
-    </label><br>
-    <label for="description">Description
-      <input id="description" type="text" name="description" th:value="${tag.description}">
-    </label><br>
-    <button type="submit">Update</button>
-  </form>
+<header th:insert="~{fragments/headerFragment :: header(${currentUser})}"></header>
+<main>
+  <div class="tag-edit_wrapper">
+    <form th:action="@{/admin/tags/{tagId}/update(tagId=${tag.id})}" method="post" class="tag-edit_form">
+      <label for="body">Body
+        <input id="body" type="text" name="body" th:value="${tag.body}">
+      </label><br>
+      <label for="description">Description
+        <input id="description" type="text" name="description" th:value="${tag.description}">
+      </label><br>
+      <div class="tag-edit_button">
+        <button type="submit">Update</button>
+      </div>
+    </form>
+  </div>
+</main>
 </body>
 </html>

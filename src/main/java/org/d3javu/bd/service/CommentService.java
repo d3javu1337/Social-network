@@ -1,23 +1,24 @@
 package org.d3javu.bd.service;
 
-import jakarta.persistence.Table;
 import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.comment.CommentCreateDto;
+import org.d3javu.bd.dto.comment.CommentDtoForLargeQuery;
 import org.d3javu.bd.dto.comment.CommentEditDto;
 import org.d3javu.bd.dto.comment.CommentReadDto;
+import org.d3javu.bd.dto.user.CompactUserReadDto;
 import org.d3javu.bd.mapper.comment.CommentCreateMapper;
 import org.d3javu.bd.mapper.comment.CommentEditMapper;
 import org.d3javu.bd.mapper.comment.CommentReadMapper;
 import org.d3javu.bd.models.comment.Comment;
 import org.d3javu.bd.models.user.User;
 import org.d3javu.bd.repositories.CommentRepository;
+import org.d3javu.bd.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.sql.Timestamp;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 public class CommentService {
 
     private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
     private final CommentCreateMapper commentCreateMapper;
     private final CommentEditMapper commentEditMapper;
     private final CommentReadMapper commentReadMapper;
@@ -54,10 +56,37 @@ public class CommentService {
                 .stream().map(commentReadMapper::map).collect(Collectors.toSet());
     }
 
-    public Set<CommentReadDto> findAllByPostId(Long id) {
-        return this.commentRepository.findAllByPostId(id)
-                .stream().map(commentReadMapper::map)
-                .collect(Collectors.toSet());
+    public Set<CommentDtoForLargeQuery> findAllByPostId(Long id) {
+//        System.out.println("--------------------------------------------");
+//        var comment = new CommentReadDto(null, null, null, null, null, null);
+//        System.out.println(this.commentRepository.findAllByPostId(id));
+//        this.commentRepository.findAllByPostId(id).forEach(el -> {
+//            System.out.println(el.getAuthor().getId() + " author id");
+//            System.out.println(el.getBody() + " body");
+//            System.out.println(el.getLikes() + " likes count");
+//        });
+        Set<CommentDtoForLargeQuery> comments = new HashSet<>();
+        var vals = this.commentRepository.getIdAndBodyAndCreatedAtAndAuthorIdByPostId(id);
+        for (var x : vals) {
+//            System.out.printf("%s %s %s %s \n", (Long)x[0], (String)x[1], ((Timestamp)x[2]).toLocalDateTime(), (Long)x[3]);
+            var commentId = (Long)x[0];
+            var commentBody = (String)x[1];
+            var commentCreatedAt = ((Timestamp) x[2]).toLocalDateTime();
+            var commentAuthorId = (Long)x[3];
+            var authorRaw = this.userRepository.FindFirstNameAndLastNameAndAvatarPathById(commentAuthorId)[0].split(",");
+//            System.out.println(Arrays.toString(authorRaw));
+//            System.out.println(authorRaw[0]);
+            var author = new CompactUserReadDto(commentAuthorId, (String)authorRaw[0], (String)authorRaw[1], (String)authorRaw[2] );
+            var likes = this.commentRepository.getLikesIdsById(commentId);
+
+            var unit = new CommentDtoForLargeQuery(commentId, commentBody, commentCreatedAt, id, author, likes);
+            comments.add(unit);
+        }
+//        System.out.println("---------------------------------------------");
+
+        return comments;
+//                .stream().map(commentReadMapper::map)
+//                .collect(Collectors.toSet());
     }
 
     @Transactional

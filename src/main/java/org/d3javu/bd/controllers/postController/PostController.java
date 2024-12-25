@@ -130,13 +130,14 @@ public class PostController {
         var userId = user.getId();
         postService.view(id, user);
         return postService.findPostById(id)
+                .map(this.postReadMapper::map)
                 .map(p -> {
                     model.addAttribute("post", p);
-                    model.addAttribute("userId", userId);
-                    model.addAttribute("tags", this.tagService.findByPost(p));
-                    model.addAttribute("authorId", p.getAuthor().getId());
-                    model.addAttribute("comments", commentService.findAllByPostId(id));
-                    model.addAttribute("isLiked", p.getLikes().contains(user));
+//                    model.addAttribute("userId", userId);
+//                    model.addAttribute("tags", this.tagService.findByPost(p));
+//                    model.addAttribute("authorId", p.getAuthor().getId());
+//                    model.addAttribute("comments", commentService.findAllByPostId(id));
+//                    model.addAttribute("isLiked", p.getLikes().contains(user));
                     model.addAttribute("currentUser", user);
                     return "/post/post";
                 })

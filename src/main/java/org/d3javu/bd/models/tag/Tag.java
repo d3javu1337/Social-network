@@ -25,10 +25,6 @@ public class Tag {
     @Column(nullable = false)
     private String description;
 
-//    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "Post")
-//    @JoinTable(name = "post_tags")
-//    private List<Post> posts;
-
     public Tag(String body, String description) {
         this.body = body;
         this.description = description;
@@ -39,8 +35,4 @@ public class Tag {
         this.description = "";
     }
 
-//    public void linkPost(Post post) {
-//        if (this.posts == null) this.posts = new ArrayList<>();
-//        this.posts.add(post);
-//    }
 }

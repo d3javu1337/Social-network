@@ -18,4 +18,6 @@ public interface UserRepository extends JpaRepository<User, Long>, FilterUserRep
 
     Optional<User> findByCustomLink(String username);
 
+    @Query(value = "select u.first_name, u.last_name, u.avatar_path from users u where u.id= :id", nativeQuery = true)
+    String[] FindFirstNameAndLastNameAndAvatarPathById(Long id);
 }

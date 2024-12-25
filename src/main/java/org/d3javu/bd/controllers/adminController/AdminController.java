@@ -2,10 +2,7 @@ package org.d3javu.bd.controllers.adminController;
 
 import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.tag.TagDto;
-import org.d3javu.bd.models.tag.Tag;
 import org.d3javu.bd.models.user.User;
-import org.d3javu.bd.repositories.TagRepository;
-import org.d3javu.bd.repositories.UserRepository;
 import org.d3javu.bd.service.PostService;
 import org.d3javu.bd.service.TagService;
 import org.d3javu.bd.service.UserService;
@@ -30,19 +27,20 @@ public class AdminController {
     public String tags(Model model) {
         model.addAttribute("currentUser", this.getCurrentUser());
         model.addAttribute("tags", tagService.findAll());
-        return "admin/tags";
+        return "admin/admin";
     }
 
     @GetMapping("/tags/{id}")
     public String tag(Model model, @PathVariable("id") Long id ) {
         model.addAttribute("tag", tagService.findById(id).get());
+        model.addAttribute("currentUser", this.getCurrentUser());
         return "admin/tag";
     }
 
     @PostMapping("/tags/{id}/update")
     public String update(@PathVariable("id") Long id, @ModelAttribute TagDto dto) {
         return this.tagService.update(id, dto)
-                .map(t -> "redirect:/admin/tags/{id}")
+                .map(t -> "redirect:/admin/tags")
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tag not found"));
 
     }
@@ -52,19 +50,19 @@ public class AdminController {
         if(this.tagService.findByBody(dto.getBody()).isPresent()) throw new ResponseStatusException(HttpStatus.CONFLICT, "Duplicate tag");
         else{
             this.tagService.create(dto);
-            return "redirect:/admin/tags";
+            return "redirect:/admin/admin";
         }
     }
-
-    @PostMapping("/posts/best/{count}")
-    public String posts(@PathVariable("count") Integer count) {
-        return "redirect:/admin/posts/report";
-    }
-
-    @GetMapping("/posts/report")
-    public String report(Model model) {
-        return "";
-    }
+//
+//    @PostMapping("/posts/best/{count}")
+//    public String posts(@PathVariable("count") Integer count) {
+//        return "redirect:/admin/posts/report";
+//    }
+//
+//    @GetMapping("/posts/report")
+//    public String report(Model model) {
+//        return "";
+//    }
 
     public User getCurrentUser(){
         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();

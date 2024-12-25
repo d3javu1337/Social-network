@@ -1,5 +1,6 @@
 package org.d3javu.bd.rest;
 
+import com.google.gson.*;
 import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.comment.CommentCreateDto;
 import org.d3javu.bd.dto.comment.CommentReadDto;
@@ -16,10 +17,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Type;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @CrossOrigin
@@ -38,7 +39,7 @@ public class CommentRestController {
 //    public List<CommentReadDto> getComments(@PathVariable long postId) {
     public Map<String, Object> getComments(@PathVariable long postId) {
 //        System.out.println(123);
-        var comments = new ArrayList<>(this.commentService.findAllByPostId(postId));
+        var comments = this.commentService.findAllByPostId(postId);
 //        System.out.println(comments.get(0).post);
         var currentUser = this.getCurrentUser();
         var map = new HashMap<String, Object>();
@@ -46,6 +47,7 @@ public class CommentRestController {
         map.put("currentUser", this.compactUserReadMapper.map(currentUser));
         return map;
     }
+
 
     @GetMapping("/{commentId}/like")
     public ResponseEntity<CommentReadDto> like(@PathVariable long commentId) {
@@ -69,6 +71,10 @@ public class CommentRestController {
 
     @PostMapping("/{postId}/create")
     public ResponseEntity<CommentReadDto> create(@RequestParam String body, @PathVariable long postId) {
+        if(body.length() < 10) {
+            System.out.println("shit");
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
         var commentCreateDto = new CommentCreateDto();
         commentCreateDto.setBody(body);
         commentCreateDto.setUser(this.getCurrentUser());
