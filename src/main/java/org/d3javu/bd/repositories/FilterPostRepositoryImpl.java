@@ -12,7 +12,7 @@ import java.util.List;
 
 import static org.d3javu.bd.models.post.QPost.post;
 
-//@Component
+
 @RequiredArgsConstructor
 public class FilterPostRepositoryImpl implements FilterPostRepository {
 
@@ -25,7 +25,7 @@ public class FilterPostRepositoryImpl implements FilterPostRepository {
         for(var x : filter.tags()){
             QPredicate.add(x, post.tags::contains);
         }
-        var predicate = QPredicate.buildAnd();
+        var predicate = QPredicate.buildOr();
 
         return new JPAQuery<Post>(em).select(post).from(post)
                 .where(predicate).fetch();

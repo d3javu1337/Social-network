@@ -65,7 +65,7 @@ public class PostController {
         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         var user = this.userService.findByEmail(userEmail);
         var tags = user.getPreferredTags();
-        var posts = this.postService.findAll()
+        var posts = this.postService.findByPreferred(tags)
                 .stream()
                 .sorted(Comparator.comparing(en -> en.createdAt))
                 .collect(Collectors.toList());
