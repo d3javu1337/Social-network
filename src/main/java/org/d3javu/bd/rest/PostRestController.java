@@ -3,7 +3,6 @@ package org.d3javu.bd.rest;
 import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.post.PostReadDto;
 import org.d3javu.bd.mapper.post.PostReadMapper;
-import org.d3javu.bd.models.images.Images;
 import org.d3javu.bd.models.user.User;
 import org.d3javu.bd.service.ImageService;
 import org.d3javu.bd.service.PostService;
@@ -11,16 +10,16 @@ import org.d3javu.bd.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.context.request.WebRequest;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.concurrent.CompletableFuture;
 
+//@EnableAsync
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/posts")
 @RestController
@@ -30,6 +29,12 @@ public class PostRestController {
     private final ImageService imageService;
     private final UserService userService;
     private final PostReadMapper postReadMapper;
+
+//    @Async
+    @GetMapping
+    public CompletableFuture<ResponseEntity<List<PostReadDto>>> getAllPosts() {
+        return CompletableFuture.completedFuture(new ResponseEntity<>(this.postService.findAll(), HttpStatus.OK));
+    }
 
     @GetMapping(value = "/{id}/images/{imagePath}", produces = MediaType.IMAGE_PNG_VALUE)
     public byte[] findImages(@PathVariable Long id, @PathVariable("imagePath") String imagePath) {

@@ -89,7 +89,7 @@ public class CommentController {
     public String delete(@PathVariable("postId") Long postId, @PathVariable("id") Long commentId) {
         var bool = this.commentService.delete(commentId);
         var comm = this.commentService.findById(commentId);
-        System.out.println(bool + " " + comm);
+//        System.out.println(bool + " " + comm);
         return "redirect:/posts/" + postId;
     }
 //

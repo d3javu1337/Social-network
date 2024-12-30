@@ -23,7 +23,7 @@ public class PostReadDto {
     public CompactUserReadDto author;
 //    public Long viewsCount;
     public Set<CompactUserReadDto> views;
-    public Set<CompactUserReadDto> likes;
+    public Set<Long> likes;
 //    public List<CommentReadDto> comments;
     public LocalDateTime createdAt;
     public List<String> images;

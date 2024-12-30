@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.post.PostCreateDto;
 import org.d3javu.bd.dto.post.PostEditDto;
 import org.d3javu.bd.dto.post.PostReadDto;
+import org.d3javu.bd.filter.EPredicateBuildMethod;
 import org.d3javu.bd.filter.post.PostFilter;
 import org.d3javu.bd.mapper.post.PostCreateMapper;
 import org.d3javu.bd.mapper.post.PostEditMapper;
@@ -16,6 +17,7 @@ import org.d3javu.bd.models.user.User;
 import org.d3javu.bd.repositories.PostRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
@@ -59,14 +62,20 @@ public class PostService {
         return this.postRepository.findById(id);
     }
 
+
     public List<PostReadDto> findAll() {
-//        return this.postRepository.findAllByOrderByCreatedAtAsc().stream().map(this.postReadMapper::map).toList();
         return this.postRepository.findAll().stream().map(this.postReadMapper::map).toList();
     }
 
     public List<PostReadDto> findByPreferred(Set<Tag> preferredTags) {
         var postFilter = new PostFilter(preferredTags);
-        return this.postRepository.findAllByTagsFilter(postFilter)
+        return this.postRepository.findAllByTagsFilter(postFilter, EPredicateBuildMethod.OR)
+                .stream().map(this.postReadMapper::map).toList();
+    }
+
+    public List<PostReadDto> findByTags(Set<Tag> tags) {
+        var postFilter = new PostFilter(tags);
+        return this.postRepository.findAllByTagsFilter(postFilter, EPredicateBuildMethod.AND)
                 .stream().map(this.postReadMapper::map).toList();
     }
 
@@ -179,7 +188,7 @@ public class PostService {
 
         var post = this.postRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         var images = post.getImages();
-        System.out.println(images);
+//        System.out.println(images);
         List<byte[]> imagesList = new ArrayList<>(images.size());
         for (int i = 0; i < images.size(); i++) {
             imagesList.add(this.imageService.getImage(images.get(i).getPath()).orElse(null));

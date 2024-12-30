@@ -32,7 +32,8 @@ public class AdminController {
 
     @GetMapping("/tags/{id}")
     public String tag(Model model, @PathVariable("id") Long id ) {
-        model.addAttribute("tag", tagService.findById(id).get());
+        model.addAttribute("tag", tagService.findById(id).orElseThrow
+                (() -> new ResponseStatusException(HttpStatus.NOT_FOUND)));
         model.addAttribute("currentUser", this.getCurrentUser());
         return "admin/tag";
     }

@@ -110,8 +110,8 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public Optional<UserReadDto> update(Long id, UserEditDto userEditDto){
-        var user = this.userRepository.findByCustomLink(userEditDto.getCustomLink());
-//        var user1 = this.userRepository.findById(userEditDto.id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+//        var user = this.userRepository.findByCustomLink(userEditDto.getCustomLink());
+        var user = this.userRepository.findById(userEditDto.id);
         if(user.isPresent() && !id.equals(user.get().getId())){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
              //need to do another but now ok

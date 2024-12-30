@@ -8,6 +8,7 @@ import org.d3javu.bd.dto.user.CompactUserReadDto;
 import org.d3javu.bd.dto.user.UserEditDto;
 import org.d3javu.bd.filter.user.UserFilter;
 import org.d3javu.bd.dto.user.UserReadDto;
+import org.d3javu.bd.mapper.user.CompactUserReadMapper;
 import org.d3javu.bd.mapper.user.UserEditMapper;
 import org.d3javu.bd.mapper.user.UserReadMapper;
 import org.d3javu.bd.models.comment.Comment;
@@ -42,6 +43,7 @@ public class UserController {
     private final CommentService commentService;
     private final UserReadMapper userReadMapper;
     private final TagService tagService;
+    private final CompactUserReadMapper compactUserReadMapper;
 
     @GetMapping
     public String findAll(Model model, UserFilter filter, Pageable pageable) {
@@ -65,7 +67,7 @@ public class UserController {
                         model.addAttribute("user", user);
                         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
                         var currentUser = this.userService.findByEmail(userEmail);
-                        model.addAttribute("currentUser", this.userReadMapper.map(currentUser));
+                        model.addAttribute("currentUser", this.compactUserReadMapper.map(currentUser));
                         var bool = this.userService.findByEmail(user.getUsername()).getFollowers().contains(currentUser);
                         model.addAttribute("isFollowed", bool);
 //                        if(currentUser.getId() == val) return "user/user";
@@ -80,7 +82,7 @@ public class UserController {
                         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
                         var currentUser = this.userService.findByEmail(userEmail);
                         var bool = this.userService.findByEmail(user.getUsername()).getFollowers().contains(currentUser);
-                        model.addAttribute("currentUser", this.userReadMapper.map(currentUser));
+                        model.addAttribute("currentUser", this.compactUserReadMapper.map(currentUser));
                         model.addAttribute("isFollowed", bool);
 //                        if(currentUser.getCustomLink().equals(id)) return "user/user";
 //                        else return "user/userProfile";
@@ -121,7 +123,9 @@ public class UserController {
     public String update(@PathVariable("id") Long id, @ModelAttribute UserEditDto user){
         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         var currentUser = this.userService.findByEmail(userEmail);
-        if(!Objects.equals(id, currentUser.getId())) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+//        System.out.printf("%s %s %s %s %s %s %s \n", id, currentUser.getId(), Objects.equals(id, currentUser.getId()),
+//                user.getCustomLink(), user.getCustomLink() == null, user.customLink.isBlank(), user.customLink.isEmpty());
+        if(!Objects.equals(id, currentUser.getId())) {throw new ResponseStatusException(HttpStatus.FORBIDDEN);}
         return userService.update(id, user)
                 .map(it -> "redirect:/users/{id}")
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));

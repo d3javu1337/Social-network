@@ -67,6 +67,7 @@ public class SecurityConfiguration {
                                 .requestMatchers("/posts/byids").permitAll()
                                 .requestMatchers("/posts/byids/*").permitAll()
                                 .requestMatchers("/posts/byids/**").permitAll()
+                                .requestMatchers("/api/v1/posts").permitAll()
                                 .requestMatchers(AntPathRequestMatcher.antMatcher("/users/{\\d}/delete")).hasRole(admin.getAuthority())
 //                                .requestMatchers("/api/**").permitAll()
 //                                .requestMatchers("/swagger-ui/**").permitAll()

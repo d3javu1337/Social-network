@@ -1,6 +1,6 @@
 package org.d3javu.bd.models.post;
 
-import com.querydsl.codegen.utils.model.Types;
+//import com.querydsl.codegen.utils.model.Types;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -61,7 +61,7 @@ public class Post {
 
     private LocalDateTime createdAt;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="posts_tags",
             joinColumns=@JoinColumn(name="post_id"),
             inverseJoinColumns=@JoinColumn(name="tag_id")

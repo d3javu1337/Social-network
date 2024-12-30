@@ -1,5 +1,6 @@
 package org.d3javu.bd.models.user;
 
+import com.querydsl.core.annotations.Config;
 import jakarta.persistence.*;
 import lombok.*;
 //import org.d3javu.bd.auth.authData.AuthData;
@@ -12,6 +13,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
 
+//@Config(entityAccessors = true)
 @AllArgsConstructor
 //@NoArgsConstructor
 @Data

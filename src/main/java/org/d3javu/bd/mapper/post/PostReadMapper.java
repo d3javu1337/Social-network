@@ -40,8 +40,11 @@ public class PostReadMapper implements Mapper<Post, PostReadDto> {
                 this.compactUserReadMapper.map(object.getAuthor()),
                 Optional.of(object.getViews().stream().map(this.compactUserReadMapper::map).collect(Collectors.toSet()))
                         .orElse(new HashSet<>()),
-                Optional.of(object.getLikes().stream().map(this.compactUserReadMapper::map).collect(Collectors.toSet()))
+                Optional.of(object.getLikes().stream().map(User::getId).collect(Collectors.toSet()))
                         .orElse(new HashSet<>()),
+//                Optional.of(object.getLikes().stream().map(this.compactUserReadMapper::map).collect(Collectors.toSet()))
+//                        .orElse(new HashSet<>()),
+
 //                Optional.of(object.getComments().stream().map(commentReadMapper::map).collect(Collectors.toList()))
 //                        .orElse(new ArrayList<>()),
 //                new HashSet<>(),

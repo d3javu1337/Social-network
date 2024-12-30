@@ -76,9 +76,9 @@ public class PostController {
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("tags", this.tagService.findAll());
 
-        System.out.println("----------------------");
-        System.out.println(model.asMap().keySet());
-        System.out.println("----------------------");
+//        System.out.println("----------------------");
+//        System.out.println(model.asMap().keySet());
+//        System.out.println("----------------------");
 
         return "/post/posts";
     }
@@ -104,10 +104,10 @@ public class PostController {
 //            ids = vals.get(x);
 //        }
 //        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        System.out.println("------------------------");
+//        System.out.println("------------------------");
 //        System.out.println(posts);
-        System.out.println(ids);
-        System.out.println("------------------------");
+//        System.out.println(ids);
+//        System.out.println("------------------------");
         var posts = this.postService.findAllByIds(Set.of(ids.toArray(new Long[0])));
         model.addAttribute("posts", posts);
 //        model.addAttribute("currentUser", this.getCurrentUser());
@@ -116,7 +116,7 @@ public class PostController {
 
     @GetMapping("/bytags")
     public String findByTags(Model model, @ModelAttribute PreferredTagsDto tags) {
-        var posts = this.postService.findByPreferred(tags.getTags());
+        var posts = this.postService.findByTags(tags.getTags());
         model.addAttribute("posts", posts);
         model.addAttribute("currentUser", this.userReadMapper.map(this.getCurrentUser()));
         model.addAttribute("tags", this.tagService.findAll());
