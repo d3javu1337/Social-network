@@ -36,11 +36,12 @@ public class PostRestController {
         return CompletableFuture.completedFuture(new ResponseEntity<>(this.postService.findAll(), HttpStatus.OK));
     }
 
-    @GetMapping(value = "/{id}/images/{imagePath}", produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping(value = "/{id}/images/{imagePath}", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE})
     public byte[] findImages(@PathVariable Long id, @PathVariable("imagePath") String imagePath) {
         System.out.println(imagePath);
-        var img = this.imageService.getImage(imagePath);
-        return img.get();
+//        var img = this.imageService.getImage(imagePath);
+        return this.imageService.getImage(imagePath)
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND));
 //        var imgs = this.postService.findImages(id);
 //        if (!imgs.isEmpty()){
 //            return imgs.get(0);

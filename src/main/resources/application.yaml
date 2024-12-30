@@ -5,6 +5,7 @@ spring:
     name: bd
   datasource:
     url: jdbc:postgresql://localhost:5432/bd
+#    url: jdbc:postgresql://host.docker.internal:5432/bd
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -21,6 +22,13 @@ spring:
   mvc:
     async:
       request-timeout: -1
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+
+#  data:
+#    jdbc:
+#      dialect: postgresql
 
 springdoc:
   swagger-ui:
@@ -28,7 +36,7 @@ springdoc:
 
 app:
   image:
-    bucket: src/images
+    bucket: src/main/resources/static/images
   report:
 #    bucket: reports
     generator:

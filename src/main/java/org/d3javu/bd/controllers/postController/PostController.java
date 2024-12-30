@@ -46,7 +46,7 @@ public class PostController {
         model.addAttribute("post", dto);
         model.addAttribute("tags", tags);
         model.addAttribute("checked", new HashSet<>());
-        return "/post/postCreate";
+        return "post/postCreate";
     }
 
     @PostMapping("/create")
@@ -80,7 +80,7 @@ public class PostController {
 //        System.out.println(model.asMap().keySet());
 //        System.out.println("----------------------");
 
-        return "/post/posts";
+        return "post/posts";
     }
 
     @GetMapping
@@ -94,7 +94,7 @@ public class PostController {
         model.addAttribute("posts", posts);
         model.addAttribute("currentUser", user);
         model.addAttribute("tags", this.tagService.findAll());
-        return "/post/posts";
+        return "post/posts";
     }
 
     @GetMapping("/byids")
@@ -111,7 +111,7 @@ public class PostController {
         var posts = this.postService.findAllByIds(Set.of(ids.toArray(new Long[0])));
         model.addAttribute("posts", posts);
 //        model.addAttribute("currentUser", this.getCurrentUser());
-        return "/post/report";
+        return "post/report";
     }
 
     @GetMapping("/bytags")
@@ -120,7 +120,7 @@ public class PostController {
         model.addAttribute("posts", posts);
         model.addAttribute("currentUser", this.userReadMapper.map(this.getCurrentUser()));
         model.addAttribute("tags", this.tagService.findAll());
-        return "/post/posts";
+        return "post/posts";
     }
 
     @GetMapping("/{id}")
@@ -139,7 +139,7 @@ public class PostController {
 //                    model.addAttribute("comments", commentService.findAllByPostId(id));
 //                    model.addAttribute("isLiked", p.getLikes().contains(user));
                     model.addAttribute("currentUser", user);
-                    return "/post/post";
+                    return "post/post";
                 })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
@@ -148,7 +148,7 @@ public class PostController {
     public String findAllByTag(@PathVariable("id") Long tagId, Model model) {
         model.addAttribute("posts", postService.findAllByTagId(tagId));
         model.addAttribute("currentUser", this.getCurrentUser());
-        return "/post/posts";
+        return "post/posts";
     }
 
     @GetMapping("/{id}/update")
@@ -157,7 +157,7 @@ public class PostController {
         model.addAttribute("post", post);
         model.addAttribute("tags", this.tagService.findAll());
         model.addAttribute("currentUser", this.getCurrentUser());
-        return "/post/postUpdate";
+        return "post/postUpdate";
     }
 
 
