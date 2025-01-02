@@ -36,7 +36,10 @@ springdoc:
 
 app:
   image:
-    bucket: images/
+    bucket:
+      source: images
+      local: true
+      port: null
   report:
 #    bucket: reports
     generator:
