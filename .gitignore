@@ -31,8 +31,8 @@ hs_err_pid*
 replay_pid*
 
 # compiled output
-reportgenerator/dist
-reportgenerator/node_modules
+reportservice/dist
+reportservice/node_modules
 */build
 
 ## Logs

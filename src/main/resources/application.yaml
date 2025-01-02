@@ -36,7 +36,7 @@ springdoc:
 
 app:
   image:
-    bucket: src/main/resources/static/images
+    bucket: images/
   report:
 #    bucket: reports
     generator:

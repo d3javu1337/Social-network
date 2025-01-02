@@ -13,13 +13,14 @@ services:
     environment:
       SPRING_DATASOURCE_URL: 'jdbc:postgresql://host.docker.internal:5432/bd'
       APP_IMAGE_BUCKET: images/
-      APP_REPORT_GENERATOR_HOST: report_generator
+      APP_REPORT_GENERATOR_HOST: report_service
     depends_on:
-      - report_generator
+      - report_service
 
-  report_generator:
+  report_service:
     restart: always
     build:
-      context: ./reportgenerator
+#      context: ./reportgenerator
+      context: ./reportservice
       dockerfile: Dockerfile
-    hostname: report_generator
+    hostname: report_service
