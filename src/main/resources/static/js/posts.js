@@ -34,24 +34,10 @@ function getComments(href, commentsWrapper){
 
     commentsWrapper = commentsWrapper || undefined;
 
-    // console.log(href)
-
-    // let href = event.currentTarget.href
-
-    // event.nextElementSibling
-
-    // console.log(event.currentTarget.parentNode.parentNode.parentNode.parentNode.nextElementSibling.className);
-
     if(commentsWrapper !== undefined && commentsWrapper !== null){
         commentsWrapper.parentNode.removeChild(commentsWrapper);
         return;
     }
-
-    // console.log(event.currentTarget.parentNode.parentNode.parentNode.nextSibling)
-
-    // if(document.getElementsByClassName('comments-wrapper').length > 0){
-    //     return;
-    // }
 
     let response = $.get({
         url: href,
@@ -152,7 +138,7 @@ function getComments(href, commentsWrapper){
             let editForm = document.createElement('form');
             let editButton = document.createElement('button');
 
-            likeCount.innerText = el['likes'].length;
+            likeCount.innerText = el['likesCount'];
 
             likeButton.className = 'comment-like-button';
             likeButton.type = 'submit';
@@ -172,15 +158,15 @@ function getComments(href, commentsWrapper){
             unlikeForm.method = 'post';
             unlikeForm.className = 'unlike-form';
 
-            let isLiked = false;
+            let isLiked = el['isLiked'];
 
-            for(let x of el['likes']){
-                // console.log(x);
-                if (x === currentUser['id']){
-                    isLiked = true;
-                    break;
-                }
-            }
+            // for(let x of el['likes']){
+            //     // console.log(x);
+            //     if (x === currentUser['id']){
+            //         isLiked = true;
+            //         break;
+            //     }
+            // }
 
             let unlikeButtonWrapper = document.createElement('div');
             unlikeButtonWrapper.className = 'unlike-button_wrapper';
@@ -254,22 +240,22 @@ function like(event){
     }).done(function (data, textStatus, jqXHR){
         // console.log(jqXHR.responseText);
         let resp = JSON.parse(jqXHR.responseText);
-        // console.log(resp);
+        console.log(resp);
 
         // console.log(event.target.nextSibling.innerText);
 
         if(event.target.className === 'like-form'){
             event.target.className = 'unlike-form';
-            event.target.action = '/posts/'+resp['post']['id']+'/comment/'+resp['id']+'/unlike';
+            event.target.action = '/posts/'+resp['postId']+'/comment/'+resp['id']+'/unlike';
             event.target.firstChild.firstChild.textContent = 'unlike';
         }
         else{
             event.target.className = 'like-form';
-            event.target.action = '/posts/'+resp['post']['id']+'/comment/'+resp['id']+'/like';
+            event.target.action = '/posts/'+resp['postId']+'/comment/'+resp['id']+'/like';
             event.target.firstChild.firstChild.textContent = 'like';
         }
 
-        event.target.nextSibling.innerText = resp['likes'].length;
+        event.target.nextSibling.innerText = resp['likesCount'];
 
     });
 
@@ -328,8 +314,8 @@ function likePost(event){
         }
 
         // event.target.addEventListener('submit', likePost);
-        console.log(resp['likes']);
-        event.target.nextElementSibling.innerText = resp['likes'].length;
+        console.log(resp);
+        event.target.nextElementSibling.innerText = resp['likesCount'];
         // event.target.nextElementSibling.innerText= 10;
         // console.log(event.target.nextElementSibling);
     });

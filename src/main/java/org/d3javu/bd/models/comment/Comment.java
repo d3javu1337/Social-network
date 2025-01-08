@@ -40,7 +40,7 @@ public class Comment {
     )
     private Set<User> likes = new HashSet<>();
 
-//    private Long likesCount = 0L;
+    private Long likesCount = 0L;
 
     private LocalDateTime createdAt;
 

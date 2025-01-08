@@ -5,13 +5,14 @@ spring:
     name: bd
   datasource:
     url: jdbc:postgresql://localhost:5432/bd
+#    url: jdbc:postgresql://localhost:5433/db
 #    url: jdbc:postgresql://host.docker.internal:5432/bd
     username: postgres
     password: postgres
-    driver-class-name: org.postgresql.Driver
+#    driver-class-name: org.postgresql.Driver
   jpa:
     properties.hibernate:
-      show_sql: false
+      show_sql: true
       format_sql: true
     hibernate:
       ddl-auto: validate
@@ -25,6 +26,11 @@ spring:
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
+
+logging:
+  level:
+    org.hibernate.sql: debug
+    org.hibernate.type: trace
 
 #  data:
 #    jdbc:

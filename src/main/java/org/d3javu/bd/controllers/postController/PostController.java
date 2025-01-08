@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.post.PostCreateDto;
 import org.d3javu.bd.dto.post.PostEditDto;
 import org.d3javu.bd.dto.tag.PreferredTagsDto;
+import org.d3javu.bd.dto.user.CompactUserReadDto;
 import org.d3javu.bd.mapper.post.PostEditMapper;
 import org.d3javu.bd.mapper.post.PostReadMapper;
 import org.d3javu.bd.mapper.tag.DtoToTagMapper;
@@ -62,18 +63,20 @@ public class PostController {
 
     @GetMapping("/preferred")
     public String findAllPreferred(Model model) {
-        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        var user = this.userService.findByEmail(userEmail);
-        var tags = user.getPreferredTags();
-        var posts = this.postService.findByPreferred(tags)
-                .stream()
-                .sorted(Comparator.comparing(en -> en.createdAt))
-                .collect(Collectors.toList());
-        var currentUser = this.userReadMapper.map(this.userService.findByEmail(SecurityContextHolder.getContext()
-                .getAuthentication().getName()));
+
+        var tags = this.userService.findPreferredTagsByUserId(this.getCurrentUserId());
+
+        var posts = this.postService.findByPreferred(tags, this.getCurrentUserId());
+
+        System.out.println("---------------------------------------------------");
+        System.out.println(posts);
+        System.out.println("---------------------------------------------------");
+//                .stream()
+//                .sorted(Comparator.comparing(en -> en.createdAt))
+//                .collect(Collectors.toList());
 //        List<PostReadDto> posts = this.postService.findByPreferred(tags);
         model.addAttribute("posts", posts);
-        model.addAttribute("currentUser", currentUser);
+        model.addAttribute("currentUser", this.getCurrentUser());
         model.addAttribute("tags", this.tagService.findAll());
 
 //        System.out.println("----------------------");
@@ -85,14 +88,14 @@ public class PostController {
 
     @GetMapping
     public String findAll(Model model) {
-        var user = this.userReadMapper.map(this.userService.findByEmail(SecurityContextHolder.getContext()
-                .getAuthentication().getName()));
-        var posts = this.postService.findAll()
-                .stream()
-                .sorted(Comparator.comparing(en -> en.createdAt))
-                .collect(Collectors.toList());
+        var posts = this.postService.findAll(this.getCurrentUserId());
+//        var posts = this.postService.findAll(31L);
+//        System.out.println("----------------------------------------");
+//        System.out.println(posts.size());
+//        System.out.println("----------------------------------------");
         model.addAttribute("posts", posts);
-        model.addAttribute("currentUser", user);
+        model.addAttribute("currentUser", this.getCurrentUser());
+//        model.addAttribute("currentUser", new CompactUserReadDto(31L, "", "", ""));
         model.addAttribute("tags", this.tagService.findAll());
         return "post/posts";
     }
@@ -118,7 +121,7 @@ public class PostController {
     public String findByTags(Model model, @ModelAttribute PreferredTagsDto tags) {
         var posts = this.postService.findByTags(tags.getTags());
         model.addAttribute("posts", posts);
-        model.addAttribute("currentUser", this.userReadMapper.map(this.getCurrentUser()));
+        model.addAttribute("currentUser", this.userService.findById(this.getCurrentUserId()));
         model.addAttribute("tags", this.tagService.findAll());
         return "post/posts";
     }
@@ -129,8 +132,7 @@ public class PostController {
                 .getAuthentication().getName());
         var userId = user.getId();
         postService.view(id, user);
-        return postService.findPostById(id)
-                .map(this.postReadMapper::map)
+        return postService.findPostById(id, userId)
                 .map(p -> {
                     model.addAttribute("post", p);
 //                    model.addAttribute("userId", userId);
@@ -147,7 +149,7 @@ public class PostController {
     @GetMapping("/tag/{id}")
     public String findAllByTag(@PathVariable("id") Long tagId, Model model) {
         model.addAttribute("posts", postService.findAllByTagId(tagId));
-        model.addAttribute("currentUser", this.getCurrentUser());
+        model.addAttribute("currentUser", this.userService.findById(this.getCurrentUserId()));
         return "post/posts";
     }
 
@@ -156,7 +158,7 @@ public class PostController {
         var post = this.postService.findById(id).get();
         model.addAttribute("post", post);
         model.addAttribute("tags", this.tagService.findAll());
-        model.addAttribute("currentUser", this.getCurrentUser());
+        model.addAttribute("currentUser", this.userService.findById(this.getCurrentUserId()));
         return "post/postUpdate";
     }
 
@@ -182,7 +184,7 @@ public class PostController {
     public String like(@PathVariable("id") Long id) {
         var user = this.userService.findByEmail(SecurityContextHolder.getContext()
                 .getAuthentication().getName());
-        this.postService.like(id, user);
+        this.postService.like(id, user.getId());
         return "redirect:/posts/" + id;
     }
 
@@ -190,7 +192,7 @@ public class PostController {
     public String unlike(@PathVariable("id") Long id) {
         var user = this.userService.findByEmail(SecurityContextHolder.getContext()
                 .getAuthentication().getName());
-        this.postService.unlike(id, user);
+        this.postService.unlike(id, user.getId());
         return "redirect:/posts/" + id;
     }
 
@@ -200,9 +202,21 @@ public class PostController {
         return "redirect:/posts/%s/update".formatted(id);
     }
 
-    public User getCurrentUser(){
+//    @Deprecated(forRemoval = true)
+//    public User getCurrentUser(){
+//        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+//        return this.userService.findByEmail(userEmail);
+//    }
+
+    public CompactUserReadDto getCurrentUser(){
         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        return this.userService.findByEmail(userEmail);
+        return this.userService.findById(this.userService.findIdByEmail(userEmail))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    public Long getCurrentUserId(){
+        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        return this.userService.findIdByEmail(userEmail);
     }
 
 }

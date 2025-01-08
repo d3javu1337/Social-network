@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 //import org.d3javu.bd.auth.authData.AuthData;
 //import org.d3javu.bd.auth.userDetails.UserDetailsImpl;
 import org.d3javu.bd.dto.post.PostReadDto;
+import org.d3javu.bd.dto.tag.TagDto;
+import org.d3javu.bd.dto.user.CompactUserReadDto;
 import org.d3javu.bd.dto.user.UserCreateDto;
 import org.d3javu.bd.dto.user.UserEditDto;
 import org.d3javu.bd.filter.user.UserFilter;
@@ -11,6 +13,7 @@ import org.d3javu.bd.dto.user.UserReadDto;
 import org.d3javu.bd.mapper.user.UserCreateMapper;
 import org.d3javu.bd.mapper.user.UserEditMapper;
 import org.d3javu.bd.mapper.user.UserReadMapper;
+import org.d3javu.bd.models.tag.Tag;
 import org.d3javu.bd.models.user.User;
 //import org.d3javu.bd.repositories.AuthDataRepository;
 import org.d3javu.bd.repositories.UserRepository;
@@ -47,6 +50,7 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final ImageService imageService;
     private final PostService postService;
+    private final TagService tagService;
 //    private final AuthDataRepository authDataRepository;
 
 //    public Page<UserReadDto> findAll(UserFilter filter, Pageable pageable) {
@@ -67,8 +71,17 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll().stream().map(userReadMapper::map).toList();
     }
 
-    public Optional<UserReadDto> findById(Long id){
-        return userRepository.findById(id).map(userReadMapper::map);
+    public Optional<CompactUserReadDto> findById(Long id){
+        return this.userRepository.findCompactById(id)
+                .stream()
+                .map(en -> new CompactUserReadDto(
+                        (Long) en[0],
+                        (String) en[1],
+                        (String) en[2],
+                        (String) en[3]
+                ))
+                .findFirst();
+//                .orElseThrow(() -> new NotFoundException("Not found user by id = "+id));
     }
 
     public Optional<UserReadDto> findByCustomLink(String customLink){
@@ -169,9 +182,11 @@ public class UserService implements UserDetailsService {
     }
 
     public User findByEmail(String user){
-//        return this.userRepository.findByEmail(user).orElseThrow(() -> new UsernameNotFoundException(user));
-//        return this.userRepository.findByEmail(user).orElse(null);
-        return this.userRepository.findByEmail(user).get();
+        return this.userRepository.findByEmail(user).orElseThrow(() -> new UsernameNotFoundException(user));
+    }
+
+    public Long findIdByEmail(String user){
+        return this.userRepository.findIdByEmail(user).orElseThrow(() -> new UsernameNotFoundException(user));
     }
 
     @Transactional
@@ -222,6 +237,11 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
+    public boolean isFollowed(Long followedId, Long followerId){
+        return this.userRepository.existsFollow(followedId, followerId);
+    }
+
+
     public Optional<byte[]> findAvatar(Long id){
         return this.userRepository.findById(id)
                 .map(User::getAvatarPath)
@@ -242,6 +262,23 @@ public class UserService implements UserDetailsService {
                 .stream()
                 .map(userReadMapper::map)
                 .collect(Collectors.toSet());
+    }
+
+    public Set<CompactUserReadDto> findFollowersById(String id){
+        var val = Long.parseLong(id);
+        return this.userRepository.findAllFollowersByFollowedId(val)
+                .stream()
+                .map(en -> new CompactUserReadDto(
+                        (Long)en[0],
+                        (String)en[1],
+                        (String)en[2],
+                        (String)en[3]
+                ))
+                .collect(Collectors.toSet());
+    }
+
+    public Set<Tag> findPreferredTagsByUserId(Long userId){
+        return this.tagService.getTagsByIds(this.userRepository.findAllPreferredTagsIdByUserId(userId));
     }
 
     public Set<PostReadDto> findPostsByUser(String id){

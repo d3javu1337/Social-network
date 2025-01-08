@@ -2,6 +2,7 @@ package org.d3javu.bd.controllers.adminController;
 
 import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.tag.TagDto;
+import org.d3javu.bd.dto.user.CompactUserReadDto;
 import org.d3javu.bd.models.user.User;
 import org.d3javu.bd.service.PostService;
 import org.d3javu.bd.service.TagService;
@@ -65,9 +66,10 @@ public class AdminController {
 //        return "";
 //    }
 
-    public User getCurrentUser(){
+    public CompactUserReadDto getCurrentUser(){
         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        return this.userService.findByEmail(userEmail);
+        return this.userService.findById(this.userService.findIdByEmail(userEmail))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
 //        return userService.update(id, user)

@@ -10,26 +10,27 @@ import org.d3javu.bd.mapper.post.PostCreateMapper;
 import org.d3javu.bd.mapper.post.PostEditMapper;
 import org.d3javu.bd.mapper.post.PostForReportMapper;
 import org.d3javu.bd.mapper.post.PostReadMapper;
-import org.d3javu.bd.models.post.Post;
 import org.d3javu.bd.models.post.PostForReport;
 import org.d3javu.bd.models.tag.Tag;
 import org.d3javu.bd.models.user.User;
 import org.d3javu.bd.repositories.PostRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.webjars.NotFoundException;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
@@ -43,6 +44,9 @@ public class PostService {
     private final PostReadMapper postReadMapper;
     private final ImageService imageService;
     private final PostForReportMapper postForReportMapper;
+
+//    @Lazy
+    private final TagService tagService;
 
 
     //crud
@@ -58,19 +62,83 @@ public class PostService {
     public Optional<PostReadDto> findById(Long id) {
         return this.postRepository.findById(id).map(this.postReadMapper::map);
     }
-    public Optional<Post> findPostById(Long id) {
-        return this.postRepository.findById(id);
+    public Optional<PostReadDto> findPostById(Long postId, Long userId) {
+        var p = this.postRepository.findAllReadDtoWithAuthorById(postId).get(0);
+        Long l = (Long)p[0];
+        System.out.println(l);
+        return this.postRepository.findAllReadDtoWithAuthorById(postId)
+                .stream()
+                .map(en ->{
+                    var t = new PostReadDto(
+                            ((Long)en[0]),
+                            (String) en[1],
+                            (String) en[2],
+                            LocalDateTime.ofInstant(((Timestamp)en[3]).toInstant(), ZoneOffset.UTC),
+                            ((Long)en[4]),
+                            ((Long)en[5]),
+                            (String) en[6],
+                            (String) en[7],
+                            (String) en[8]
+
+                    );
+                    t.setTags(this.tagService.findByPost(t.getId()));
+                    t.setIsLiked(this.postRepository.existsLikeByPostIdAndUserId(t.getId(), userId));
+                    t.setImages(this.imageService.findAllImagesByPostId(t.getId()));
+                    return t;
+                }).findFirst();
     }
 
 
-    public List<PostReadDto> findAll() {
-        return this.postRepository.findAll().stream().map(this.postReadMapper::map).toList();
+//    public List<PostReadDto> findAll() {
+//        return this.postRepository.findAll().stream().map(this.postReadMapper::map).toList();
+//    }
+
+    public List<PostReadDto> findAll(Long userId) {
+        return this.postRepository.findAllReadDtoWithAuthor()
+                .stream()
+                .map(en ->{
+                    var t = new PostReadDto(
+                            (Long) en[0],
+                            (String) en[1],
+                            (String) en[2],
+                            LocalDateTime.ofInstant(((Timestamp)en[3]).toInstant(), ZoneOffset.UTC),
+                            (Long) en[4],
+                            (Long) en[5],
+                            (String) en[6],
+                            (String) en[7],
+                            (String) en[8]
+
+                    );
+                    t.setTags(this.tagService.findByPost(t.getId()));
+                    t.setIsLiked(this.postRepository.existsLikeByPostIdAndUserId(t.getId(), userId));
+                    t.setImages(this.imageService.findAllImagesByPostId(t.getId()));
+                    return t;
+                })
+                .collect(Collectors.toList());
     }
 
-    public List<PostReadDto> findByPreferred(Set<Tag> preferredTags) {
+    public List<PostReadDto> findByPreferred(Set<Tag> preferredTags, Long userId) {
         var postFilter = new PostFilter(preferredTags);
         return this.postRepository.findAllByTagsFilter(postFilter, EPredicateBuildMethod.OR)
-                .stream().map(this.postReadMapper::map).toList();
+                .stream()
+                .map(en -> {
+                    var t = new PostReadDto(
+                            en.getId(),
+                            en.getTitle(),
+                            en.getBody(),
+                            en.getCreatedAt(),
+                            en.getLikesCount(),
+                            en.getAuthor().getId(),
+                            en.getAuthor().getFirstName(),
+                            en.getAuthor().getLastName(),
+                            en.getAuthor().getAvatarPath()
+
+                    );
+                    t.setTags(this.tagService.findByPost(t.getId()));
+                    t.setIsLiked(this.postRepository.existsLikeByPostIdAndUserId(t.getId(), userId));
+                    t.setImages(this.imageService.findAllImagesByPostId(t.getId()));
+                    return t;
+                }).toList();
     }
 
     public List<PostReadDto> findByTags(Set<Tag> tags) {
@@ -94,11 +162,15 @@ public class PostService {
 
     @Transactional
     public Optional<PostReadDto> update(Long id, PostEditDto postEditDto) {
-        var post = this.findPostById(id);
-        post.get().getImages().clear();
-        this.uploadImages(postEditDto.getImages());
-        this.postRepository.saveAndFlush(this.postEditMapper.map(postEditDto, post.get()));
-        return Optional.ofNullable(this.postReadMapper.map(this.postRepository.findById(id).get()));
+        var post = this.postRepository.findById(id);
+        return post.map(en -> {
+            this.uploadImages(postEditDto.getImages());
+            this.postRepository.saveAndFlush(this.postEditMapper.map(postEditDto, post.get()));
+//            return en;
+            return this.postReadMapper.map(this.postRepository.findById(id).get());
+        });
+//        return Optional.ofNullable(this.postReadMapper.map(this.postRepository.findById(id).get()));
+//        post.get().getImages().clear();
 //        return Optional.of(this.postReadMapper.map(post.get()));
 
 //        return this.postRepository.findById(id)
@@ -110,13 +182,13 @@ public class PostService {
 //                .map(this.postReadMapper::map);
     }
 
-    @Transactional
-    public Optional<PostReadDto> internalUpdate(Long id, Post post) {
-        return Optional.of(this.postReadMapper.map(this.postRepository.saveAndFlush(post)));
-//                .map(post -> this.postEditMapper.map(postEditDto, post))
-//                .map(this.postRepository::saveAndFlush)
-//                .map(this.postReadMapper::map);
-    }
+//    @Transactional
+//    public Optional<PostReadDto> internalUpdate(Long id, Post post) {
+//        return Optional.of(this.postReadMapper.map(this.postRepository.saveAndFlush(post)));
+////                .map(post -> this.postEditMapper.map(postEditDto, post))
+////                .map(this.postRepository::saveAndFlush)
+////                .map(this.postReadMapper::map);
+//    }
 
     @Transactional
     public boolean delete(Long id) {
@@ -142,24 +214,23 @@ public class PostService {
     }
 
     @Transactional
-    public void like(Long id, User user){
-        var post = postRepository.findById(id).orElse(null);
-        if(post != null) {
-            post.like(user);
-            postRepository.saveAndFlush(post);
-        }else{
-            throw new NotFoundException("Post not found");
+    public void like(Long postId, Long userId) {
+        if(this.postRepository.existsPostById(postId) && !this.postRepository.existsLikeByPostIdAndUserId(postId, userId)){
+                this.postRepository.likePost(postId, userId);
+                this.postRepository.updateLikesCount(postId);
+        } else{
+            throw new HttpClientErrorException(HttpStatus.CONFLICT);
         }
+
     }
 
     @Transactional
-    public void unlike(Long id, User user){
-        var post = postRepository.findById(id).orElse(null);
-        if(post != null) {
-            post.unlike(user);
-            postRepository.saveAndFlush(post);
-        }else{
-            throw new NotFoundException("Post not found");
+    public void unlike(Long postId, Long userId){
+        if(this.postRepository.existsPostById(postId) && this.postRepository.existsLikeByPostIdAndUserId(postId, userId)){
+            this.postRepository.unlikePost(postId, userId);
+            this.postRepository.updateLikesCount(postId);
+        } else{
+          throw new HttpClientErrorException(HttpStatus.CONFLICT);
         }
     }
 

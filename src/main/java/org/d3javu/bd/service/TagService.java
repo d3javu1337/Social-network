@@ -4,15 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.tag.TagDto;
 import org.d3javu.bd.mapper.tag.DtoToTagMapper;
 import org.d3javu.bd.mapper.tag.TagToDtoMapper;
-import org.d3javu.bd.models.post.Post;
 import org.d3javu.bd.models.tag.Tag;
 import org.d3javu.bd.repositories.TagRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.webjars.NotFoundException;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -23,7 +20,7 @@ import java.util.stream.Collectors;
 public class TagService {
 
     private final TagRepository tagRepository;
-    private final PostService postService;
+//    private final PostService postService;
     private final TagToDtoMapper tagToDtoMapper;
     private final DtoToTagMapper dtoToTagMapper;
 
@@ -71,12 +68,23 @@ public class TagService {
                 .orElse(false);
     }
 
-    public Set<TagDto> findByPost(Post post) {
-        return this.tagRepository.findTagsIdByPostId(post.getId()).stream().map(tagToDtoMapper::map).collect(Collectors.toSet());
+    public Set<TagDto> findByPost(Long postId) {
+        return this.tagRepository.findTagsByPostId(postId).stream().map(tagToDtoMapper::map).collect(Collectors.toSet());
     }
 
     public Optional<TagDto> findByBody(String body) {
         return this.tagRepository.findByBody(body).map(this.tagToDtoMapper::map);
+    }
+
+    public Set<Tag> getTagsByIds(Set<Long> ids) {
+        return this.tagRepository.findTagsByIds(ids)
+                .stream()
+                .map(en -> new Tag(
+                        (Long)en[0],
+                        (String)en[1],
+                        (String)en[2]
+                ))
+                .collect(Collectors.toSet());
     }
 
 //    public boolean existsByBody(String body) {

@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,7 @@ public class CommentService {
     private final CommentCreateMapper commentCreateMapper;
     private final CommentEditMapper commentEditMapper;
     private final CommentReadMapper commentReadMapper;
+    private final UserService userService;
 
     private final PostService postService;
 
@@ -41,52 +43,73 @@ public class CommentService {
     public CommentReadDto create(Long postId, CommentCreateDto commentCreateDto) {
 //        var comment = commentCreateMapper.map(commentCreateDto);
 //        comment = commentRepository.saveAndFlush(comment);
-        var comment = this.addComment(postId, commentCreateDto);
+//        var comment = this.addComment(postId, commentCreateDto);
 //        var comment = this.commentRepository.saveAndFlush(this.commentCreateMapper.map(commentCreateDto));
 //        return this.commentRepository.saveAllAndFlush(comment)
-        return commentReadMapper.map(comment);
-    }
+//        var comment = this.commentCreateMapper.map(commentCreateDto);
+        commentCreateDto.setPostId(postId);
+        commentCreateDto.setCreatedAt(LocalDateTime.now());
+        commentCreateDto.setLikesCount(0L);
+        var id = this.commentRepository.createComment(
+                commentCreateDto.body,
+                commentCreateDto.postId,
+                commentCreateDto.userId,
+                commentCreateDto.createdAt,
+                commentCreateDto.likesCount
+        );
 
-    public Optional<CommentReadDto> findById(Long id) {
-        return commentRepository.findById(id).map(commentReadMapper::map);
-    }
 
-    public Set<CommentReadDto> findAll() {
-        return this.commentRepository.findAll()
-                .stream().map(commentReadMapper::map).collect(Collectors.toSet());
-    }
 
-    public Set<CommentDtoForLargeQuery> findAllByPostId(Long id) {
-//        System.out.println("--------------------------------------------");
-//        var comment = new CommentReadDto(null, null, null, null, null, null);
-//        System.out.println(this.commentRepository.findAllByPostId(id));
-//        this.commentRepository.findAllByPostId(id).forEach(el -> {
-//            System.out.println(el.getAuthor().getId() + " author id");
-//            System.out.println(el.getBody() + " body");
-//            System.out.println(el.getLikes() + " likes count");
-//        });
+        return new CommentReadDto(Long.valueOf(id), null, null, null, null, null);
+
+//        return commentReadMapper.map(comment);
+    }
+//
+//    public Optional<CommentReadDto> findById(Long id) {
+//        return commentRepository.findById(id).map(commentReadMapper::map);
+//    }
+
+//    public Set<CommentReadDto> findAll() {
+//        return this.commentRepository.findAll()
+//                .stream().map(commentReadMapper::map).collect(Collectors.toSet());
+//    }
+
+    public Set<CommentDtoForLargeQuery> findAllByPostId(Long postId, Long userId) {
         Set<CommentDtoForLargeQuery> comments = new HashSet<>();
-        var vals = this.commentRepository.getIdAndBodyAndCreatedAtAndAuthorIdByPostId(id);
+        var vals = this.commentRepository.getIdAndBodyAndCreatedAtAndAuthorIdByPostId(postId);
         for (var x : vals) {
-//            System.out.printf("%s %s %s %s \n", (Long)x[0], (String)x[1], ((Timestamp)x[2]).toLocalDateTime(), (Long)x[3]);
             var commentId = (Long)x[0];
             var commentBody = (String)x[1];
             var commentCreatedAt = ((Timestamp) x[2]).toLocalDateTime();
             var commentAuthorId = (Long)x[3];
             var authorRaw = this.userRepository.FindFirstNameAndLastNameAndAvatarPathById(commentAuthorId)[0].split(",");
-//            System.out.println(Arrays.toString(authorRaw));
-//            System.out.println(authorRaw[0]);
             var author = new CompactUserReadDto(commentAuthorId, (String)authorRaw[0], (String)authorRaw[1], (String)authorRaw[2] );
-            var likes = this.commentRepository.getLikesIdsById(commentId);
+            var likes = this.commentRepository.getLikesCountById(commentId);
+            var isLiked = this.commentRepository.existsLikeByUserIdAndCommentId(userId, commentId);
 
-            var unit = new CommentDtoForLargeQuery(commentId, commentBody, commentCreatedAt, id, author, likes);
+            var unit = new CommentDtoForLargeQuery(commentId, commentBody, commentCreatedAt, postId, author, likes, isLiked);
             comments.add(unit);
         }
-//        System.out.println("---------------------------------------------");
 
         return comments;
-//                .stream().map(commentReadMapper::map)
-//                .collect(Collectors.toSet());
+    }
+
+    public CommentDtoForLargeQuery findById(Long commentId, Long userId) {
+        return this.commentRepository.getIdAndBodyAndCreatedAtAndAuthorIdByCommentId(commentId)
+                .stream()
+                .map(en -> {
+                    var comment = new CommentDtoForLargeQuery();
+                    comment.id = (Long)en[0];
+                    comment.body = (String)en[1];
+                    comment.createdAt = ((Timestamp) en[2]).toLocalDateTime();
+                    comment.likesCount = (Long)en[3];
+                    comment.postId = (Long)en[4];
+                    comment.author = new CompactUserReadDto((Long)en[5], (String)en[6], (String)en[7], (String)en[8]);
+                    comment.isLiked = this.commentRepository.existsLikeByUserIdAndCommentId(userId, commentId);
+                    return comment;
+                })
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Comment not found"));
     }
 
     @Transactional
@@ -111,34 +134,26 @@ public class CommentService {
 //crud
 
     @Transactional
-    public void like(Long id, User user) {
-        this.commentRepository.findById(id).map(comment -> {
-            comment.like(user);
-            this.commentRepository.save(comment);
-            this.commentRepository.flush();
-            return true;
-        }).orElseThrow(() -> new NotFoundException("Comment not found"));
+    public void like(Long commentId, Long userId) {
+        this.commentRepository.likeComment(userId, commentId);
+        this.commentRepository.updateLikesCountByCommentId(commentId);
     }
 
     @Transactional
-    public void unlike(Long id, User user) {
-        this.commentRepository.findById(id).map(comment -> {
-            comment.unlike(user);
-            this.commentRepository.save(comment);
-            this.commentRepository.flush();
-            return true;
-        }).orElseThrow(() -> new NotFoundException("Comment not found"));
+    public void unlike(Long commentId, Long userId) {
+        this.commentRepository.unlikeComment(userId, commentId);
+        this.commentRepository.updateLikesCountByCommentId(commentId);
     }
 
-    @Transactional
-    public Comment addComment(Long postId, CommentCreateDto commentCreateDto) {
-        var post = this.postService.findPostById(postId).orElseThrow(() -> new NotFoundException("Post not found"));
-//        comment.setPost(post);
-        commentCreateDto.post = post;
-        var comment = this.commentCreateMapper.map(commentCreateDto);
-        return this.commentRepository.save(comment);
-//        this.postService.internalUpdate(postId, post);
-    }
+//    @Transactional
+//    public Comment addComment(Long postId, CommentCreateDto commentCreateDto) {
+//        var post = this.postService.findPostById(postId).orElseThrow(() -> new NotFoundException("Post not found"));
+////        comment.setPost(post);
+//        commentCreateDto.post = post;
+//        var comment = this.commentCreateMapper.map(commentCreateDto);
+//        return this.commentRepository.save(comment);
+////        this.postService.internalUpdate(postId, post);
+//    }
 
 
 }

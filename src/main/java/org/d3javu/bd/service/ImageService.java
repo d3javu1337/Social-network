@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -91,6 +92,10 @@ public class ImageService {
     @Transactional
     public void deleteImage(Long postId, String path) {
         this.imagesRepository.deleteImagesByPostIdAndPath(postId, path);
+    }
+
+    public List<String> findAllImagesByPostId(Long postId) {
+        return this.imagesRepository.findAllPathsByPostId(postId);
     }
 
 }

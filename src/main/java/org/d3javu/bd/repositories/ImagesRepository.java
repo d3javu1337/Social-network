@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface ImagesRepository extends JpaRepository<Images, Long> {
 
 
@@ -12,5 +14,9 @@ public interface ImagesRepository extends JpaRepository<Images, Long> {
     @Query(value = "delete from images where post_id= :postId and path= :imagesPath",
     nativeQuery = true)
     void deleteImagesByPostIdAndPath(Long postId, String imagesPath);
+
+    @Query(value = "select i.path from images i where i.post_id= :postId",
+            nativeQuery = true)
+    List<String> findAllPathsByPostId(Long postId);
 
 }

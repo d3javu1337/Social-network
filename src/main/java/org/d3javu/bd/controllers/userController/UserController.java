@@ -65,10 +65,12 @@ public class UserController {
             return userService.findById(val)
                     .map(user -> {
                         model.addAttribute("user", user);
-                        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-                        var currentUser = this.userService.findByEmail(userEmail);
-                        model.addAttribute("currentUser", this.compactUserReadMapper.map(currentUser));
-                        var bool = this.userService.findByEmail(user.getUsername()).getFollowers().contains(currentUser);
+//                        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+                        var currentUser = this.getCurrentUser();
+                        model.addAttribute("currentUser", currentUser);
+
+//                        var bool = this.userService.findByEmail(user.getUsername()).getFollowers().contains(currentUser);
+                        var bool = this.userService.isFollowed(user.getId(), currentUser.getId());
                         model.addAttribute("isFollowed", bool);
 //                        if(currentUser.getId() == val) return "user/user";
 //                        else return "user/userProfile";
@@ -196,44 +198,33 @@ public class UserController {
             val = this.userService.findByCustomLink(id)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)).getId();
         }
-        model.addAttribute("users", this.userService.findById(val)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
-                .getFollowers()
-                .stream()
-                .map(en -> new CompactUserReadDto(
-                        en.getId(),
-                        en.getFirstName(),
-                        en.getLastName(),
-                        en.getAvatar()
-                ))
-                .collect(Collectors.toList())
-        );
+        model.addAttribute("users", this.userService.findFollowersById(id));
         return "user/users";
     }
 
-    @GetMapping("/liked/post/{id}")
-    public String likedPost(@PathVariable("id") Long id, Model model){
-        var liked = this.postService.findById(id)
-                .map(PostReadDto::getLikes)
-//                .map(e -> (Set<CommentReadDto>)e. )
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        model.addAttribute("users", liked);
-        return "user/users";
-    }
+//    @GetMapping("/liked/post/{id}")
+//    public String likedPost(@PathVariable("id") Long id, Model model){
+//        var liked = this.postService.findById(id)
+//                .map(PostReadDto::getLikes)
+////                .map(e -> (Set<CommentReadDto>)e. )
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+//        model.addAttribute("users", liked);
+//        return "user/users";
+//    }
 
 
-    @GetMapping("/liked/comment/{id}")
-    public String likedComment(@PathVariable("id") Long id, Model model){
-        var liked = this.commentService.findById(id)
-//                .map(CommentReadDto::getLikes)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
-                .getLikes();
-//                .stream()
-//                .map(this.userReadMapper::map);
-//                .collect(Collectors.toSet());
-        model.addAttribute("users", liked);
-        return "user/users";
-    }
+//    @GetMapping("/liked/comment/{id}")
+//    public String likedComment(@PathVariable("id") Long id, Model model){
+//        var liked = this.commentService.findById(id)
+////                .map(CommentReadDto::getLikes)
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
+//                .getLikes();
+////                .stream()
+////                .map(this.userReadMapper::map);
+////                .collect(Collectors.toSet());
+//        model.addAttribute("users", liked);
+//        return "user/users";
+//    }
 
 
     public boolean isNumber(String id){
@@ -245,9 +236,15 @@ public class UserController {
         return true;
     }
 
-    public User getCurrentUser(){
+    public CompactUserReadDto getCurrentUser(){
         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        return this.userService.findByEmail(userEmail);
+        return this.userService.findById(this.userService.findIdByEmail(userEmail))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    public Long getCurrentUserId(){
+        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        return this.userService.findIdByEmail(userEmail);
     }
 
 }

@@ -35,7 +35,7 @@ public class Post {
     @Column(columnDefinition = "text")
     private String body;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private User author;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -56,7 +56,7 @@ public class Post {
 
     private Long likesCount = 0L;
 
-    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "post")
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, mappedBy = "post")
     private Set<Comment> comments = new HashSet<>();
 
     private LocalDateTime createdAt;

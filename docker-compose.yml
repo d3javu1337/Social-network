@@ -1,7 +1,7 @@
 version: '3.9'
 
 networks:
-  default:
+  application:
     driver: bridge
     driver_opts:
       com.docker.network.driver.mtu: 1450
@@ -21,6 +21,8 @@ services:
     environment:
 #      SPRING_DATASOURCE_URL: 'jdbc:postgresql://host.docker.internal:5432/bd'
       SPRING_DATASOURCE_URL: 'jdbc:postgresql://database:5432/db'
+#      SPRING_DATASOURCE_URL: 'jdbc:postgresql://postgres:5432/db'
+#      SPRING_DATASOURCE_URL: 'jdbc:postgresql://postgres:5432/baza'
       APP_IMAGE_BUCKET: images_service
       APP_REPORT_GENERATOR_HOST: report_service
       APP_REPORT_GENERATOR_PORT: 5488
@@ -28,6 +30,14 @@ services:
       APP_IMAGE_BUCKET_SOURCE: images_service
       APP_IMAGE_BUCKET_PORT: 8888
       APP_IMAGE_BUCKET_LOCAL: false
+    networks:
+      - application
+    deploy:
+      resources:
+        limits:
+          memory: 1000MB
+        reservations:
+          memory: 1000MB
     depends_on:
       - report_service
       - images_service
@@ -39,36 +49,43 @@ services:
       context: ./reportservice
       dockerfile: Dockerfile
     hostname: report_service
+    networks:
+      - application
 
   images_service:
     image: nginx:stable-alpine3.20-perl
     restart: always
     expose:
       - 8888
-    #    ports:
-    #      - "127.0.0.1:8888:8888"
     volumes:
       - ./images/conf/nginx.conf:/etc/nginx/nginx.conf
       - ./images/postimages:/var/opt/postimages
       - ./images/profileimages:/var/opt/profileimages
     hostname: images_service
+    networks:
+      - application
 
   db:
-    image: postgres:16
-    user: 999:999
+    image: postgres:16.3-alpine
     restart: always
     environment:
       POSTGRES_DB: db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-#      PGDATA: /var/lib/postgresql/data
     expose:
       - 5432
     volumes:
       - ./src/main/resources/sql/create.sql:/docker-entrypoint-initdb.d/001.sql
       - ./src/main/resources/sql/insert.sql:/docker-entrypoint-initdb.d/002.sql
-      - pg_data:/var/lib/postgresql/data
-        #      - ../2. Init Database:/docker-entrypoint-initdb.d
-#    ports:
-#      - '127.0.0.1:5433:5432'
+      - ./pg_data:/var/lib/postgresql/data
     hostname: database
+    ports:
+      - '127.0.0.1:5433:5432'
+    networks:
+      - application
+    deploy:
+      resources:
+        limits:
+          memory: 500MB
+        reservations:
+          memory: 500MB

@@ -1,12 +1,10 @@
 package org.d3javu.bd.models.tag;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 
+@AllArgsConstructor
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode

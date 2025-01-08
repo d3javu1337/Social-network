@@ -41,14 +41,14 @@ public class User implements Serializable {
     @Enumerated(EnumType.STRING)
     private Roles role;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name="follows",
             joinColumns=@JoinColumn(name="follower_id"),
             inverseJoinColumns=@JoinColumn(name="followed_id")
     )
     private Set<User> follows;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name="follows",
             joinColumns=@JoinColumn(name="followed_id"),
             inverseJoinColumns=@JoinColumn(name="follower_id")
@@ -58,7 +58,7 @@ public class User implements Serializable {
 //    @OneToMany(cascade = CascadeType.ALL)
 //    private List<Tag> preferredTags;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name="user_preferred_tags",
             joinColumns=@JoinColumn(name="user_id"),
             inverseJoinColumns=@JoinColumn(name="tag_id")

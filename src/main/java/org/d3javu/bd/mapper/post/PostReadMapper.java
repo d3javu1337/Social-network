@@ -33,23 +33,23 @@ public class PostReadMapper implements Mapper<Post, PostReadDto> {
     @Override
     public PostReadDto map(Post object) {
         return new PostReadDto(
-                object.getId(),
-                object.getTitle(),
-                object.getBody(),
-                object.getTags(),
-                this.compactUserReadMapper.map(object.getAuthor()),
-                Optional.of(object.getViews().stream().map(this.compactUserReadMapper::map).collect(Collectors.toSet()))
-                        .orElse(new HashSet<>()),
-                Optional.of(object.getLikes().stream().map(User::getId).collect(Collectors.toSet()))
-                        .orElse(new HashSet<>()),
-//                Optional.of(object.getLikes().stream().map(this.compactUserReadMapper::map).collect(Collectors.toSet()))
+//                object.getId(),
+//                object.getTitle(),
+//                object.getBody(),
+//                object.getTags(),
+//                this.compactUserReadMapper.map(object.getAuthor()),
+//                Optional.of(object.getViews().stream().map(this.compactUserReadMapper::map).collect(Collectors.toSet()))
 //                        .orElse(new HashSet<>()),
-
-//                Optional.of(object.getComments().stream().map(commentReadMapper::map).collect(Collectors.toList()))
-//                        .orElse(new ArrayList<>()),
-//                new HashSet<>(),
-                object.getCreatedAt(),
-                object.getImages().stream().map(Images::getPath).collect(Collectors.toList())
+//                Optional.of(object.getLikes().stream().map(User::getId).collect(Collectors.toSet()))
+//                        .orElse(new HashSet<>()),
+////                Optional.of(object.getLikes().stream().map(this.compactUserReadMapper::map).collect(Collectors.toSet()))
+////                        .orElse(new HashSet<>()),
+//
+////                Optional.of(object.getComments().stream().map(commentReadMapper::map).collect(Collectors.toList()))
+////                        .orElse(new ArrayList<>()),
+////                new HashSet<>(),
+//                object.getCreatedAt(),
+//                object.getImages().stream().map(Images::getPath).collect(Collectors.toList())
         );
     }
 }

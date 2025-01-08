@@ -1,13 +1,17 @@
 package org.d3javu.bd.repositories;
 
+import org.d3javu.bd.dto.comment.CommentCreateDto;
 import org.d3javu.bd.dto.comment.CommentDtoForLargeQuery;
 import org.d3javu.bd.dto.comment.CommentReadDto;
 import org.d3javu.bd.models.comment.Comment;
 import org.d3javu.bd.models.comment.IComment;
 import org.d3javu.bd.models.post.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -31,6 +35,48 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query(value = "select c.id, c.body, c.created_at, c.user_id from comments c where post_id= :id", nativeQuery = true)
     List<Object[]> getIdAndBodyAndCreatedAtAndAuthorIdByPostId (Long id);
 
+//    @Query(value = "select c.id, c.body, c.created_at, c.user_id from comments c where id= :id", nativeQuery = true)
+    @Query(value = "select " +
+            "cv.id, cv.body, cv.created_at, cv.likes_count, cv.post_id, " +
+            "cv.authorid, cv.authorfirstname, cv.authorlastname, cv.authoravatarpath " +
+            "from commentswithauthorsview cv where id= :id ", nativeQuery = true)
+    List<Object[]> getIdAndBodyAndCreatedAtAndAuthorIdByCommentId(Long id);
+
     @Query(value = "select cl.user_id from comments_likes cl where comment_id= :id", nativeQuery = true)
     Set<Long> getLikesIdsById(Long id);
+
+    @Query(value = "select count(*) from comments_likes where comment_id= :id",
+            nativeQuery = true)
+    Long getLikesCountById(Long id);
+
+    @Query(value = "select count(*)>0 from bd.public.comments_likes where user_id= :userId and comment_id= :commentId",
+            nativeQuery = true)
+    Boolean existsLikeByUserIdAndCommentId(Long userId, Long commentId);
+
+    @Transactional
+//    @Modifying
+    @Query(value = "insert into comments(created_at, likes_count, post_id, user_id, body) " +
+            "values (:createdAt, :likesCount, :postId, :userId, :body) returning id",
+            nativeQuery = true)
+    Long createComment(String body, Long postId, Long userId, LocalDateTime createdAt, Long likesCount);
+
+    @Transactional
+    @Modifying
+    @Query(value = "insert into comments_likes(comment_id, user_id) values (:commentId, :userId)",
+        nativeQuery = true)
+    void likeComment(Long userId, Long commentId);
+
+    @Transactional
+    @Modifying
+    @Query(value = "delete from comments_likes where comment_id= :commentId and user_id= :userId",
+        nativeQuery = true)
+    void unlikeComment(Long userId, Long commentId);
+
+    @Transactional
+    @Modifying
+    @Query(value = "update comments c set likes_count = " +
+            "(select count(*) from comments_likes cl where cl.comment_id= :commentId) " +
+            "where c.id= :commentId",
+            nativeQuery = true)
+    void updateLikesCountByCommentId(Long commentId);
 }

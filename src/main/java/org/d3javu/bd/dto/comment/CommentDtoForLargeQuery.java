@@ -1,11 +1,13 @@
 package org.d3javu.bd.dto.comment;
 
+import lombok.NoArgsConstructor;
 import org.d3javu.bd.dto.user.CompactUserReadDto;
 import org.d3javu.bd.models.user.IUser;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 
+@NoArgsConstructor
 public class CommentDtoForLargeQuery {
 
     public Long id;
@@ -13,16 +15,18 @@ public class CommentDtoForLargeQuery {
     public LocalDateTime createdAt;
     public Long postId;
     public CompactUserReadDto author;
-    public Set<Long> likes;
+    public Long likesCount;
+    public Boolean isLiked;
 //
 
 
-    public CommentDtoForLargeQuery(Long id, String body, LocalDateTime createdAt, Long postId, CompactUserReadDto author, Set<Long> likes) {
+    public CommentDtoForLargeQuery(Long id, String body, LocalDateTime createdAt, Long postId, CompactUserReadDto author, Long likesCount, Boolean isLiked) {
         this.id = id;
         this.body = body;
         this.createdAt = createdAt;
         this.postId = postId;
         this.author = author;
-        this.likes = likes;
+        this.likesCount = likesCount;
+        this.isLiked = isLiked;
     }
 }

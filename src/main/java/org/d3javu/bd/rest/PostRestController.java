@@ -10,14 +10,13 @@ import org.d3javu.bd.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 //@EnableAsync
 @RequiredArgsConstructor
@@ -30,10 +29,28 @@ public class PostRestController {
     private final UserService userService;
     private final PostReadMapper postReadMapper;
 
-//    @Async
+//    public PostRestController(@Lazy PostService postService, ImageService imageService, UserService userService, PostReadMapper postReadMapper) {
+//        this.postService = postService;
+//        this.imageService = imageService;
+//        this.userService = userService;
+//        this.postReadMapper = postReadMapper;
+//    }
+
+    //    @Async
     @GetMapping
-    public CompletableFuture<ResponseEntity<List<PostReadDto>>> getAllPosts() {
-        return CompletableFuture.completedFuture(new ResponseEntity<>(this.postService.findAll(), HttpStatus.OK));
+    public ResponseEntity<List<PostReadDto>> getAllPosts() {
+//        System.out.println("request at: %s".formatted(LocalDateTime.now()));
+//        var p1 = new PostReadDto(null, null, null, null, null, null, null, LocalDateTime.now(), null);
+//        var currUser = Optional.ofNullable(this.getCurrentUser()).orElse(new User());
+        var posts = this.postService.findAll(this.getCurrentUserId())
+                .stream()
+                .sorted(Comparator.comparing(en -> en.createdAt))
+                .collect(Collectors.toList());
+//        System.out.println("response at: %s".formatted(LocalDateTime.now()));
+//        var p2 = new PostReadDto(null, null, null, null, null, null, null, LocalDateTime.now(), null);
+//        posts.add(0, p2);
+//        posts.add(0, p1);
+        return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}/images/{imagePath}", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE})
@@ -52,31 +69,31 @@ public class PostRestController {
 
     @GetMapping("/{postId}/like")
     public ResponseEntity<PostReadDto> like(@PathVariable Long postId) {
-//        this.postService.findPostById(postId)
-//                .map(en ->{
-//                    en.like(this.getCurrentUser());
-//                    this.postService.up
-//                    return new ResponseEntity<>(en, HttpStatus.OK);
-//                });
-        this.postService.like(postId, this.getCurrentUser());
-        var post = this.postService.findPostById(postId)
-                .map(this.postReadMapper::map)
+        var currentUserId = this.getCurrentUserId();
+        this.postService.like(postId, currentUserId);
+        var post = this.postService.findPostById(postId, currentUserId)
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND));
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
     @GetMapping("/{postId}/unlike")
     public ResponseEntity<PostReadDto> unlike(@PathVariable Long postId) {
-        this.postService.unlike(postId, this.getCurrentUser());
-        var post = this.postService.findPostById(postId)
-                .map(this.postReadMapper::map)
+        var currentUserId = this.getCurrentUserId();
+        this.postService.unlike(postId, currentUserId);
+        var post = this.postService.findPostById(postId, currentUserId)
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND));
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
+    @Deprecated(forRemoval = true)
     public User getCurrentUser(){
         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         return this.userService.findByEmail(userEmail);
+    }
+
+    public Long getCurrentUserId(){
+        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        return this.userService.findIdByEmail(userEmail);
     }
 
 //    @GetMapping(value = "/{id}/images", produces = MediaType.APPLICATION_JSON_VALUE)

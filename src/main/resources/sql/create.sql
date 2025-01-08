@@ -145,3 +145,35 @@ ALTER TABLE user_preferred_tags
 
 ALTER TABLE user_preferred_tags
     ADD CONSTRAINT fk_usepretag_on_user FOREIGN KEY (user_id) REFERENCES users (id);
+
+create view commentsWithAuthorsView
+as
+select
+    c.id,
+    c.body,
+    c.created_at,
+    c.likes_count,
+    c.post_id,
+    u.id as authorId,
+    u.first_name as authorFirstName,
+    u.last_name as authorLastName,
+    u.avatar_path as authorAvatarPath
+from comments c
+         join users u
+              on c.user_id=u.id;
+
+create view postsWithAuthorsView
+as
+select
+    p.id,
+    p.title,
+    p.body,
+    p.created_at,
+    p.likes_count,
+    u.id as authorId,
+    u.first_name as authorFirstName,
+    u.last_name as authorLastName,
+    u.avatar_path as authorAvatarPath
+from posts p
+         join users u
+              on p.author_id=u.id;

@@ -31,16 +31,15 @@ public class CommentController {
 
     @GetMapping("/all")
     public String all(@PathVariable Long postId, Model model) {
-        model.addAttribute("comments", this.commentService.findAllByPostId(postId));
+        var currentUserId = this.getCurrentUserId();
+        model.addAttribute("comments", this.commentService.findAllByPostId(postId, currentUserId));
         return "comment/comments";
     }
 
     @PostMapping("/{id}/like")
     public String like(@PathVariable("id") Long commentId, @PathVariable("postId") Long postId) {
 
-        var user = this.userService.findByEmail(SecurityContextHolder.getContext()
-                .getAuthentication().getName());
-        this.commentService.like(commentId, user);
+        this.commentService.like(commentId, this.getCurrentUserId());
 
         return "redirect:/posts/" + postId;
     }
@@ -48,9 +47,7 @@ public class CommentController {
     @PostMapping("/{id}/unlike")
     public String unlike(@PathVariable("id") Long commentId, @PathVariable("postId") Long postId) {
 
-        var user = this.userService.findByEmail(SecurityContextHolder.getContext()
-                .getAuthentication().getName());
-        this.commentService.unlike(commentId, user);
+        this.commentService.unlike(commentId, this.getCurrentUserId());
 
         return "redirect:/posts/"+postId;
     }
@@ -59,7 +56,7 @@ public class CommentController {
     public String createComment(@PathVariable("postId") Long postId, @ModelAttribute CommentCreateDto commentCreateDto) {
 //        var user = this.userService.findByEmail(SecurityContextHolder.getContext()
 //                .getAuthentication().getName());
-        commentCreateDto.user = this.getCurrentUser();
+        commentCreateDto.userId = this.getCurrentUser().getId();
         this.commentService.create(postId, commentCreateDto);
         return "redirect:/posts/" + postId;
     }
@@ -69,9 +66,9 @@ public class CommentController {
 //        var user = this.userService.findByEmail(SecurityContextHolder.getContext()
 //                .getAuthentication().getName());
         var user = this.getCurrentUser();
-        var comment = this.commentService.findById(commentId)
-                .orElseThrow(() -> new NotFoundException("not found id : "+commentId));
-        if(!user.getId().equals(comment.getAuthor().getId())) {throw new ResponseStatusException(HttpStatus.FORBIDDEN);}
+        var comment = this.commentService.findById(commentId, this.getCurrentUserId());
+//                .orElseThrow(() -> new NotFoundException("not found id : "+commentId));
+        if(!user.getId().equals(comment.author.getId())) {throw new ResponseStatusException(HttpStatus.FORBIDDEN);}
         model.addAttribute("comment", comment);
         model.addAttribute("postId", postId);
         model.addAttribute("currentUser",user);
@@ -88,7 +85,7 @@ public class CommentController {
     @PostMapping("/{id}/edit/delete")
     public String delete(@PathVariable("postId") Long postId, @PathVariable("id") Long commentId) {
         var bool = this.commentService.delete(commentId);
-        var comm = this.commentService.findById(commentId);
+        var comm = this.commentService.findById(commentId, this.getCurrentUserId());
 //        System.out.println(bool + " " + comm);
         return "redirect:/posts/" + postId;
     }
@@ -100,9 +97,15 @@ public class CommentController {
 //        return "comment/comments";
 //    }
 
+    @Deprecated(forRemoval = true)
     public User getCurrentUser(){
         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         return this.userService.findByEmail(userEmail);
+    }
+
+    public Long getCurrentUserId(){
+        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        return this.userService.findIdByEmail(userEmail);
     }
 
 

@@ -13,4 +13,7 @@ public interface FilterPostRepository {
 
     List<Post> findAllByTagsFilter(PostFilter filter, EPredicateBuildMethod method);
 
+//    List<PostReadDto> findAllDto();
+
+
 }

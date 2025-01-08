@@ -15,8 +15,8 @@ public class CommentCreateMapper implements Mapper<CommentCreateDto, Comment> {
     public Comment map(CommentCreateDto object) {
         Comment comment = new Comment();
         comment.setBody(object.getBody());
-        comment.setUser(object.getUser());
-        comment.setPost(object.getPost());
+//        comment.setUser(object.getUser());
+//        comment.setPost(object.getPost());
         comment.setCreatedAt(LocalDateTime.now());
         return comment;
     }

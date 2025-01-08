@@ -23,7 +23,7 @@
 #images/postimages
 #images/profileimages
 # for compiled
-*/target/**
+target/**
 
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
@@ -34,7 +34,8 @@ replay_pid*
 reportservice/dist
 reportservice/node_modules
 */build
-
+pg_data/**
+images/postimages/**
 ## Logs
 #logs
 #*.log

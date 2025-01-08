@@ -3,6 +3,7 @@ package org.d3javu.bd.rest;
 import com.google.gson.*;
 import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.comment.CommentCreateDto;
+import org.d3javu.bd.dto.comment.CommentDtoForLargeQuery;
 import org.d3javu.bd.dto.comment.CommentReadDto;
 import org.d3javu.bd.mapper.comment.CommentReadMapper;
 import org.d3javu.bd.mapper.user.CompactUserReadMapper;
@@ -39,7 +40,8 @@ public class CommentRestController {
 //    public List<CommentReadDto> getComments(@PathVariable long postId) {
     public Map<String, Object> getComments(@PathVariable long postId) {
 //        System.out.println(123);
-        var comments = this.commentService.findAllByPostId(postId);
+        var currenUserId = this.getCurrentUserId();
+        var comments = this.commentService.findAllByPostId(postId, currenUserId);
 //        System.out.println(comments.get(0).post);
         var currentUser = this.getCurrentUser();
         var map = new HashMap<String, Object>();
@@ -50,17 +52,17 @@ public class CommentRestController {
 
 
     @GetMapping("/{commentId}/like")
-    public ResponseEntity<CommentReadDto> like(@PathVariable long commentId) {
-        this.commentService.like(commentId,this.getCurrentUser());
-        var comment = this.commentService.findById(commentId).orElseThrow(() -> new NotFoundException("Comment not found"));
-        return new ResponseEntity<>(comment, HttpStatus.OK);
+    public ResponseEntity<CommentDtoForLargeQuery> like(@PathVariable long commentId) {
+        this.commentService.like(commentId, this.getCurrentUserId());
+//        var comment = this.commentService.findById(commentId).orElseThrow(() -> new NotFoundException("Comment not found"));
+        return new ResponseEntity<>(this.commentService.findById(commentId, this.getCurrentUserId()), HttpStatus.OK);
     }
 
     @GetMapping("/{commentId}/unlike")
-    public ResponseEntity<CommentReadDto> unlike(@PathVariable long commentId) {
-        this.commentService.unlike(commentId,this.getCurrentUser());
-        var comment = this.commentService.findById(commentId).orElseThrow(() -> new NotFoundException("Comment not found"));
-        return new ResponseEntity<>(comment, HttpStatus.OK);
+    public ResponseEntity<CommentDtoForLargeQuery> unlike(@PathVariable long commentId) {
+        this.commentService.unlike(commentId, this.getCurrentUserId());
+//        var comment = this.commentService.findById(commentId).orElseThrow(() -> new NotFoundException("Comment not found"));
+        return new ResponseEntity<>(this.commentService.findById(commentId, this.getCurrentUserId()), HttpStatus.OK);
     }
 
     @PostMapping("/{commentId}/edit")
@@ -77,15 +79,21 @@ public class CommentRestController {
         }
         var commentCreateDto = new CommentCreateDto();
         commentCreateDto.setBody(body);
-        commentCreateDto.setUser(this.getCurrentUser());
+        commentCreateDto.setUserId(this.getCurrentUser().getId());
         var comment = this.commentService.create(postId, commentCreateDto);
         return new ResponseEntity<>(comment, HttpStatus.OK);
     }
 
 
+    @Deprecated(forRemoval = true)
     public User getCurrentUser(){
         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         return this.userService.findByEmail(userEmail);
+    }
+
+    public Long getCurrentUserId(){
+        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        return this.userService.findIdByEmail(userEmail);
     }
 
 }
