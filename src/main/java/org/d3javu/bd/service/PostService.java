@@ -14,8 +14,10 @@ import org.d3javu.bd.models.post.PostForReport;
 import org.d3javu.bd.models.tag.Tag;
 import org.d3javu.bd.models.user.User;
 import org.d3javu.bd.repositories.PostRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
@@ -34,7 +36,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @Service
 public class PostService {
 
@@ -44,19 +46,40 @@ public class PostService {
     private final PostReadMapper postReadMapper;
     private final ImageService imageService;
     private final PostForReportMapper postForReportMapper;
-
-//    @Lazy
+    private final UserService userService;
     private final TagService tagService;
 
+    public PostService(PostRepository postRepository,
+                       PostCreateMapper postCreateMapper,
+                       PostEditMapper postEditMapper,
+                       PostReadMapper postReadMapper,
+                       ImageService imageService,
+                       PostForReportMapper postForReportMapper,
+                       @Lazy UserService userService,
+                       TagService tagService) {
+        this.postRepository = postRepository;
+        this.postCreateMapper = postCreateMapper;
+        this.postEditMapper = postEditMapper;
+        this.postReadMapper = postReadMapper;
+        this.imageService = imageService;
+        this.postForReportMapper = postForReportMapper;
+        this.userService = userService;
+        this.tagService = tagService;
+    }
 
     //crud
     @Transactional
-    public PostReadDto create(PostCreateDto postCreateDto) {
+    public Long create(PostCreateDto postCreateDto, Long userId) {
         var images = Optional.ofNullable(postCreateDto.getImages()).orElse(new ArrayList<>());
-        var post = Optional.of(postCreateDto).map(this.postCreateMapper::map).get();
-        this.uploadImages(images);
-        post = this.postRepository.saveAndFlush(post);
-        return this.postReadMapper.map(post);
+        var postId = this.postRepository.create(
+                postCreateDto.title,
+                postCreateDto.body,
+                userId,
+                LocalDateTime.now(),
+                0L, 0L
+        );
+        this.uploadImages(images, postId);
+        return postId;
     }
 
     public Optional<PostReadDto> findById(Long id) {
@@ -144,7 +167,23 @@ public class PostService {
     public List<PostReadDto> findByTags(Set<Tag> tags) {
         var postFilter = new PostFilter(tags);
         return this.postRepository.findAllByTagsFilter(postFilter, EPredicateBuildMethod.AND)
-                .stream().map(this.postReadMapper::map).toList();
+                .stream()
+                .map(en -> {var t = new PostReadDto(
+                        en.getId(),
+                        en.getTitle(),
+                        en.getBody(),
+                        en.getCreatedAt(),
+                        en.getLikesCount(),
+                        en.getAuthor().getId(),
+                        en.getAuthor().getFirstName(),
+                        en.getAuthor().getLastName(),
+                        en.getAuthor().getAvatarPath()
+                    );
+                    t.setTags(this.tagService.findByPost(t.getId()));
+                    t.setImages(this.imageService.findAllImagesByPostId(t.getId()));
+                    t.setIsLiked(this.postRepository.existsLikeByPostIdAndUserId(t.id, this.getCurrentUserId()));
+                    return t;
+                }).toList();
     }
 
     public List<PostReadDto> findAllByTagId(Long tagId) {
@@ -162,12 +201,11 @@ public class PostService {
 
     @Transactional
     public Optional<PostReadDto> update(Long id, PostEditDto postEditDto) {
-        var post = this.postRepository.findById(id);
-        return post.map(en -> {
-            this.uploadImages(postEditDto.getImages());
-            this.postRepository.saveAndFlush(this.postEditMapper.map(postEditDto, post.get()));
-//            return en;
-            return this.postReadMapper.map(this.postRepository.findById(id).get());
+        return this.postRepository.findById(id)
+                .map(en -> {
+                    this.uploadImages(postEditDto.getImages(), en.getId());
+                    this.postRepository.saveAndFlush(this.postEditMapper.map(postEditDto, en));
+                    return this.postReadMapper.map(this.postRepository.findById(id).get());
         });
 //        return Optional.ofNullable(this.postReadMapper.map(this.postRepository.findById(id).get()));
 //        post.get().getImages().clear();
@@ -241,12 +279,11 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    public void uploadImages(List<MultipartFile> images){
+    public void uploadImages(List<MultipartFile> images, Long postId){
         for(var x : images){
             if(!x.isEmpty()){
                 try {
-                    imageService.uploadImage(x.getOriginalFilename(), x.getInputStream());
-//                    post.se
+                    imageService.uploadImage(x.getOriginalFilename(), x.getInputStream(), postId);
                 }
                 catch (IOException e) {
                     throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);//something other
@@ -277,5 +314,10 @@ public class PostService {
                 .stream()
                 .map(this.postReadMapper::map)
                 .collect(Collectors.toSet());
+    }
+
+    public Long getCurrentUserId(){
+        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        return this.userService.findIdByEmail(userEmail);
     }
 }

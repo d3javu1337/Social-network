@@ -42,4 +42,13 @@ public interface UserRepository extends JpaRepository<User, Long>, FilterUserRep
     @Query(value = "select pt.tag_id from user_preferred_tags pt where user_id= :userId",
             nativeQuery = true)
     Set<Long> findAllPreferredTagsIdByUserId(Long userId);
+
+    @Query(value = "select count(*) from follows where followed_id= :userId",
+            nativeQuery = true)
+    Long getFollowersCountByUserId(Long userId);
+
+    @Query(value = "select count(*) from follows where follower_id= :userId",
+            nativeQuery = true)
+    Long getFollowsCountByUserId(Long userId);
+
 }

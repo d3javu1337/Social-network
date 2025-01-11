@@ -4,6 +4,7 @@ import org.d3javu.bd.models.images.Images;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,4 +20,8 @@ public interface ImagesRepository extends JpaRepository<Images, Long> {
             nativeQuery = true)
     List<String> findAllPathsByPostId(Long postId);
 
+    @Transactional
+    @Query(value = "insert into images(post_id, path) values (:postId, :path) returning id",
+            nativeQuery = true)
+    Long linkImage(String path, Long postId);
 }

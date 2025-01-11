@@ -84,9 +84,7 @@ public class CommentController {
 
     @PostMapping("/{id}/edit/delete")
     public String delete(@PathVariable("postId") Long postId, @PathVariable("id") Long commentId) {
-        var bool = this.commentService.delete(commentId);
-        var comm = this.commentService.findById(commentId, this.getCurrentUserId());
-//        System.out.println(bool + " " + comm);
+        this.commentService.delete(commentId);
         return "redirect:/posts/" + postId;
     }
 //

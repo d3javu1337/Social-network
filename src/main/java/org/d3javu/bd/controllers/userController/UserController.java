@@ -1,19 +1,13 @@
 package org.d3javu.bd.controllers.userController;
 
 import lombok.RequiredArgsConstructor;
-import org.d3javu.bd.dto.comment.CommentReadDto;
-import org.d3javu.bd.dto.post.PostReadDto;
 import org.d3javu.bd.dto.tag.PreferredTagsDto;
+import org.d3javu.bd.dto.user.CompactUserEditDto;
 import org.d3javu.bd.dto.user.CompactUserReadDto;
 import org.d3javu.bd.dto.user.UserEditDto;
 import org.d3javu.bd.filter.user.UserFilter;
-import org.d3javu.bd.dto.user.UserReadDto;
 import org.d3javu.bd.mapper.user.CompactUserReadMapper;
-import org.d3javu.bd.mapper.user.UserEditMapper;
 import org.d3javu.bd.mapper.user.UserReadMapper;
-import org.d3javu.bd.models.comment.Comment;
-import org.d3javu.bd.models.user.User;
-import org.d3javu.bd.repositories.TagRepository;
 import org.d3javu.bd.repositories.UserRepository;
 import org.d3javu.bd.service.CommentService;
 import org.d3javu.bd.service.PostService;
@@ -25,11 +19,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequestMapping("/users")
@@ -62,6 +54,8 @@ public class UserController {
         model.addAttribute("tags", this.tagService.findAll());
         if(isNumber(id)){
             var val = Long.parseLong(id);
+            model.addAttribute("followsCount", this.userService.getFollowsCountById(val));
+            model.addAttribute("followersCount", this.userService.getFollowersCountById(val));
             return userService.findById(val)
                     .map(user -> {
                         model.addAttribute("user", user);
@@ -83,6 +77,8 @@ public class UserController {
                         model.addAttribute("user", user);
                         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
                         var currentUser = this.userService.findByEmail(userEmail);
+                        model.addAttribute("followsCount", this.userService.getFollowsCountById(currentUser.getId()));
+                        model.addAttribute("followersCount", this.userService.getFollowersCountById(currentUser.getId()));
                         var bool = this.userService.findByEmail(user.getUsername()).getFollowers().contains(currentUser);
                         model.addAttribute("currentUser", this.compactUserReadMapper.map(currentUser));
                         model.addAttribute("isFollowed", bool);
@@ -107,11 +103,10 @@ public class UserController {
 
     @GetMapping("/{id}/update")
     public String forUpdate(@PathVariable("id") Long id, Model model){
-        var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        var currentUser = this.userService.findByEmail(userEmail);
+        var currentUserId = this.getCurrentUserId();
         model.addAttribute("user", this.userService.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)));
-        if (currentUser.getId() == id) return "user/user";
+        if (currentUserId.equals(id)) return "user/user";
         throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 
 //        if(!Objects.equals(id, currentUser.getId())) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
@@ -122,7 +117,7 @@ public class UserController {
     }
 
     @PostMapping("/{id}/update")
-    public String update(@PathVariable("id") Long id, @ModelAttribute UserEditDto user){
+    public String update(@PathVariable("id") Long id, @ModelAttribute CompactUserEditDto user){
         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         var currentUser = this.userService.findByEmail(userEmail);
 //        System.out.printf("%s %s %s %s %s %s %s \n", id, currentUser.getId(), Objects.equals(id, currentUser.getId()),

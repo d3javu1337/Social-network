@@ -1,6 +1,7 @@
 package org.d3javu.bd.rest;
 
 import lombok.RequiredArgsConstructor;
+import org.d3javu.bd.dto.user.CompactUserEditDto;
 import org.d3javu.bd.dto.user.CompactUserReadDto;
 import org.d3javu.bd.dto.user.UserEditDto;
 import org.d3javu.bd.dto.user.UserReadDto;
@@ -43,7 +44,7 @@ public class UserRestController {
     }
 
     @PutMapping("/{id}")
-    public UserReadDto update(@PathVariable("id") Long id, @RequestBody UserEditDto user){
+    public UserReadDto update(@PathVariable("id") Long id, @RequestBody CompactUserEditDto user){
         return userService.update(id, user)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 //        return "redirect:/users/{id}";

@@ -52,13 +52,9 @@ public class PostController {
 
     @PostMapping("/create")
     public String create(@ModelAttribute PostCreateDto postCreateDto, @ModelAttribute PreferredTagsDto chosenTags) {
-        var user = SecurityContextHolder.getContext().getAuthentication().getName();
-        var author = this.userService.findByEmail(user);
-        postCreateDto.setAuthor(author);
         postCreateDto.setTags(chosenTags.getTags());
-//        System.out.println(post+"++++++++++++++++++++++++++++++++");
-        var p = this.postService.create(postCreateDto);
-        return "redirect:/posts/" + p.getId();
+        var p = this.postService.create(postCreateDto, this.getCurrentUserId());
+        return "redirect:/posts/" + p;
     }
 
     @GetMapping("/preferred")
@@ -121,7 +117,7 @@ public class PostController {
     public String findByTags(Model model, @ModelAttribute PreferredTagsDto tags) {
         var posts = this.postService.findByTags(tags.getTags());
         model.addAttribute("posts", posts);
-        model.addAttribute("currentUser", this.userService.findById(this.getCurrentUserId()));
+        model.addAttribute("currentUser", this.getCurrentUser());
         model.addAttribute("tags", this.tagService.findAll());
         return "post/posts";
     }
@@ -155,10 +151,12 @@ public class PostController {
 
     @GetMapping("/{id}/update")
     public String update(Model model, @PathVariable Long id) {
-        var post = this.postService.findById(id).get();
+        var post = this.postService.findPostById(id, this.getCurrentUserId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         model.addAttribute("post", post);
         model.addAttribute("tags", this.tagService.findAll());
-        model.addAttribute("currentUser", this.userService.findById(this.getCurrentUserId()));
+        model.addAttribute("currentUser", this.userService.findById(this.getCurrentUserId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST)));
         return "post/postUpdate";
     }
 

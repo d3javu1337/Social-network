@@ -4,12 +4,8 @@ import lombok.RequiredArgsConstructor;
 //import org.d3javu.bd.auth.authData.AuthData;
 //import org.d3javu.bd.auth.userDetails.UserDetailsImpl;
 import org.d3javu.bd.dto.post.PostReadDto;
-import org.d3javu.bd.dto.tag.TagDto;
-import org.d3javu.bd.dto.user.CompactUserReadDto;
-import org.d3javu.bd.dto.user.UserCreateDto;
-import org.d3javu.bd.dto.user.UserEditDto;
+import org.d3javu.bd.dto.user.*;
 import org.d3javu.bd.filter.user.UserFilter;
-import org.d3javu.bd.dto.user.UserReadDto;
 import org.d3javu.bd.mapper.user.UserCreateMapper;
 import org.d3javu.bd.mapper.user.UserEditMapper;
 import org.d3javu.bd.mapper.user.UserReadMapper;
@@ -122,24 +118,33 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public Optional<UserReadDto> update(Long id, UserEditDto userEditDto){
+    public Optional<UserReadDto> update(Long id, CompactUserEditDto userEditDto){
 //        var user = this.userRepository.findByCustomLink(userEditDto.getCustomLink());
-        var user = this.userRepository.findById(userEditDto.id);
+        var user = this.userRepository.findById(id);
         if(user.isPresent() && !id.equals(user.get().getId())){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
              //need to do another but now ok
         }
 //        System.out.println(userEditDto.customLink);
-        if (userEditDto.getCustomLink() != null && !userEditDto.getCustomLink().isEmpty()) {
-            if (userEditDto.getCustomLink().charAt(0) >= '0' && userEditDto.getCustomLink().charAt(0) <= '9') {
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-            }
-        }
+//        if (userEditDto.getCustomLink() != null && !userEditDto.getCustomLink().isEmpty()) {
+//            if (userEditDto.getCustomLink().charAt(0) >= '0' && userEditDto.getCustomLink().charAt(0) <= '9') {
+//                throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+//            }
+//        }
 
         return this.userRepository.findById(id)
                 .map(en -> {
-                    uploadAvatar(userEditDto.avatar);
-                    return this.userEditMapper.map(userEditDto, en);
+                    if(!en.getAvatarPath().equals(userEditDto.getAvatar().getOriginalFilename())){
+                        uploadAvatar(userEditDto.avatar);
+                    }
+                    if(!en.getFirstName().equals(userEditDto.getFirstName())){
+                        en.setFirstName(userEditDto.getFirstName());
+                    }
+                    if(!en.getLastName().equals(userEditDto.getLastName())){
+                        en.setLastName(userEditDto.getLastName());
+                    }
+//                    return this.userEditMapper.map(userEditDto, en);
+                    return en;
                 })
                 .map(this.userRepository::saveAndFlush)
                 .map(this.userReadMapper::map);
@@ -235,6 +240,14 @@ public class UserService implements UserDetailsService {
                     return true;
                 })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    public Long getFollowersCountById(Long userId){
+        return this.userRepository.getFollowersCountByUserId(userId);
+    }
+
+    public Long getFollowsCountById(Long userId){
+        return this.userRepository.getFollowsCountByUserId(userId);
     }
 
     public boolean isFollowed(Long followedId, Long followerId){

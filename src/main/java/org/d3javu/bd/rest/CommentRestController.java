@@ -72,10 +72,9 @@ public class CommentRestController {
     }
 
     @PostMapping("/{postId}/create")
-    public ResponseEntity<CommentReadDto> create(@RequestParam String body, @PathVariable long postId) {
-        if(body.length() < 10) {
-            System.out.println("shit");
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> create(@RequestParam String body, @PathVariable long postId) {
+        if(body.isBlank()) {
+            return new ResponseEntity<>("Comment body can not be blank", HttpStatus.BAD_REQUEST);
         }
         var commentCreateDto = new CommentCreateDto();
         commentCreateDto.setBody(body);

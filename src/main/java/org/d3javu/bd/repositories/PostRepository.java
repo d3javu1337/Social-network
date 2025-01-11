@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -64,5 +65,11 @@ public interface PostRepository extends JpaRepository<Post, Long>, FilterPostRep
     @Query(value = "update posts set likes_count=(select count(*) from posts_likes where post_id= :postId) where id= :postId",
             nativeQuery = true)
     void updateLikesCount(Long postId);
+
+    @Transactional
+    @Query(value = "insert into posts(title, body, author_id, created_at, likes_count, views_count) " +
+            "values (:title, :body, :authorId, :createdAt, :likesCount, :viewsCount) returning id",
+            nativeQuery = true)
+    Long create(String title, String body, Long authorId, LocalDateTime createdAt, Long likesCount, Long viewsCount);
 
 }

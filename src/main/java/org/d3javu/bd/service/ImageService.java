@@ -63,13 +63,14 @@ public class ImageService {
     }
 
     @Transactional
-    public void uploadImage(String path, InputStream content) throws IOException {
+    public void uploadImage(String path, InputStream content, Long postId) throws IOException {
         if (isLocal) {
             Path p = Path.of(bucket, "postimages", path);
 //        System.out.println("--------------------------------"+true);
             try(content){
                 Files.createDirectories(p.getParent());
                 Files.write(p, content.readAllBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+                this.imagesRepository.linkImage(path, postId);
             }
         }else {
             final String url = "http://"+this.bucket+":"+this.port+"/postimages/"+path;

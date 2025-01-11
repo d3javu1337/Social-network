@@ -120,15 +120,20 @@ public class CommentService {
                 .map(commentReadMapper::map);
     }
 
+//    @Transactional
+//    public boolean delete(Long id) {
+//        return this.commentRepository.findById(id)
+//                .map(comment -> {
+//                    this.commentRepository.delete(comment);
+//                    this.commentRepository.flush();
+//                    return true;
+//                })
+//                .orElse(false);
+//    }
+
     @Transactional
-    public boolean delete(Long id) {
-        return this.commentRepository.findById(id)
-                .map(comment -> {
-                    this.commentRepository.delete(comment);
-                    this.commentRepository.flush();
-                    return true;
-                })
-                .orElse(false);
+    public void delete(Long id) {
+        this.commentRepository.deleteCommentById(id);
     }
 
 //crud

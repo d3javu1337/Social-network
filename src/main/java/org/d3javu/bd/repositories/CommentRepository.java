@@ -49,7 +49,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             nativeQuery = true)
     Long getLikesCountById(Long id);
 
-    @Query(value = "select count(*)>0 from bd.public.comments_likes where user_id= :userId and comment_id= :commentId",
+    @Query(value = "select count(*)>0 from comments_likes where user_id= :userId and comment_id= :commentId",
             nativeQuery = true)
     Boolean existsLikeByUserIdAndCommentId(Long userId, Long commentId);
 
@@ -79,4 +79,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             "where c.id= :commentId",
             nativeQuery = true)
     void updateLikesCountByCommentId(Long commentId);
+
+    @Transactional
+    @Modifying
+    @Query(value = "delete from comments where id= :id",
+            nativeQuery = true)
+    void deleteCommentById(Long id);
 }

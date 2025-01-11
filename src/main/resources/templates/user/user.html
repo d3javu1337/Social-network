@@ -18,12 +18,12 @@
             <label for="lastName" class="lastname-label">Lastname:
                 <input id="lastName" type="text" name="lastName" th:value="*{lastName}">
             </label><br>
-            <label for="username" class="username-label">Email:
-                <input id="username" type="text" name="username" th:value="*{username}">
-            </label><br>
-            <label for="customLink" class="customlink-label">Custom Link:
-                <input id="customLink" type="text" name="customLink" th:value="*{customLink}">
-            </label><br>
+<!--            <label for="username" class="username-label">Email:-->
+<!--                <input id="username" type="text" name="username" th:value="*{username}">-->
+<!--            </label><br>-->
+<!--            <label for="customLink" class="customlink-label">Custom Link:-->
+<!--                <input id="customLink" type="text" name="customLink" th:value="*{customLink}">-->
+<!--            </label><br>-->
             <div th:if="${user.avatar}" class="user-avatar">
                 <img th:src="@{/api/v1/users/{userId}/avatar(userId=${user.id})}" alt="image" style="width: 240px; height: 240px">
             </div>
