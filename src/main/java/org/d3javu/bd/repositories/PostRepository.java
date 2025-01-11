@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -24,6 +25,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, FilterPostRep
 
 //    @Query(value = "select * from posts where id in (select post_id from post_tags where tag_id in :tags)",
 //    nativeQuery = true)
+
     List<Post> findAllByTags(Set<Tag> tags);
 
 //    List<Post> findAllByOrderByCreatedAtAsc();
@@ -32,7 +34,13 @@ public interface PostRepository extends JpaRepository<Post, Long>, FilterPostRep
 
     List<Post> findAllByOrderByLikesCountDesc(Pageable pageable);
 
+    @Query(value = "select v.id, v.title, v.body, v.created_at, v.likes_count, v.authorid, v.authorfirstname, " +
+            "v.authorlastname, v.authoravatarpath from postswithauthorsview v where v.id in(:ids) order by v.created_at desc",
+            nativeQuery = true)
+    List<Object[]> findDtosByIdIn(ArrayList<Long> ids);
+
     List<Post> findAllByIdIn(Set<Long> ids);
+
 
     @Query(value = "select v.id, v.title, v.body, v.created_at, v.likes_count, v.authorid, v.authorfirstname, " +
             "v.authorlastname, v.authoravatarpath from postswithauthorsview v order by v.created_at desc", nativeQuery = true)

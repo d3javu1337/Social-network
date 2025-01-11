@@ -3,8 +3,6 @@ package org.d3javu.bd.controllers.adminController;
 import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.tag.TagDto;
 import org.d3javu.bd.dto.user.CompactUserReadDto;
-import org.d3javu.bd.models.user.User;
-import org.d3javu.bd.service.PostService;
 import org.d3javu.bd.service.TagService;
 import org.d3javu.bd.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -21,8 +19,6 @@ public class AdminController {
 
     private final TagService tagService;
     private final UserService userService;
-//    private final CommentService commentService;
-    private final PostService postService;
 
     @GetMapping("/tags")
     public String tags(Model model) {
@@ -44,7 +40,6 @@ public class AdminController {
         return this.tagService.update(id, dto)
                 .map(t -> "redirect:/admin/tags")
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tag not found"));
-
     }
 
     @PostMapping("/tags/new")
@@ -52,27 +47,13 @@ public class AdminController {
         if(this.tagService.findByBody(dto.getBody()).isPresent()) throw new ResponseStatusException(HttpStatus.CONFLICT, "Duplicate tag");
         else{
             this.tagService.create(dto);
-            return "redirect:/admin/admin";
+            return "admin/admin";
         }
     }
-//
-//    @PostMapping("/posts/best/{count}")
-//    public String posts(@PathVariable("count") Integer count) {
-//        return "redirect:/admin/posts/report";
-//    }
-//
-//    @GetMapping("/posts/report")
-//    public String report(Model model) {
-//        return "";
-//    }
 
     public CompactUserReadDto getCurrentUser(){
         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         return this.userService.findById(this.userService.findIdByEmail(userEmail))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
-
-//        return userService.update(id, user)
-//            .map(it -> "redirect:/users/{id}")
-//            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 }

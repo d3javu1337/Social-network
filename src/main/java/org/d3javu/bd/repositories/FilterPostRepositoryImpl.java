@@ -18,10 +18,9 @@ import static org.d3javu.bd.models.post.QPost.post;
 public class FilterPostRepositoryImpl implements FilterPostRepository {
 
     private final EntityManager em;
-    private final PostReadMapper postReadMapper;
 
     @Override
-    public List<Post> findAllByTagsFilter(PostFilter filter, EPredicateBuildMethod predicateBuildMethod) {
+    public List<Long> findAllIdsByTagsFilter(PostFilter filter, EPredicateBuildMethod predicateBuildMethod) {
         var QPredicate = QPredicates.builder();
         for(var x : filter.tags()){
             QPredicate.add(x, post.tags::contains);
@@ -31,9 +30,8 @@ public class FilterPostRepositoryImpl implements FilterPostRepository {
             case OR -> QPredicate.buildOr();
             default -> throw new IllegalStateException("Unexpected value: " + predicateBuildMethod);
         };
-//        var predicate = QPredicate.buildOr();
 
-        return new JPAQuery<Post>(em).select(post).from(post)
+        return new JPAQuery<Long>(em).select(post.id).from(post)
                 .where(predicate).fetch();
     }
 }

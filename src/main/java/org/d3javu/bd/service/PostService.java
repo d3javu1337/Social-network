@@ -1,6 +1,5 @@
 package org.d3javu.bd.service;
 
-import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.post.PostCreateDto;
 import org.d3javu.bd.dto.post.PostEditDto;
 import org.d3javu.bd.dto.post.PostReadDto;
@@ -142,19 +141,31 @@ public class PostService {
 
     public List<PostReadDto> findByPreferred(Set<Tag> preferredTags, Long userId) {
         var postFilter = new PostFilter(preferredTags);
-        return this.postRepository.findAllByTagsFilter(postFilter, EPredicateBuildMethod.OR)
+        return this.postRepository.findDtosByIdIn((ArrayList<Long>)this.postRepository.findAllIdsByTagsFilter(postFilter, EPredicateBuildMethod.OR))
                 .stream()
                 .map(en -> {
+//                    var t = new PostReadDto(
+//                            en.getId(),
+//                            en.getTitle(),
+//                            en.getBody(),
+//                            en.getCreatedAt(),
+//                            en.getLikesCount(),
+//                            en.getAuthor().getId(),
+//                            en.getAuthor().getFirstName(),
+//                            en.getAuthor().getLastName(),
+//                            en.getAuthor().getAvatarPath()
+//
+//                    );
                     var t = new PostReadDto(
-                            en.getId(),
-                            en.getTitle(),
-                            en.getBody(),
-                            en.getCreatedAt(),
-                            en.getLikesCount(),
-                            en.getAuthor().getId(),
-                            en.getAuthor().getFirstName(),
-                            en.getAuthor().getLastName(),
-                            en.getAuthor().getAvatarPath()
+                            (Long) en[0],
+                            (String) en[1],
+                            (String) en[2],
+                            LocalDateTime.ofInstant(((Timestamp)en[3]).toInstant(), ZoneOffset.UTC),
+                            (Long) en[4],
+                            (Long) en[5],
+                            (String) en[6],
+                            (String) en[7],
+                            (String) en[8]
 
                     );
                     t.setTags(this.tagService.findByPost(t.getId()));
@@ -166,18 +177,31 @@ public class PostService {
 
     public List<PostReadDto> findByTags(Set<Tag> tags) {
         var postFilter = new PostFilter(tags);
-        return this.postRepository.findAllByTagsFilter(postFilter, EPredicateBuildMethod.AND)
+        return this.postRepository.findDtosByIdIn((ArrayList<Long>) this.postRepository.findAllIdsByTagsFilter(postFilter, EPredicateBuildMethod.AND))
                 .stream()
-                .map(en -> {var t = new PostReadDto(
-                        en.getId(),
-                        en.getTitle(),
-                        en.getBody(),
-                        en.getCreatedAt(),
-                        en.getLikesCount(),
-                        en.getAuthor().getId(),
-                        en.getAuthor().getFirstName(),
-                        en.getAuthor().getLastName(),
-                        en.getAuthor().getAvatarPath()
+                .map(en -> {
+//                    var t = new PostReadDto(
+//                        en.getId(),
+//                        en.getTitle(),
+//                        en.getBody(),
+//                        en.getCreatedAt(),
+//                        en.getLikesCount(),
+//                        en.getAuthor().getId(),
+//                        en.getAuthor().getFirstName(),
+//                        en.getAuthor().getLastName(),
+//                        en.getAuthor().getAvatarPath()
+//                    );
+                    var t = new PostReadDto(
+                            (Long) en[0],
+                            (String) en[1],
+                            (String) en[2],
+                            LocalDateTime.ofInstant(((Timestamp)en[3]).toInstant(), ZoneOffset.UTC),
+                            (Long) en[4],
+                            (Long) en[5],
+                            (String) en[6],
+                            (String) en[7],
+                            (String) en[8]
+
                     );
                     t.setTags(this.tagService.findByPost(t.getId()));
                     t.setImages(this.imageService.findAllImagesByPostId(t.getId()));
