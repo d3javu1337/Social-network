@@ -30,7 +30,9 @@ public interface PostRepository extends JpaRepository<Post, Long>, FilterPostRep
 
 //    List<Post> findAllByOrderByCreatedAtAsc();
 
-    Set<Post> findAllByAuthorId(Long id);
+    @Query(value = "select v.id, v.title, v.body, v.created_at, v.likes_count, v.authorid, v.authorfirstname, " +
+            "v.authorlastname, v.authoravatarpath from postswithauthorsview v where v.authorid= :authorId order by v.created_at desc", nativeQuery = true)
+    List<Object[]> findAllByAuthorId(Long authorId);
 
     List<Post> findAllByOrderByLikesCountDesc(Pageable pageable);
 

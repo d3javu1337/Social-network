@@ -208,7 +208,7 @@
                 <div class="images_wrapper" th:if="${not post.images.isEmpty()}">
                     <div class="images" th:if="${not post.images.isEmpty()}">
                         <a th:each="t : ${post.images}" th:if="${not t.isEmpty()}" th:href="@{'/api/v1/posts/'+${post.id}+'/images/'+${t}}" th:target="_blank" th:rel="noopener" class="image_wrapper">
-                            <img th:src="@{'/api/v1/posts/'+${post.id}+'/images/'+${t}}">
+                            <img th:src="@{'/api/v1/posts/'+${post.id}+'/images/'+${t}}" th:alt="${t}">
                         </a>
                     </div>
                 </div>
@@ -224,14 +224,14 @@
                     <div class="actions">
                         <div class="like-block">
 <!--                            <form th:action="@{'/posts/'+${post.id}+'/like'}" method="post" th:if="${!post.likes.contains(currentUser)}" class="post_like-form">-->
-                            <form th:action="@{'/posts/'+${post.id}+'/like'}" method="post" th:if="${!post.likes.contains(currentUser.id)}" class="post_like-form">
+                            <form th:action="@{'/posts/'+${post.id}+'/like'}" method="post" th:if="${!post.isLiked}" class="post_like-form">
                                 <button type="submit" class="like-button">like</button>
                             </form>
 <!--                            <form th:action="@{'/posts/'+${post.id}+'/unlike'}" method="post" th:if="${post.likes.contains(currentUser)}" class="post_unlike-form">-->
-                            <form th:action="@{'/posts/'+${post.id}+'/unlike'}" method="post" th:if="${post.likes.contains(currentUser.id)}" class="post_unlike-form">
+                            <form th:action="@{'/posts/'+${post.id}+'/unlike'}" method="post" th:if="${post.isLiked}" class="post_unlike-form">
                                 <button type="submit" class="like-button">unlike</button>
                             </form>
-                            <p th:text="${post.likes.size()}" class="post_like-count">likes count</p>
+                            <p th:text="${post.likesCount}" class="post_like-count">likes count</p>
                         </div>
                         <div class="comment-block">
                             <a th:href="@{'/api/v1/comments/'+${post.id}}" class="comments-button">

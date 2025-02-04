@@ -136,6 +136,7 @@ public class UserService implements UserDetailsService {
                 .map(en -> {
                     if(!en.getAvatarPath().equals(userEditDto.getAvatar().getOriginalFilename())){
                         uploadAvatar(userEditDto.avatar);
+                        en.setAvatarPath(userEditDto.getAvatar().getOriginalFilename());
                     }
                     if(!en.getFirstName().equals(userEditDto.getFirstName())){
                         en.setFirstName(userEditDto.getFirstName());

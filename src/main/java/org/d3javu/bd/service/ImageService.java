@@ -75,6 +75,7 @@ public class ImageService {
         }else {
             final String url = "http://"+this.bucket+":"+this.port+"/postimages/"+path;
             new RestTemplate().put(url, content.readAllBytes());
+            this.imagesRepository.linkImage(path, postId);
         }
 
     }

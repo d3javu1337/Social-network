@@ -28,10 +28,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
@@ -87,22 +84,11 @@ public class PostService {
     public Optional<PostReadDto> findPostById(Long postId, Long userId) {
         var p = this.postRepository.findAllReadDtoWithAuthorById(postId).get(0);
         Long l = (Long)p[0];
-        System.out.println(l);
+//        System.out.println(l);
         return this.postRepository.findAllReadDtoWithAuthorById(postId)
                 .stream()
                 .map(en ->{
-                    var t = new PostReadDto(
-                            ((Long)en[0]),
-                            (String) en[1],
-                            (String) en[2],
-                            LocalDateTime.ofInstant(((Timestamp)en[3]).toInstant(), ZoneOffset.UTC),
-                            ((Long)en[4]),
-                            ((Long)en[5]),
-                            (String) en[6],
-                            (String) en[7],
-                            (String) en[8]
-
-                    );
+                    var t = this.dtoFromObjectArr(en);
                     t.setTags(this.tagService.findByPost(t.getId()));
                     t.setIsLiked(this.postRepository.existsLikeByPostIdAndUserId(t.getId(), userId));
                     t.setImages(this.imageService.findAllImagesByPostId(t.getId()));
@@ -119,18 +105,7 @@ public class PostService {
         return this.postRepository.findAllReadDtoWithAuthor()
                 .stream()
                 .map(en ->{
-                    var t = new PostReadDto(
-                            (Long) en[0],
-                            (String) en[1],
-                            (String) en[2],
-                            LocalDateTime.ofInstant(((Timestamp)en[3]).toInstant(), ZoneOffset.UTC),
-                            (Long) en[4],
-                            (Long) en[5],
-                            (String) en[6],
-                            (String) en[7],
-                            (String) en[8]
-
-                    );
+                    var t = this.dtoFromObjectArr(en);
                     t.setTags(this.tagService.findByPost(t.getId()));
                     t.setIsLiked(this.postRepository.existsLikeByPostIdAndUserId(t.getId(), userId));
                     t.setImages(this.imageService.findAllImagesByPostId(t.getId()));
@@ -156,18 +131,7 @@ public class PostService {
 //                            en.getAuthor().getAvatarPath()
 //
 //                    );
-                    var t = new PostReadDto(
-                            (Long) en[0],
-                            (String) en[1],
-                            (String) en[2],
-                            LocalDateTime.ofInstant(((Timestamp)en[3]).toInstant(), ZoneOffset.UTC),
-                            (Long) en[4],
-                            (Long) en[5],
-                            (String) en[6],
-                            (String) en[7],
-                            (String) en[8]
-
-                    );
+                    var t = this.dtoFromObjectArr(en);
                     t.setTags(this.tagService.findByPost(t.getId()));
                     t.setIsLiked(this.postRepository.existsLikeByPostIdAndUserId(t.getId(), userId));
                     t.setImages(this.imageService.findAllImagesByPostId(t.getId()));
@@ -191,18 +155,7 @@ public class PostService {
 //                        en.getAuthor().getLastName(),
 //                        en.getAuthor().getAvatarPath()
 //                    );
-                    var t = new PostReadDto(
-                            (Long) en[0],
-                            (String) en[1],
-                            (String) en[2],
-                            LocalDateTime.ofInstant(((Timestamp)en[3]).toInstant(), ZoneOffset.UTC),
-                            (Long) en[4],
-                            (Long) en[5],
-                            (String) en[6],
-                            (String) en[7],
-                            (String) en[8]
-
-                    );
+                    var t = this.dtoFromObjectArr(en);
                     t.setTags(this.tagService.findByPost(t.getId()));
                     t.setImages(this.imageService.findAllImagesByPostId(t.getId()));
                     t.setIsLiked(this.postRepository.existsLikeByPostIdAndUserId(t.id, this.getCurrentUserId()));
@@ -336,7 +289,13 @@ public class PostService {
     public Set<PostReadDto> findAllByAuthorId(long id) {
         return this.postRepository.findAllByAuthorId(id)
                 .stream()
-                .map(this.postReadMapper::map)
+                .map(en -> {
+                    var t = this.dtoFromObjectArr(en);
+                    t.setTags(this.tagService.findByPost(t.getId()));
+                    t.setImages(this.imageService.findAllImagesByPostId(t.getId()));
+                    t.setIsLiked(this.postRepository.existsLikeByPostIdAndUserId(t.id, this.getCurrentUserId()));
+                    return t;
+                })
                 .collect(Collectors.toSet());
     }
 
@@ -344,4 +303,20 @@ public class PostService {
         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         return this.userService.findIdByEmail(userEmail);
     }
+
+    private PostReadDto dtoFromObjectArr(Object[] en){
+        return new PostReadDto(
+                (Long) en[0],
+                (String) en[1],
+                (String) en[2],
+                LocalDateTime.ofInstant(((Timestamp)en[3]).toInstant(), ZoneOffset.UTC),
+                (Long) en[4],
+                (Long) en[5],
+                (String) en[6],
+                (String) en[7],
+                (String) en[8]
+
+        );
+    }
+
 }
