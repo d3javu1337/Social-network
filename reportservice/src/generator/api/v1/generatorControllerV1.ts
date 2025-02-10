@@ -1,11 +1,11 @@
 import {Body, Controller, Header, Post, Res} from '@nestjs/common';
-import {GeneratorService} from "./generator.service";
+import {GeneratorService} from "../../generator.service";
 import {Response} from "express";
 import {ApiResponse} from "@nestjs/swagger";
-import {CompactModel} from "./models/compact";
+import {CompactModel} from "../../models/compact";
 
 @Controller('api/v1/generator')
-export class GeneratorController {
+export class GeneratorControllerV1 {
 
     constructor(private generatorService: GeneratorService) {}
 

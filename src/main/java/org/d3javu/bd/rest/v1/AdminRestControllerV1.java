@@ -1,9 +1,10 @@
-package org.d3javu.bd.rest;
+package org.d3javu.bd.rest.v1;
 
 import com.google.common.hash.Hashing;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.d3javu.bd.controllers.postController.PostController;
+import org.d3javu.bd.kafka.KafkaService;
 import org.d3javu.bd.mapper.post.PostForReportMapper;
 import org.d3javu.bd.models.post.PostForReport;
 import org.d3javu.bd.models.user.User;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/admin")
-public class AdminRestController {
+public class AdminRestControllerV1 {
 
     private final PostService postService;
     private final ThymeleafViewResolver thymeleafViewResolver;
@@ -38,13 +39,13 @@ public class AdminRestController {
     private final UserService userService;
     private final TemplateEngine templateEngine;
 
-    @Value("${app.report.generator.port}")
+    @Value("${app.report.generator.http.port}")
     private int port;
 
-    @Value("${app.report.generator.host}")
+    @Value("${app.report.generator.http.host}")
     private String host;
 
-    @Value("${app.report.generator.route}")
+    @Value("${app.report.generator.http.route}")
     private String route;
 
 //    @GetMapping("/report/json")
@@ -109,6 +110,7 @@ public class AdminRestController {
         return new ResponseEntity<>(res, headers, HttpStatus.OK);
     }
 
+    @Deprecated(forRemoval = true)
     public User getCurrentUser(){
         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         return this.userService.findByEmail(userEmail);

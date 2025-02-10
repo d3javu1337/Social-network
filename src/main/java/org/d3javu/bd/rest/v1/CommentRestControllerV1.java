@@ -1,6 +1,5 @@
-package org.d3javu.bd.rest;
+package org.d3javu.bd.rest.v1;
 
-import com.google.gson.*;
 import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.comment.CommentCreateDto;
 import org.d3javu.bd.dto.comment.CommentDtoForLargeQuery;
@@ -11,24 +10,18 @@ import org.d3javu.bd.models.user.User;
 import org.d3javu.bd.service.CommentService;
 import org.d3javu.bd.service.UserService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.webjars.NotFoundException;
 
-import java.lang.reflect.Type;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @CrossOrigin
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/comments")
 @RestController
-public class CommentRestController {
+public class CommentRestControllerV1 {
 
     private final CommentService commentService;
     private final CommentReadMapper commentReadMapper;

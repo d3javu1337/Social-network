@@ -1,4 +1,4 @@
-package org.d3javu.bd.rest;
+package org.d3javu.bd.rest.v1;
 
 import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.user.CompactUserEditDto;
@@ -15,7 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
 @RestController
-public class UserRestController {
+public class UserRestControllerV1 {
 
     private final UserRepository userRepository;
     private final UserService userService;

@@ -1,4 +1,4 @@
-package org.d3javu.bd.rest;
+package org.d3javu.bd.rest.v1;
 
 import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.post.PostReadDto;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/posts")
 @RestController
-public class PostRestController {
+public class PostRestControllerV1 {
 
     private final PostService postService;
     private final ImageService imageService;

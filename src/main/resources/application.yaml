@@ -26,6 +26,9 @@ spring:
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
+  kafka:
+    producer:
+      bootstrap-servers: 'localhost:29092,localhost:39092,localhost:49092'
 
 logging:
   level:
@@ -49,7 +52,8 @@ app:
   report:
 #    bucket: reports
     generator:
-      port: 5488
-      host: localhost
-      route: /api/v1/generator/generate
+      http:
+        port: 5488
+        host: localhost
+        route: /api/v1/generator/generate
 

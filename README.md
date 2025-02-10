@@ -8,6 +8,7 @@
 - Node.js + NestJS + PDFMake
 - Nginx
 - Docker 
+- Kafka
 - HTML, CSS, JS
 
 ## to start application : (Docker required)

@@ -44,10 +44,10 @@ public class SecurityConfiguration {
 
     private final UserService userService;
 
-    @Value("${app.report.generator.port}")
+    @Value("${app.report.generator.http.port}")
     private int port;
 
-    @Value("${app.report.generator.host}")
+    @Value("${app.report.generator.http.host}")
     private String host;
 
     @Autowired
