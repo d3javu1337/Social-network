@@ -2,11 +2,9 @@ package org.d3javu.bd.rest.v1;
 
 import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.comment.CommentCreateDto;
-import org.d3javu.bd.dto.comment.CommentDtoForLargeQuery;
+import org.d3javu.bd.dto.comment.CommentEditDto;
 import org.d3javu.bd.dto.comment.CommentReadDto;
-import org.d3javu.bd.mapper.comment.CommentReadMapper;
-import org.d3javu.bd.mapper.user.CompactUserReadMapper;
-import org.d3javu.bd.models.user.User;
+import org.d3javu.bd.dto.user.CompactUserReadDto;
 import org.d3javu.bd.service.CommentService;
 import org.d3javu.bd.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -14,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
@@ -24,44 +23,36 @@ import java.util.*;
 public class CommentRestControllerV1 {
 
     private final CommentService commentService;
-    private final CommentReadMapper commentReadMapper;
     private final UserService userService;
-    private final CompactUserReadMapper compactUserReadMapper;
 
 
     @GetMapping(value = "/{postId}", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public List<CommentReadDto> getComments(@PathVariable long postId) {
     public Map<String, Object> getComments(@PathVariable long postId) {
-//        System.out.println(123);
         var currenUserId = this.getCurrentUserId();
         var comments = this.commentService.findAllByPostId(postId, currenUserId);
-//        System.out.println(comments.get(0).post);
-        var currentUser = this.getCurrentUser();
         var map = new HashMap<String, Object>();
         map.put("comments", comments);
-        map.put("currentUser", this.compactUserReadMapper.map(currentUser));
+        map.put("currentUser", this.getCurrentUser());
         return map;
     }
 
 
     @GetMapping("/{commentId}/like")
-    public ResponseEntity<CommentDtoForLargeQuery> like(@PathVariable long commentId) {
+    public ResponseEntity<CommentReadDto> like(@PathVariable long commentId) {
         this.commentService.like(commentId, this.getCurrentUserId());
-//        var comment = this.commentService.findById(commentId).orElseThrow(() -> new NotFoundException("Comment not found"));
         return new ResponseEntity<>(this.commentService.findById(commentId, this.getCurrentUserId()), HttpStatus.OK);
     }
 
     @GetMapping("/{commentId}/unlike")
-    public ResponseEntity<CommentDtoForLargeQuery> unlike(@PathVariable long commentId) {
+    public ResponseEntity<CommentReadDto> unlike(@PathVariable long commentId) {
         this.commentService.unlike(commentId, this.getCurrentUserId());
-//        var comment = this.commentService.findById(commentId).orElseThrow(() -> new NotFoundException("Comment not found"));
         return new ResponseEntity<>(this.commentService.findById(commentId, this.getCurrentUserId()), HttpStatus.OK);
     }
 
     @PostMapping("/{commentId}/edit")
-    public ResponseEntity<CommentReadDto> edit(@PathVariable long commentId, @RequestBody CommentReadDto comment) {
-
-        return new ResponseEntity<>(null, HttpStatus.OK);
+    public ResponseEntity<CommentReadDto> edit(@PathVariable long commentId, @RequestBody CommentEditDto comment) {
+        var comm = this.commentService.update(commentId, this.getCurrentUserId(), comment);
+        return new ResponseEntity<>(comm, HttpStatus.OK);
     }
 
     @PostMapping("/{postId}/create")
@@ -71,16 +62,16 @@ public class CommentRestControllerV1 {
         }
         var commentCreateDto = new CommentCreateDto();
         commentCreateDto.setBody(body);
-        commentCreateDto.setUserId(this.getCurrentUser().getId());
-        var comment = this.commentService.create(postId, commentCreateDto);
+        var userId = this.getCurrentUserId();
+        var comment = this.commentService.create(postId, userId, commentCreateDto);
         return new ResponseEntity<>(comment, HttpStatus.OK);
     }
 
 
-    @Deprecated(forRemoval = true)
-    public User getCurrentUser(){
+    public CompactUserReadDto getCurrentUser(){
         var userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        return this.userService.findByEmail(userEmail);
+        return this.userService.findById(this.userService.findIdByEmail(userEmail))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     public Long getCurrentUserId(){

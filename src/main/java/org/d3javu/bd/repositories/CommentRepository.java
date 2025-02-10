@@ -1,11 +1,7 @@
 package org.d3javu.bd.repositories;
 
-import org.d3javu.bd.dto.comment.CommentCreateDto;
-import org.d3javu.bd.dto.comment.CommentDtoForLargeQuery;
-import org.d3javu.bd.dto.comment.CommentReadDto;
 import org.d3javu.bd.models.comment.Comment;
 import org.d3javu.bd.models.comment.IComment;
-import org.d3javu.bd.models.post.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -13,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
@@ -85,4 +81,22 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query(value = "delete from comments where id= :id",
             nativeQuery = true)
     void deleteCommentById(Long id);
+
+    @Transactional
+    @Modifying
+    @Query(value = "update comments set body= :newBody where id= :commentId",
+            nativeQuery = true)
+    void updateComment(Long commentId, String newBody);
+
+    @Query(value = "select id, body, created_at, post_id, authorId as userId, authorFirstName as userFirstName," +
+            "authorLastName as userLastName, authorAvatarPath as userAvatarPath, likes_count from commentsWithAuthorsView " +
+            "where post_id= :postId",
+            nativeQuery = true)
+    Set<IComment> findAllDtoByPostId(Long postId);
+
+    @Query(value = "select id, body, created_at, post_id, authorId as userId, authorFirstName as userFirstName, " +
+            "authorLastName as userLastName, authorAvatarPath as userAvatarPath, likes_count from commentsWithAuthorsView " +
+            "where id= :commentId",
+            nativeQuery = true)
+    Optional<IComment> findCommentById(Long commentId);
 }

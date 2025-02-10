@@ -3,32 +3,14 @@ package org.d3javu.bd.mapper.post;
 import lombok.RequiredArgsConstructor;
 import org.d3javu.bd.dto.post.PostReadDto;
 import org.d3javu.bd.mapper.Mapper;
-//import org.d3javu.bd.mapper.user.StaticUserReadMapper;
-import org.d3javu.bd.mapper.comment.CommentReadMapper;
 import org.d3javu.bd.mapper.user.CompactUserReadMapper;
 import org.d3javu.bd.mapper.user.UserReadMapper;
-import org.d3javu.bd.models.images.Images;
 import org.d3javu.bd.models.post.Post;
-import org.d3javu.bd.models.tag.Tag;
-import org.d3javu.bd.models.user.User;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
 public class PostReadMapper implements Mapper<Post, PostReadDto> {
-
-    private final UserReadMapper userReadMapper;
-    private final CommentReadMapper commentReadMapper;
-    private final CompactUserReadMapper compactUserReadMapper;
-//    private final CommentMapper commentMapper;
 
     @Override
     public PostReadDto map(Post object) {

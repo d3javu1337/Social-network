@@ -1,8 +1,8 @@
 package org.d3javu.bd.dto.comment;
 
-import lombok.Value;
+import lombok.Data;
 
-@Value
+@Data
 public class CommentEditDto {
 
     public String body;

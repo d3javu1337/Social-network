@@ -10,6 +10,10 @@ public interface IComment {
     Long getId();
     String getBody();
     LocalDateTime getCreatedAt();
-    IUser getAuthor();
-    Set<Long> getLikes();
+    Long getPostId();
+    Long getUserId();
+    String getUserFirstName();
+    String getUserLastName();
+    String getUserAvatarPath();
+    Long getLikesCount();
 }
