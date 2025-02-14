@@ -31,10 +31,10 @@ public class FilterUserRepositoryImpl implements FilterUserRepository {
 //            predicates.add(cb.like(user.get("lastName"), filter.lastName()));
             predicates.add(cb.like(user.get("lastName"), "%"+filter.lastName()+"%"));
         }
-        if(filter.email() != null && !filter.email().isBlank()){
-//            predicates.add(cb.like(user.get("email"), filter.email()));
-            predicates.add(cb.like(user.get("email"), "%" +filter.email()+"%"));
-        }
+//        if(filter.email() != null && !filter.email().isBlank()){
+////            predicates.add(cb.like(user.get("email"), filter.email()));
+//            predicates.add(cb.like(user.get("email"), "%" +filter.email()+"%"));
+//        }
 
         criteria.where(predicates.toArray(Predicate[]::new));
 

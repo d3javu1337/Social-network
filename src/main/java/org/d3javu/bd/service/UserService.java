@@ -1,8 +1,6 @@
 package org.d3javu.bd.service;
 
 import lombok.RequiredArgsConstructor;
-//import org.d3javu.bd.auth.authData.AuthData;
-//import org.d3javu.bd.auth.userDetails.UserDetailsImpl;
 import org.d3javu.bd.dto.post.PostReadDto;
 import org.d3javu.bd.dto.user.*;
 import org.d3javu.bd.filter.user.UserFilter;
@@ -10,8 +8,8 @@ import org.d3javu.bd.mapper.user.UserCreateMapper;
 import org.d3javu.bd.mapper.user.UserEditMapper;
 import org.d3javu.bd.mapper.user.UserReadMapper;
 import org.d3javu.bd.models.tag.Tag;
+import org.d3javu.bd.models.user.IUser;
 import org.d3javu.bd.models.user.User;
-//import org.d3javu.bd.repositories.AuthDataRepository;
 import org.d3javu.bd.repositories.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,7 +30,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-//import static org.d3javu.bd.models.QUser.user;
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +44,6 @@ public class UserService implements UserDetailsService {
     private final ImageService imageService;
     private final PostService postService;
     private final TagService tagService;
-//    private final AuthDataRepository authDataRepository;
 
 //    public Page<UserReadDto> findAll(UserFilter filter, Pageable pageable) {
 //        var predicate = QPredicates.builder()
@@ -63,11 +59,16 @@ public class UserService implements UserDetailsService {
                 .stream().map(userReadMapper::map).toList();
     }
 
-    public List<UserReadDto> findAll(){
-        return userRepository.findAll().stream().map(userReadMapper::map).toList();
+    public List<IUser> findAll(){
+        return userRepository.findAllIUsers();
+    }
+
+    public Optional<IUser> findIUserById(Long id) {
+                return this.userRepository.findIUserById(id);
     }
 
     public Optional<CompactUserReadDto> findById(Long id){
+
         return this.userRepository.findCompactById(id)
                 .stream()
                 .map(en -> new CompactUserReadDto(
@@ -77,7 +78,6 @@ public class UserService implements UserDetailsService {
                         (String) en[3]
                 ))
                 .findFirst();
-//                .orElseThrow(() -> new NotFoundException("Not found user by id = "+id));
     }
 
     public Optional<UserReadDto> findByCustomLink(String customLink){
@@ -97,40 +97,19 @@ public class UserService implements UserDetailsService {
     public UserReadDto create(UserCreateDto userCreateDto){
 
         var login = userCreateDto.getLogin();
-//        var passwordHash = GetPasswordHash.hash(userCreateDto.getPassword());
         var passwordHash = this.passwordEncoder.encode(userCreateDto.getPassword());
         userCreateDto.setPassword(passwordHash);
         org.d3javu.bd.models.user.User User = Optional.of(userCreateDto).map(userCreateMapper::map).get();
-//        AuthData authData = new AuthData(login, passwordHash, User);
-//                User.map(userRepository::save);
-//        User.setAuthData(authData);
         User = userRepository.save(User);
-//        authDataRepository.save(authData);
-
-//        return User.map(userReadMapper::map).orElse(null);
         return userReadMapper.map(User);
-
-//        return Optional.of(userCreateDto)
-//                .map(userCreateMapper::map)
-//                .map(userRepository::save)
-//                .map(userReadMapper::map)
-//                .orElse(null);
     }
 
     @Transactional
     public Optional<UserReadDto> update(Long id, CompactUserEditDto userEditDto){
-//        var user = this.userRepository.findByCustomLink(userEditDto.getCustomLink());
         var user = this.userRepository.findById(id);
         if(user.isPresent() && !id.equals(user.get().getId())){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-             //need to do another but now ok
         }
-//        System.out.println(userEditDto.customLink);
-//        if (userEditDto.getCustomLink() != null && !userEditDto.getCustomLink().isEmpty()) {
-//            if (userEditDto.getCustomLink().charAt(0) >= '0' && userEditDto.getCustomLink().charAt(0) <= '9') {
-//                throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-//            }
-//        }
 
         return this.userRepository.findById(id)
                 .map(en -> {
@@ -144,7 +123,6 @@ public class UserService implements UserDetailsService {
                     if(!en.getLastName().equals(userEditDto.getLastName())){
                         en.setLastName(userEditDto.getLastName());
                     }
-//                    return this.userEditMapper.map(userEditDto, en);
                     return en;
                 })
                 .map(this.userRepository::saveAndFlush)
@@ -176,8 +154,6 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//        User user = authDataRepository.findByLogin(username).orElseThrow(() -> new UsernameNotFoundException(username)).getUser();
-//        return UserDetailsImpl.build(user);
         return userRepository.findByEmail(username)
                 .map(user -> new org.springframework.security.core.userdetails.User(
                         user.getEmail(),

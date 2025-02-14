@@ -1,5 +1,6 @@
 package org.d3javu.bd.repositories;
 
+import org.d3javu.bd.models.user.IUser;
 import org.d3javu.bd.models.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -50,5 +51,13 @@ public interface UserRepository extends JpaRepository<User, Long>, FilterUserRep
     @Query(value = "select count(*) from follows where follower_id= :userId",
             nativeQuery = true)
     Long getFollowsCountByUserId(Long userId);
+
+    @Query(value = "select id, first_name, last_name, avatar_path from users",
+            nativeQuery = true)
+    List<IUser> findAllIUsers();
+
+    @Query(value = "select id, first_name, last_name, avatar_path from users where id= :id",
+            nativeQuery = true)
+    Optional<IUser> findIUserById(Long id);
 
 }
