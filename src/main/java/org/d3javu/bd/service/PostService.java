@@ -37,7 +37,6 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final PostCreateMapper postCreateMapper;
     private final PostEditMapper postEditMapper;
     private final PostReadMapper postReadMapper;
     private final ImageService imageService;
@@ -46,7 +45,6 @@ public class PostService {
     private final TagService tagService;
 
     public PostService(PostRepository postRepository,
-                       PostCreateMapper postCreateMapper,
                        PostEditMapper postEditMapper,
                        PostReadMapper postReadMapper,
                        ImageService imageService,
@@ -54,7 +52,6 @@ public class PostService {
                        @Lazy UserService userService,
                        TagService tagService) {
         this.postRepository = postRepository;
-        this.postCreateMapper = postCreateMapper;
         this.postEditMapper = postEditMapper;
         this.postReadMapper = postReadMapper;
         this.imageService = imageService;

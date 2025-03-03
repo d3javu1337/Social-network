@@ -96,25 +96,19 @@ public class SecurityConfiguration {
         AuthenticationManagerBuilder authenticationManagerBuilder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
+        authenticationManagerBuilder.parentAuthenticationManager(null);
         return authenticationManagerBuilder.build();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-//        return new Argon2PasswordEncoder(16, 32, 1, 8192, 2);
         return new BCryptPasswordEncoder(13);
     }
 
     @Bean
     public UserDetailsService userDetailsService() throws UsernameNotFoundException {
         return username -> {
-            User user;
-
-//            try{
-                user = userService.findByEmail(username);
-//            }catch (UsernameNotFoundException e){
-//                throw new UsernameNotFoundException(username);
-//            }
+            User user = userService.findByEmail(username);
             if (user != null) {
                 return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
                         List.of(user.getRole()));
@@ -122,18 +116,4 @@ public class SecurityConfiguration {
             throw new NotFoundException("user not found");
         };
     }
-
-//    @Bean
-//    public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
-//        return (request, response, authentication) -> {
-//            boolean isAdmin = authentication.getAuthorities().stream()
-//                    .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-//            if (isAdmin) {
-//                response.sendRedirect("/admin");
-//            } else {
-//                response.sendRedirect("/user");
-//            }
-//        };
-//    }
-
 }
